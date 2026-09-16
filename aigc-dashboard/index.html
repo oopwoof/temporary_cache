@@ -1,0 +1,1220 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIGC 互动大屏 · 运营看板</title>
+<style>
+/* ---------------------------------------------------------------- 设计令牌
+   颜色按"角色"定义, 浅/深两套各自成立(深色不是浅色的自动反转)。
+   分类色/序数色已用 dataviz 校验脚本跑过对比度与色盲可分辨性。 */
+:root{
+  color-scheme: light;
+  --page:#f9f9f7; --surface:#fcfcfb;
+  --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --hairline:rgba(11,11,11,.10);
+  --series-1:#2a78d6;           /* 分类槽位 1 */
+  --series-2:#eb6834;           /* 分类槽位 2 */
+  --ord-1:#86b6ef; --ord-2:#3987e5; --ord-3:#256abf; --ord-4:#184f95;  /* 漏斗序数色 */
+  --seq-lo:#cde2fb; --seq-hi:#0d366b;                                   /* 热力图连续色 */
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --delta-good:#006300; --delta-bad:#c0392b;
+  --wash:rgba(11,11,11,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19;
+    --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --hairline:rgba(255,255,255,.10);
+    --series-1:#3987e5; --series-2:#d95926;
+    --ord-1:#b7d3f6; --ord-2:#86b6ef; --ord-3:#3987e5; --ord-4:#1c5cab;
+    --seq-lo:#104281; --seq-hi:#cde2fb;
+    --delta-good:#0ca30c; --delta-bad:#e66767;
+    --wash:rgba(255,255,255,.06);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0d0d0d; --surface:#1a1a19;
+  --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --hairline:rgba(255,255,255,.10);
+  --series-1:#3987e5; --series-2:#d95926;
+  --ord-1:#b7d3f6; --ord-2:#86b6ef; --ord-3:#3987e5; --ord-4:#1c5cab;
+  --seq-lo:#104281; --seq-hi:#cde2fb;
+  --delta-good:#0ca30c; --delta-bad:#e66767;
+  --wash:rgba(255,255,255,.06);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--page); color:var(--ink);
+  font-family: system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:14px; line-height:1.5;
+}
+.wrap{max-width:1480px; margin:0 auto; padding:24px 16px 64px}
+
+/* ---------------------------------------------------------------- 页头 */
+header.top{display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:20px}
+header.top h1{font-size:22px; font-weight:650; margin:0 0 4px}
+header.top p{margin:0; color:var(--ink-2); font-size:13px}
+.spacer{flex:1}
+.btn{
+  font:inherit; font-size:13px; color:var(--ink); background:var(--surface);
+  border:1px solid var(--hairline); border-radius:8px; padding:7px 12px; cursor:pointer;
+}
+.btn:hover{background:var(--wash)}
+.btn[aria-pressed="true"]{background:var(--series-1); border-color:var(--series-1); color:#fff}
+
+/* ---------------------------------------------------------------- 筛选行 */
+.filters{
+  display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end;
+  background:var(--surface); border:1px solid var(--hairline); border-radius:12px;
+  padding:14px 16px; margin-bottom:20px;
+}
+.fgroup{display:flex; flex-direction:column; gap:6px; min-width:0}
+.fgroup > label, .flabel{font-size:12px; color:var(--ink-muted)}
+.presets{display:flex; gap:6px; flex-wrap:wrap}
+.presets .btn{padding:6px 10px}
+input[type=date], select{
+  font:inherit; font-size:13px; color:var(--ink); background:var(--surface);
+  border:1px solid var(--hairline); border-radius:8px; padding:6px 8px;
+}
+.chips{display:flex; gap:6px; flex-wrap:wrap; max-width:640px}
+.chip{
+  font-size:12px; padding:5px 10px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--hairline); background:var(--surface); color:var(--ink-2);
+  white-space:nowrap;
+}
+.chip[aria-pressed="true"]{background:var(--series-1); border-color:var(--series-1); color:#fff}
+.chip:hover{background:var(--wash)}
+.chip[aria-pressed="true"]:hover{background:var(--series-1)}
+.scope-note{font-size:12px; color:var(--ink-muted); width:100%}
+
+/* ---------------------------------------------------------------- KPI 磁贴 */
+.kpi-row{display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:20px}
+@media (max-width:1240px){.kpi-row{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:720px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+.tile{
+  background:var(--surface); border:1px solid var(--hairline); border-radius:12px;
+  padding:14px 14px 10px; position:relative;
+}
+.tile.alert{border-color:var(--critical); box-shadow:inset 0 0 0 1px var(--critical)}
+.tile .t-label{font-size:12px; color:var(--ink-2); margin-bottom:6px}
+.tile .t-value{font-size:28px; font-weight:650; letter-spacing:-.01em; line-height:1.15}
+.tile .t-value .unit{font-size:15px; font-weight:500; color:var(--ink-2); margin-left:2px}
+.tile .t-sub{font-size:12px; color:var(--ink-muted); margin-top:3px}
+.tile .t-delta{font-size:12px; margin-top:6px; display:flex; align-items:center; gap:5px}
+.up{color:var(--delta-good)} .down{color:var(--delta-bad)} .flat{color:var(--ink-muted)}
+.tile .t-flag{
+  font-size:11px; margin-top:6px; display:inline-flex; align-items:center; gap:4px;
+  color:var(--ink-2); font-weight:600;
+}
+.spark{display:block; margin-top:8px; width:100%; height:26px}
+
+/* ---------------------------------------------------------------- 卡片 */
+.card{
+  background:var(--surface); border:1px solid var(--hairline); border-radius:12px;
+  padding:16px; margin-bottom:16px;
+}
+.card-head{display:flex; align-items:baseline; gap:12px; margin-bottom:4px; flex-wrap:wrap}
+.card-head h2{font-size:15px; font-weight:600; margin:0}
+.card-head .sub{font-size:12px; color:var(--ink-muted); flex:1}
+.card-head .tools{display:flex; gap:6px}
+.card-head .tools .btn{padding:4px 9px; font-size:12px}
+.chart{width:100%; height:300px}
+.chart.tall{height:340px}
+.grid2{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+@media (max-width:1100px){.grid2{grid-template-columns:1fr}}
+
+/* ---------------------------------------------------------------- 表格 */
+table.tbl{width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums}
+table.tbl th, table.tbl td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--grid)}
+table.tbl th{font-weight:600; color:var(--ink-2); font-size:12px; white-space:nowrap}
+table.tbl td.num, table.tbl th.num{text-align:right}
+table.tbl tbody tr:hover{background:var(--wash)}
+.tblwrap{max-height:340px; overflow:auto; margin-top:8px}
+.hidden{display:none !important}
+
+/* ---------------------------------------------------------------- 状态 */
+.status{display:inline-flex; align-items:center; gap:6px; white-space:nowrap; font-weight:600}
+.status .dot{width:8px; height:8px; border-radius:50%; flex:none}
+.s-online .dot{background:var(--good)} .s-online{color:var(--ink)}
+.s-degraded .dot{background:var(--warning)}
+.s-offline .dot{background:var(--critical)}
+.sev{display:inline-flex; align-items:center; gap:5px; white-space:nowrap}
+.sev .dot{width:8px; height:8px; border-radius:50%; flex:none}
+.sev-critical .dot{background:var(--critical)}
+.sev-serious .dot{background:var(--serious)}
+.sev-warning .dot{background:var(--warning)}
+.pill{
+  font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--hairline);
+  color:var(--ink-2); white-space:nowrap;
+}
+.pill.open{border-color:var(--critical); color:var(--critical); font-weight:600}
+
+/* ---------------------------------------------------------------- 预警 */
+.alert-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:10px; margin-top:10px}
+.alert-item{border:1px solid var(--hairline); border-left:3px solid var(--ink-muted); border-radius:8px; padding:10px 12px}
+.alert-item.critical{border-left-color:var(--critical)}
+.alert-item.serious{border-left-color:var(--serious)}
+.alert-item.warning{border-left-color:var(--warning)}
+.alert-item .a-head{display:flex; gap:8px; align-items:center; font-weight:600; font-size:13px; flex-wrap:wrap}
+.alert-item .a-body{font-size:12px; color:var(--ink-2); margin-top:4px}
+.alert-item .a-act{font-size:12px; color:var(--ink-muted); margin-top:5px}
+.empty{color:var(--ink-muted); font-size:13px; padding:14px 0}
+.row-detail td{background:var(--wash); color:var(--ink-2); font-size:12px}
+tr.clickable{cursor:pointer}
+footer.foot{margin-top:28px; color:var(--ink-muted); font-size:12px; line-height:1.7}
+.legend-note{font-size:12px; color:var(--ink-muted); margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <h1>AIGC 互动大屏 · 运营看板</h1>
+    <p id="head-sub">加载中…</p>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn" id="theme-toggle" type="button">切换深色</button>
+</header>
+
+<!-- 一行筛选, 作用于下面所有内容 -->
+<section class="filters" aria-label="筛选">
+  <div class="fgroup">
+    <span class="flabel">日期范围</span>
+    <div class="presets" id="presets" role="group" aria-label="日期快捷范围"></div>
+  </div>
+  <div class="fgroup">
+    <label for="date-start">自定义起</label>
+    <input type="date" id="date-start">
+  </div>
+  <div class="fgroup">
+    <label for="date-end">自定义止</label>
+    <input type="date" id="date-end">
+  </div>
+  <div class="fgroup">
+    <label for="city">城市</label>
+    <select id="city"></select>
+  </div>
+  <div class="fgroup" style="flex:1">
+    <span class="flabel">点位（可多选，不选＝全部）</span>
+    <div class="chips" id="device-chips" role="group" aria-label="点位筛选"></div>
+  </div>
+  <div class="fgroup"><span class="flabel">&nbsp;</span><button class="btn" id="reset" type="button">重置</button></div>
+  <p class="scope-note" id="scope-note"></p>
+</section>
+
+<section class="kpi-row" id="kpi-row" aria-label="核心指标"></section>
+
+<section class="card" aria-label="规则预警">
+  <div class="card-head">
+    <h2>规则预警</h2>
+    <span class="sub">按当前筛选范围实时扫描指标阈值生成，与下方异常事件互补</span>
+  </div>
+  <div id="alerts"></div>
+</section>
+
+<div class="grid2">
+  <section class="card">
+    <div class="card-head">
+      <h2>参与与转化趋势</h2>
+      <span class="sub">按日，两条线的距离就是流失掉的人</span>
+      <div class="tools"><button class="btn" data-table="trend" type="button">表格</button></div>
+    </div>
+    <div class="chart" id="c-trend"></div>
+    <div class="tblwrap hidden" id="t-trend"></div>
+  </section>
+  <section class="card">
+    <div class="card-head">
+      <h2>生成成功率趋势</h2>
+      <span class="sub">虚线以下为低于 90% 阈值的日子</span>
+      <div class="tools"><button class="btn" data-table="success" type="button">表格</button></div>
+    </div>
+    <div class="chart" id="c-success"></div>
+    <div class="tblwrap hidden" id="t-success"></div>
+  </section>
+  <section class="card">
+    <div class="card-head">
+      <h2>平均生成时长趋势</h2>
+      <span class="sub">仅统计成功生成；超过 12s 即触发预警</span>
+      <div class="tools"><button class="btn" data-table="latency" type="button">表格</button></div>
+    </div>
+    <div class="chart" id="c-latency"></div>
+    <div class="tblwrap hidden" id="t-latency"></div>
+  </section>
+  <section class="card">
+    <div class="card-head">
+      <h2>内容审核构成</h2>
+      <span class="sub">按日送审条数，通过 / 拒绝 / 待审</span>
+      <div class="tools"><button class="btn" data-table="review" type="button">表格</button></div>
+    </div>
+    <div class="chart" id="c-review"></div>
+    <div class="tblwrap hidden" id="t-review"></div>
+  </section>
+  <section class="card">
+    <div class="card-head">
+      <h2>点位对比</h2>
+      <span class="sub" id="rank-sub"></span>
+      <div class="tools">
+        <select id="rank-metric" aria-label="对比指标">
+          <option value="participants">参与人数</option>
+          <option value="successRate">生成成功率</option>
+          <option value="scanRate">扫码转化率</option>
+          <option value="shareRate">分享转化率</option>
+          <option value="avgGen">平均生成时长</option>
+          <option value="rejectRate">审核拒绝率</option>
+          <option value="onlineRate">设备在线率</option>
+        </select>
+        <button class="btn" data-table="rank" type="button">表格</button>
+      </div>
+    </div>
+    <div class="chart tall" id="c-rank"></div>
+    <div class="tblwrap hidden" id="t-rank"></div>
+  </section>
+  <section class="card">
+    <div class="card-head">
+      <h2>转化漏斗</h2>
+      <span class="sub">人数口径：参与 → 生成成功 → 扫码 → 分享</span>
+      <div class="tools"><button class="btn" data-table="funnel" type="button">表格</button></div>
+    </div>
+    <div class="chart tall" id="c-funnel"></div>
+    <div class="tblwrap hidden" id="t-funnel"></div>
+  </section>
+</div>
+
+<section class="card">
+  <div class="card-head">
+    <h2>高峰时段分布</h2>
+    <span class="sub">星期 × 小时的日均参与人数，用来排班与安排现场引导</span>
+    <div class="tools"><button class="btn" data-table="heat" type="button">表格</button></div>
+  </div>
+  <div class="chart tall" id="c-heat"></div>
+  <div class="tblwrap hidden" id="t-heat"></div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>设备状态</h2>
+    <span class="sub" id="device-sub"></span>
+  </div>
+  <div class="tblwrap" style="max-height:none" id="device-table"></div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>异常事件</h2>
+    <span class="sub">点击任意一行展开处理建议</span>
+    <div class="tools">
+      <select id="inc-sev" aria-label="严重级别"><option value="">全部级别</option><option value="critical">严重</option><option value="serious">较重</option><option value="warning">提醒</option></select>
+      <select id="inc-type" aria-label="异常类型"></select>
+      <select id="inc-status" aria-label="处理状态"><option value="">全部状态</option><option value="open">未恢复</option><option value="resolved">已恢复</option></select>
+    </div>
+  </div>
+  <div class="tblwrap" id="inc-table"></div>
+</section>
+
+<footer class="foot">
+  数据为 <code>data/generate_mock.py</code> 生成的模拟数据（随机种子 42），与任何真实业务无关。<br>
+  指标定义与计算口径见 <code>docs/指标说明.md</code>。每张图都提供“表格”视图，数值不依赖悬浮提示即可读取。
+</footer>
+
+</div>
+
+<script src="vendor/echarts.min.js"></script>
+<script src="data/mock.js"></script>
+<script>
+"use strict";
+(function () {
+const D = window.MOCK_DATA;
+const META = D.meta, TH = META.thresholds, EDGES = META.hist_edges;
+const DEVICES = D.devices, DAILY = D.daily, INCIDENTS = D.incidents;
+const DEV_BY_ID = Object.fromEntries(DEVICES.map(d => [d.id, d]));
+const ALL_DATES = [...new Set(DAILY.map(r => r.date))].sort();
+const MIN_DATE = ALL_DATES[0], MAX_DATE = ALL_DATES[ALL_DATES.length - 1];
+const SUM_KEYS = ["participants","gen_users","gen_requests","gen_success","gen_failed",
+  "gen_seconds_total","gen_success_users","qr_scans","shares","review_total","review_pass",
+  "review_reject","review_pending","online_minutes","expected_minutes"];
+const WEEKDAYS = ["周一","周二","周三","周四","周五","周六","周日"];
+const SEV_LABEL = {critical:"严重", serious:"较重", warning:"提醒"};
+const STATUS_LABEL = {online:"在线", degraded:"降级", offline:"离线"};
+
+/* ------------------------------------------------------------ 工具函数 */
+const $ = s => document.querySelector(s);
+const el = (t, cls, txt) => { const n = document.createElement(t);
+  if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
+const addDays = (iso, n) => { const d = new Date(iso + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const daysBetween = (a, b) => Math.round(
+  (Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000);
+const weekdayOf = iso => (new Date(iso + "T00:00:00Z").getUTCDay() + 6) % 7; // 0=周一
+const clampDate = d => d < MIN_DATE ? MIN_DATE : (d > MAX_DATE ? MAX_DATE : d);
+
+const fmtInt = n => Math.round(n).toLocaleString("zh-CN");
+const fmtCompact = n => n >= 10000 ? (n / 10000).toFixed(1) + "万" : fmtInt(n);
+const fmtPct = (v, d = 1) => (v * 100).toFixed(d) + "%";
+const fmtSec = v => v.toFixed(1) + "s";
+
+/* 从直方图线性插值求分位数 —— 与 generate_mock.py 中的算法一致,
+   保证任意日期 × 点位切片下 P95 都能正确聚合(平均值可以加权, 分位数不能)。 */
+function percentileFromHist(hist, q) {
+  const total = hist.reduce((a, b) => a + b, 0);
+  if (!total) return 0;
+  const target = q * total; let cum = 0;
+  for (let i = 0; i < hist.length; i++) {
+    if (cum + hist[i] >= target && hist[i] > 0) {
+      const lo = EDGES[i], hi = EDGES[i + 1];
+      return Math.round((lo + (hi - lo) * (target - cum) / hist[i]) * 10) / 10;
+    }
+    cum += hist[i];
+  }
+  return EDGES[EDGES.length - 1];
+}
+
+/* 唯一的聚合入口: 看板上每个数字都由它算出, 所以口径只有一份。 */
+function computeMetrics(records) {
+  const a = {}; SUM_KEYS.forEach(k => a[k] = 0);
+  const hist = new Array(EDGES.length - 1).fill(0);
+  for (const r of records) {
+    for (const k of SUM_KEYS) a[k] += r[k];
+    for (let i = 0; i < hist.length; i++) hist[i] += r.gen_seconds_hist[i];
+  }
+  const safe = (x, y) => y ? x / y : 0;
+  return Object.assign(a, {
+    hist,
+    days: new Set(records.map(r => r.date)).size,
+    successRate: safe(a.gen_success, a.gen_requests),
+    failRate: safe(a.gen_failed, a.gen_requests),
+    avgGen: safe(a.gen_seconds_total, a.gen_success),
+    p95: percentileFromHist(hist, 0.95),
+    scanRate: safe(a.qr_scans, a.participants),
+    shareRate: safe(a.shares, a.participants),
+    passRate: safe(a.review_pass, a.review_total),
+    rejectRate: safe(a.review_reject, a.review_total),
+    pendingRate: safe(a.review_pending, a.review_total),
+    onlineRate: safe(a.online_minutes, a.expected_minutes)
+  });
+}
+
+/* ------------------------------------------------------------ 状态 */
+const state = {
+  preset: "30d",
+  start: addDays(MAX_DATE, -29),
+  end: MAX_DATE,
+  city: "",
+  devices: new Set(),          // 空 = 全部
+  rankMetric: "participants",
+  inc: { sev: "", type: "", status: "" }
+};
+
+const PRESETS = [
+  { id: "7d",  label: "近 7 天",  days: 7 },
+  { id: "14d", label: "近 14 天", days: 14 },
+  { id: "30d", label: "近 30 天", days: 30 },
+  { id: "60d", label: "全部 60 天", days: 60 }
+];
+
+function activeDeviceIds() {
+  let ids = DEVICES.map(d => d.id);
+  if (state.city) ids = ids.filter(id => DEV_BY_ID[id].city === state.city);
+  if (state.devices.size) ids = ids.filter(id => state.devices.has(id));
+  return ids;
+}
+function slice(start, end, ids) {
+  const set = new Set(ids);
+  return DAILY.filter(r => r.date >= start && r.date <= end && set.has(r.device_id));
+}
+
+/* ------------------------------------------------------------ 主题 */
+function tok(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function theme() {
+  return {
+    surface: tok("--surface"), ink: tok("--ink"), ink2: tok("--ink-2"),
+    muted: tok("--ink-muted"), grid: tok("--grid"), axis: tok("--axis"),
+    s1: tok("--series-1"), s2: tok("--series-2"),
+    ord: [tok("--ord-1"), tok("--ord-2"), tok("--ord-3"), tok("--ord-4")],
+    seqLo: tok("--seq-lo"), seqHi: tok("--seq-hi"),
+    good: tok("--good"), warning: tok("--warning"),
+    serious: tok("--serious"), critical: tok("--critical")
+  };
+}
+function isDark() {
+  const set = document.documentElement.getAttribute("data-theme");
+  if (set) return set === "dark";
+  return matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+/* 所有图表共用的底盘: 细网格线、实线、收敛的坐标轴文字。 */
+function baseGrid(t, extra) {
+  return Object.assign({
+    left: 8, right: 16, top: 34, bottom: 6, containLabel: true
+  }, extra || {});
+}
+function axisCommon(t) {
+  return {
+    axisLine: { lineStyle: { color: t.axis, width: 1 } },
+    axisTick: { show: false },
+    axisLabel: { color: t.muted, fontSize: 11 },
+    splitLine: { lineStyle: { color: t.grid, width: 1, type: "solid" } }
+  };
+}
+function tipBox(t) {
+  return {
+    backgroundColor: t.surface, borderColor: t.grid, borderWidth: 1,
+    padding: [8, 10], extraCssText: "box-shadow:0 4px 16px rgba(0,0,0,.12);border-radius:8px",
+    textStyle: { color: t.ink, fontSize: 12 }
+  };
+}
+/* 提示框内: 数值是主角(粗、高对比), 系列名次要; 系列用一小段线条做色标。 */
+function tipRow(color, name, value) {
+  return '<div style="display:flex;align-items:center;gap:6px;margin-top:3px">'
+    + '<span style="display:inline-block;width:12px;height:2px;background:' + color + '"></span>'
+    + '<span style="opacity:.72">' + name + '</span>'
+    + '<strong style="margin-left:auto;font-weight:650">' + value + '</strong></div>';
+}
+function esc(s) { const n = document.createElement("span"); n.textContent = s; return n.innerHTML; }
+
+/* ------------------------------------------------------------ 图表注册表 */
+const charts = {};
+function chart(id) {
+  if (!charts[id]) charts[id] = echarts.init(document.getElementById("c-" + id), null, { renderer: "canvas" });
+  return charts[id];
+}
+function renderTable(id, head, rows, aligns) {
+  const wrap = document.getElementById("t-" + id);
+  wrap.textContent = "";
+  const table = el("table", "tbl");
+  const thead = el("thead"), tr = el("tr");
+  head.forEach((h, i) => { const th = el("th", (aligns && aligns[i] === "num") ? "num" : null, h); tr.appendChild(th); });
+  thead.appendChild(tr); table.appendChild(thead);
+  const tb = el("tbody");
+  rows.forEach(r => {
+    const t = el("tr");
+    r.forEach((c, i) => t.appendChild(el("td", (aligns && aligns[i] === "num") ? "num" : null, String(c))));
+    tb.appendChild(t);
+  });
+  table.appendChild(tb); wrap.appendChild(table);
+}
+
+/* ------------------------------------------------------------ 渲染: KPI */
+function deltaNode(cur, prev, opts) {
+  const o = opts || {};
+  const n = el("div", "t-delta");
+  if (prev == null || !isFinite(prev) || (prev === 0 && o.pp !== true)) {
+    n.className = "t-delta flat"; n.textContent = "环比 —"; return n;
+  }
+  let diff, text;
+  if (o.pp) { diff = (cur - prev) * 100; text = (diff >= 0 ? "+" : "") + diff.toFixed(1) + "pp"; }
+  else if (o.abs) { diff = cur - prev; text = (diff >= 0 ? "+" : "") + diff.toFixed(1) + o.unit; }
+  else { diff = (cur - prev) / prev * 100; text = (diff >= 0 ? "+" : "") + diff.toFixed(1) + "%"; }
+  const good = o.upIsBad ? diff < 0 : diff > 0;
+  const cls = Math.abs(diff) < 0.05 ? "flat" : (good ? "up" : "down");
+  n.className = "t-delta " + cls;
+  n.appendChild(el("span", null, (diff > 0 ? "▲" : diff < 0 ? "▼" : "■") + " " + text));
+  n.appendChild(el("span", null, "较上一周期"));
+  return n;
+}
+/* 迷你趋势线: 12 个点, 收敛的灰色, 末点用强调色的小圆点。 */
+function sparkline(values, accent) {
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("class", "spark"); svg.setAttribute("viewBox", "0 0 120 26");
+  svg.setAttribute("preserveAspectRatio", "none"); svg.setAttribute("aria-hidden", "true");
+  if (values.length < 2) return svg;
+  const step = Math.max(1, Math.ceil(values.length / 12));
+  const pts = values.filter((_, i) => i % step === 0 || i === values.length - 1);
+  const min = Math.min(...pts), max = Math.max(...pts), span = (max - min) || 1;
+  const xy = pts.map((v, i) => [
+    2 + i * (116 / (pts.length - 1)),
+    23 - ((v - min) / span) * 20
+  ]);
+  const p = document.createElementNS(NS, "polyline");
+  p.setAttribute("fill", "none"); p.setAttribute("stroke", tok("--ink-muted"));
+  p.setAttribute("stroke-width", "1.5"); p.setAttribute("stroke-linejoin", "round");
+  p.setAttribute("stroke-linecap", "round");
+  p.setAttribute("points", xy.map(a => a.join(",")).join(" "));
+  svg.appendChild(p);
+  const c = document.createElementNS(NS, "circle");
+  const last = xy[xy.length - 1];
+  c.setAttribute("cx", last[0]); c.setAttribute("cy", last[1]); c.setAttribute("r", "2.6");
+  c.setAttribute("fill", accent);
+  svg.appendChild(c);
+  return svg;
+}
+function renderKPIs(cur, prev, daily) {
+  const t = theme(), row = $("#kpi-row");
+  row.textContent = "";
+  const series = k => daily.map(d => d[k]);
+  const tiles = [
+    { label: "参与人数", value: fmtCompact(cur.participants), sub: "日均 " + fmtInt(cur.participants / Math.max(1, cur.days)) + " 人",
+      delta: deltaNode(cur.participants, prev.participants), spark: series("participants"), alert: false },
+    { label: "生成成功率", value: fmtPct(cur.successRate), sub: "失败 " + fmtInt(cur.gen_failed) + " 次 / 共 " + fmtCompact(cur.gen_requests) + " 次",
+      delta: deltaNode(cur.successRate, prev.successRate, { pp: true }),
+      spark: daily.map(d => d.successRate), alert: cur.successRate < TH.success_rate_min,
+      flag: "低于 " + fmtPct(TH.success_rate_min, 0) + " 阈值" },
+    { label: "扫码转化率", value: fmtPct(cur.scanRate), sub: "分享转化 " + fmtPct(cur.shareRate),
+      delta: deltaNode(cur.scanRate, prev.scanRate, { pp: true }),
+      spark: daily.map(d => d.scanRate), alert: cur.scanRate < TH.scan_rate_min,
+      flag: "低于 " + fmtPct(TH.scan_rate_min, 0) + " 阈值" },
+    { label: "平均生成时长", value: cur.avgGen.toFixed(1), unit: "秒", sub: "P95 " + fmtSec(cur.p95),
+      delta: deltaNode(cur.avgGen, prev.avgGen, { abs: true, unit: "s", upIsBad: true }),
+      spark: daily.map(d => d.avgGen), alert: cur.avgGen > TH.avg_gen_seconds_max,
+      flag: "超过 " + TH.avg_gen_seconds_max + "s 阈值" },
+    { label: "审核通过率", value: fmtPct(cur.passRate), sub: "拒绝 " + fmtPct(cur.rejectRate) + " · 待审 " + fmtPct(cur.pendingRate),
+      delta: deltaNode(cur.passRate, prev.passRate, { pp: true }),
+      spark: daily.map(d => d.passRate), alert: cur.rejectRate > TH.reject_rate_max,
+      flag: "拒绝率超 " + fmtPct(TH.reject_rate_max, 0) + " 阈值" },
+    { label: "设备在线率", value: fmtPct(cur.onlineRate), sub: "损失 " + fmtInt((cur.expected_minutes - cur.online_minutes) / 60) + " 小时",
+      delta: deltaNode(cur.onlineRate, prev.onlineRate, { pp: true }),
+      spark: daily.map(d => d.onlineRate), alert: cur.onlineRate < TH.online_rate_min,
+      flag: "低于 " + fmtPct(TH.online_rate_min, 0) + " 阈值" }
+  ];
+  tiles.forEach(cfg => {
+    const n = el("div", "tile" + (cfg.alert ? " alert" : ""));
+    n.appendChild(el("div", "t-label", cfg.label));
+    const v = el("div", "t-value", cfg.value);
+    if (cfg.unit) v.appendChild(el("span", "unit", cfg.unit));
+    n.appendChild(v);
+    n.appendChild(el("div", "t-sub", cfg.sub));
+    n.appendChild(cfg.delta);
+    if (cfg.alert) {
+      const f = el("div", "t-flag");
+      f.appendChild(el("span", "sev sev-critical")).appendChild(el("span", "dot"));
+      f.appendChild(el("span", null, "⚠ " + cfg.flag));
+      n.appendChild(f);
+    }
+    n.appendChild(sparkline(cfg.spark, t.s1));
+    row.appendChild(n);
+  });
+}
+
+/* ------------------------------------------------------------ 渲染: 图表 */
+function renderTrend(daily) {
+  const t = theme();
+  const x = daily.map(d => d.date.slice(5));
+  const s = [
+    { name: "参与人数", key: "participants", color: t.s1 },
+    { name: "扫码带走人数", key: "qr_scans", color: t.s2 }
+  ];
+  chart("trend").setOption({
+    backgroundColor: "transparent",
+    animationDuration: 240,
+    grid: baseGrid(t, { top: 46 }),
+    legend: { data: s.map(o => o.name), top: 0, left: 0, icon: "roundRect",
+      itemWidth: 12, itemHeight: 3, textStyle: { color: t.ink2, fontSize: 12 } },
+    tooltip: Object.assign({ trigger: "axis",
+      axisPointer: { type: "line", lineStyle: { color: t.axis, width: 1 }, snap: true },
+      formatter: p => '<div style="font-weight:600">' + esc(p[0].axisValue) + "</div>"
+        + p.map(o => tipRow(o.color, esc(o.seriesName), fmtInt(o.value) + " 人")).join("")
+        + tipRow(t.muted, "扫码转化率", fmtPct(p[0].value ? p[1].value / p[0].value : 0))
+    }, tipBox(t)),
+    xAxis: Object.assign({ type: "category", data: x, boundaryGap: false }, axisCommon(t),
+      { splitLine: { show: false } }),
+    yAxis: Object.assign({ type: "value" },
+      axisCommon(t), { axisLine: { show: false },
+        axisLabel: { color: t.muted, fontSize: 11, formatter: v => v.toLocaleString("zh-CN") } }),
+    series: s.map(o => ({
+      name: o.name, type: "line", data: daily.map(d => d[o.key]),
+      smooth: false, symbol: "circle", symbolSize: 8, showSymbol: false,
+      lineStyle: { width: 2, color: o.color, cap: "round", join: "round" },
+      itemStyle: { color: o.color, borderColor: t.surface, borderWidth: 2 },
+      emphasis: { focus: "series" },
+      // 只标极值, 不给每个点都加数字
+      markPoint: o.key === "participants" ? {
+        symbol: "circle", symbolSize: 9,
+        itemStyle: { color: o.color, borderColor: t.surface, borderWidth: 2 },
+        label: { color: t.ink2, fontSize: 11, position: "top", distance: 8,
+          formatter: p => "峰值 " + fmtInt(p.value) + " 人" },
+        data: [{ type: "max" }]
+      } : undefined
+    }))
+  }, true);
+  renderTable("trend", ["日期", "参与人数", "扫码带走", "分享", "扫码转化率", "生成请求"],
+    daily.map(d => [d.date, fmtInt(d.participants), fmtInt(d.qr_scans), fmtInt(d.shares),
+      fmtPct(d.scanRate), fmtInt(d.gen_requests)]),
+    ["", "num", "num", "num", "num", "num"]);
+}
+
+function lineWithThreshold(id, daily, key, opts) {
+  const t = theme();
+  // 端点 = (含阈值的范围 + 留白) 向外取整到 snap 的整数倍, 保证刻度是干净的数
+  opts.pad = (v, range, dir) => {
+    const span = Math.max(range.max - range.min, Math.abs(opts.threshold) * 0.02) || 1;
+    const raw = v + dir * span * 0.10, s = opts.snap;
+    return (dir < 0 ? Math.floor(raw / s) : Math.ceil(raw / s)) * s;
+  };
+  chart(id).setOption({
+    backgroundColor: "transparent",
+    animationDuration: 240,
+    grid: baseGrid(t, { top: 26 }),
+    tooltip: Object.assign({ trigger: "axis",
+      axisPointer: { type: "line", lineStyle: { color: t.axis, width: 1 }, snap: true },
+      formatter: p => '<div style="font-weight:600">' + esc(p[0].axisValue) + "</div>"
+        + tipRow(p[0].color, opts.name, opts.fmt(p[0].value))
+    }, tipBox(t)),
+    xAxis: Object.assign({ type: "category", data: daily.map(d => d.date.slice(5)), boundaryGap: false },
+      axisCommon(t), { splitLine: { show: false } }),
+    yAxis: Object.assign({ type: "value" }, axisCommon(t), {
+      axisLine: { show: false },
+      axisLabel: { color: t.muted, fontSize: 11, formatter: opts.axisFmt },
+      // 阈值线必须落在可视范围内, 否则"超没超"这件事就看不出来了
+      min: v => opts.pad(Math.min(v.min, opts.threshold), v, -1),
+      max: v => opts.pad(Math.max(v.max, opts.threshold), v, 1)
+    }),
+    series: [{
+      name: opts.name, type: "line", data: daily.map(d => d[key]),
+      symbol: "circle", symbolSize: 8, showSymbol: false,
+      lineStyle: { width: 2, color: t.s1, cap: "round", join: "round" },
+      itemStyle: { color: t.s1, borderColor: t.surface, borderWidth: 2 },
+      areaStyle: { color: t.s1, opacity: 0.10 },
+      markLine: {
+        silent: true, symbol: "none",
+        // 极值标记通常落在右半边, 阈值标签放左端避免压字
+        label: { formatter: opts.thresholdLabel, color: t.ink2, fontSize: 11,
+          position: "insideStartTop" },
+        lineStyle: { color: t.critical, width: 1, type: "dashed" },
+        data: [{ yAxis: opts.threshold }]
+      },
+      markPoint: opts.extreme ? {
+        symbol: "circle", symbolSize: 9,
+        itemStyle: { color: t.critical, borderColor: t.surface, borderWidth: 2 },
+        label: { color: t.ink2, fontSize: 11, position: opts.extremePos || "top",
+          formatter: p => opts.fmt(p.value) },
+        data: [{ type: opts.extreme }]
+      } : undefined
+    }]
+  }, true);
+}
+
+function renderSuccess(daily) {
+  lineWithThreshold("success", daily, "successRate", {
+    name: "生成成功率", fmt: v => fmtPct(v), axisFmt: v => (v * 100).toFixed(0) + "%",
+    threshold: TH.success_rate_min, snap: 0.01,
+    thresholdLabel: "阈值 90%", extreme: "min", extremePos: "bottom"
+  });
+  renderTable("success", ["日期", "生成成功率", "成功次数", "失败次数"],
+    daily.map(d => [d.date, fmtPct(d.successRate), fmtInt(d.gen_success), fmtInt(d.gen_failed)]),
+    ["", "num", "num", "num"]);
+}
+function renderLatency(daily) {
+  lineWithThreshold("latency", daily, "avgGen", {
+    name: "平均生成时长", fmt: v => fmtSec(v), axisFmt: v => v + "s",
+    threshold: TH.avg_gen_seconds_max, snap: 1,
+    thresholdLabel: "阈值 12s", extreme: "max"
+  });
+  renderTable("latency", ["日期", "平均生成时长", "P95 时长", "成功次数"],
+    daily.map(d => [d.date, fmtSec(d.avgGen), fmtSec(d.p95), fmtInt(d.gen_success)]),
+    ["", "num", "num", "num"]);
+}
+
+function renderReview(daily) {
+  const t = theme();
+  /* 通过/拒绝/待审 表达的是"状态"而非"身份", 所以用状态色而不是分类色;
+     状态色一律配文字标签, 不让颜色单独承担含义。 */
+  const s = [
+    { name: "通过", key: "review_pass", color: t.good },
+    { name: "拒绝", key: "review_reject", color: t.critical },
+    { name: "待审", key: "review_pending", color: t.muted }
+  ];
+  chart("review").setOption({
+    backgroundColor: "transparent",
+    animationDuration: 240,
+    grid: baseGrid(t, { top: 40 }),
+    legend: { data: s.map(o => o.name), top: 0, left: 0, icon: "roundRect",
+      itemWidth: 10, itemHeight: 10, textStyle: { color: t.ink2, fontSize: 12 } },
+    tooltip: Object.assign({ trigger: "axis", axisPointer: { type: "shadow" },
+      formatter: p => {
+        const tot = p.reduce((a, o) => a + o.value, 0);
+        return '<div style="font-weight:600">' + esc(p[0].axisValue) + "</div>"
+          + p.map(o => tipRow(o.color, esc(o.seriesName),
+              fmtInt(o.value) + " 条 · " + (tot ? fmtPct(o.value / tot) : "0%"))).join("");
+      }
+    }, tipBox(t)),
+    xAxis: Object.assign({ type: "category", data: daily.map(d => d.date.slice(5)) },
+      axisCommon(t), { splitLine: { show: false } }),
+    yAxis: Object.assign({ type: "value" },
+      axisCommon(t), { axisLine: { show: false },
+        axisLabel: { color: t.muted, fontSize: 11, formatter: v => v.toLocaleString("zh-CN") } }),
+    series: s.map(o => ({
+      name: o.name, type: "bar", stack: "review", data: daily.map(d => d[o.key]),
+      barMaxWidth: 24,
+      // 2px 的"面色缝隙"把相邻分段分开, 而不是给每段描一圈对比色的边
+      itemStyle: { color: o.color, borderColor: t.surface, borderWidth: 2 },
+      emphasis: { focus: "series" }
+    }))
+  }, true);
+  renderTable("review", ["日期", "送审总量", "通过", "拒绝", "待审", "通过率"],
+    daily.map(d => [d.date, fmtInt(d.review_total), fmtInt(d.review_pass),
+      fmtInt(d.review_reject), fmtInt(d.review_pending), fmtPct(d.passRate)]),
+    ["", "num", "num", "num", "num", "num"]);
+}
+
+const RANK_DEF = {
+  participants: { label: "参与人数", fmt: fmtInt, axis: v => v.toLocaleString("zh-CN"), better: "high" },
+  successRate:  { label: "生成成功率", fmt: v => fmtPct(v), axis: v => (v * 100).toFixed(0) + "%", better: "high", th: TH.success_rate_min, cmp: "lt" },
+  scanRate:     { label: "扫码转化率", fmt: v => fmtPct(v), axis: v => (v * 100).toFixed(0) + "%", better: "high", th: TH.scan_rate_min, cmp: "lt" },
+  shareRate:    { label: "分享转化率", fmt: v => fmtPct(v), axis: v => (v * 100).toFixed(0) + "%", better: "high" },
+  avgGen:       { label: "平均生成时长", fmt: fmtSec, axis: v => v + "s", better: "low", th: TH.avg_gen_seconds_max, cmp: "gt" },
+  rejectRate:   { label: "审核拒绝率", fmt: v => fmtPct(v), axis: v => (v * 100).toFixed(0) + "%", better: "low", th: TH.reject_rate_max, cmp: "gt" },
+  onlineRate:   { label: "设备在线率", fmt: v => fmtPct(v), axis: v => (v * 100).toFixed(0) + "%", better: "high", th: TH.online_rate_min, cmp: "lt" }
+};
+function renderRank(perDevice) {
+  const t = theme(), key = state.rankMetric, def = RANK_DEF[key];
+  const rows = perDevice.slice().sort((a, b) =>
+    def.better === "low" ? b.m[key] - a.m[key] : a.m[key] - b.m[key]);
+  $("#rank-sub").textContent = "按" + def.label + "排序，共 " + rows.length + " 个点位"
+    + (def.th != null ? "；越过红色虚线即触发预警" : "");
+  chart("rank").setOption({
+    backgroundColor: "transparent",
+    animationDuration: 240,
+    grid: baseGrid(t, { top: 18, right: 72, left: 8 }),
+    tooltip: Object.assign({ trigger: "item",
+      formatter: p => '<div style="font-weight:600">' + esc(p.name) + "</div>"
+        + tipRow(t.s1, def.label, def.fmt(p.value))
+    }, tipBox(t)),
+    xAxis: Object.assign({ type: "value" }, axisCommon(t), { axisLine: { show: false },
+      axisLabel: { color: t.muted, fontSize: 11, formatter: def.axis } }),
+    yAxis: Object.assign({ type: "category", data: rows.map(r => r.name) },
+      axisCommon(t), { splitLine: { show: false }, axisLabel: { color: t.ink2, fontSize: 12 } }),
+    series: [{
+      // 标称类别(点位)没有内在顺序 —— 全部用同一个分类槽位色, 不做明暗渐变
+      type: "bar", data: rows.map(r => r.m[key]),
+      barMaxWidth: 24, barCategoryGap: "45%",
+      itemStyle: { color: t.s1, borderRadius: [0, 4, 4, 0] },
+      label: { show: true, position: "right", distance: 8, color: t.ink2, fontSize: 11,
+        formatter: p => def.fmt(p.value) },
+      markLine: def.th != null ? {
+        silent: true, symbol: "none",
+        lineStyle: { color: t.critical, width: 1, type: "dashed" },
+        label: { show: false },
+        data: [{ xAxis: def.th }]
+      } : undefined
+    }]
+  }, true);
+  renderTable("rank", ["点位", "城市", def.label],
+    rows.slice().reverse().map(r => [r.name, r.city, def.fmt(r.m[key])]), ["", "", "num"]);
+}
+
+function renderFunnel(m) {
+  const t = theme();
+  const stages = [
+    { name: "参与（触屏开始）", value: m.participants },
+    { name: "生成成功", value: m.gen_success_users },
+    { name: "扫码带走", value: m.qr_scans },
+    { name: "分享出去", value: m.shares }
+  ];
+  const top = stages[0].value || 1;
+  chart("funnel").setOption({
+    backgroundColor: "transparent",
+    animationDuration: 240,
+    tooltip: Object.assign({ trigger: "item",
+      formatter: p => '<div style="font-weight:600">' + esc(p.name) + "</div>"
+        + tipRow(t.ord[p.dataIndex], "人数", fmtInt(p.value) + " 人")
+        + tipRow(t.ord[p.dataIndex], "占参与", fmtPct(p.value / top))
+    }, tipBox(t)),
+    series: [{
+      type: "funnel", top: 16, bottom: 16, left: "8%", right: "8%",
+      minSize: "36%", maxSize: "94%", sort: "descending",
+      gap: 2,                                   // 2px 面色缝隙
+      data: stages.map((s, i) => ({ name: s.name, value: s.value,
+        itemStyle: { color: t.ord[i], borderWidth: 0 } })),
+      label: { show: true, position: "inside", color: "#fff", fontSize: 12, fontWeight: 600,
+        formatter: p => p.name + "  " + fmtCompact(p.value) + "（" + fmtPct(p.value / top, 0) + "）" },
+      labelLine: { show: false },
+      emphasis: { label: { fontSize: 12 } }
+    }]
+  }, true);
+  renderTable("funnel", ["环节", "人数", "占参与人数", "较上一环节"],
+    stages.map((s, i) => [s.name, fmtInt(s.value), fmtPct(s.value / top),
+      i === 0 ? "—" : fmtPct(s.value / (stages[i - 1].value || 1))]),
+    ["", "num", "num", "num"]);
+}
+
+function renderHeat(records) {
+  const t = theme();
+  const openH = META.open_hour, closeH = META.close_hour;
+  const hours = []; for (let h = openH; h < closeH; h++) hours.push(h + ":00");
+  const sum = {}, dayCount = {};
+  const seen = new Set();
+  for (const r of records) {
+    const wd = weekdayOf(r.date);
+    if (!seen.has(r.date + "|" + wd)) { seen.add(r.date + "|" + wd); dayCount[wd] = (dayCount[wd] || 0) + 1; }
+    for (let h = openH; h < closeH; h++) {
+      const k = wd + "|" + h; sum[k] = (sum[k] || 0) + r.hourly_participants[h];
+    }
+  }
+  const data = [], vals = [];
+  for (let wd = 0; wd < 7; wd++) for (let h = openH; h < closeH; h++) {
+    const n = dayCount[wd] ? sum[wd + "|" + h] / dayCount[wd] : 0;
+    data.push([h - openH, wd, Math.round(n)]); vals.push(n);
+  }
+  const max = Math.max(1, ...vals);
+  chart("heat").setOption({
+    backgroundColor: "transparent",
+    animationDuration: 240,
+    grid: { left: 8, right: 16, top: 12, bottom: 56, containLabel: true },
+    tooltip: Object.assign({ trigger: "item",
+      formatter: p => '<div style="font-weight:600">' + WEEKDAYS[p.value[1]] + " " + hours[p.value[0]] + "</div>"
+        + tipRow(t.s1, "日均参与", fmtInt(p.value[2]) + " 人")
+    }, tipBox(t)),
+    xAxis: { type: "category", data: hours, splitArea: { show: false },
+      axisLine: { lineStyle: { color: t.axis } }, axisTick: { show: false },
+      axisLabel: { color: t.muted, fontSize: 11 } },
+    yAxis: { type: "category", data: WEEKDAYS, inverse: true, splitArea: { show: false },
+      axisLine: { lineStyle: { color: t.axis } }, axisTick: { show: false },
+      axisLabel: { color: t.ink2, fontSize: 12 } },
+    visualMap: {
+      min: 0, max: Math.ceil(max), calculable: true, orient: "horizontal",
+      left: "center", bottom: 8, itemWidth: 12, itemHeight: 120,
+      // 连续量 = 单一色相, 浅→深; 绝不用彩虹色
+      inRange: { color: [t.seqLo, t.seqHi] },
+      textStyle: { color: t.muted, fontSize: 11 },
+      text: ["人多", "人少"]
+    },
+    series: [{
+      type: "heatmap", data: data,
+      itemStyle: { borderColor: t.surface, borderWidth: 2 },  // 2px 面色缝隙
+      emphasis: { itemStyle: { borderColor: t.ink2, borderWidth: 2 } },
+      progressive: 0
+    }]
+  }, true);
+  renderTable("heat", ["星期"].concat(hours),
+    WEEKDAYS.map((w, wd) => [w].concat(hours.map((_, hi) =>
+      fmtInt(data.find(d => d[0] === hi && d[1] === wd)[2])))),
+    [""].concat(hours.map(() => "num")));
+}
+
+/* ------------------------------------------------------------ 渲染: 预警 */
+const ACTION = META.suggested_action;
+const RULES = [
+  { key: "successRate", type: "model_error", label: "生成成功率", sev: "critical",
+    hit: m => m.gen_requests > 0 && m.successRate < TH.success_rate_min,
+    text: m => "当前 " + fmtPct(m.successRate) + "，低于 " + fmtPct(TH.success_rate_min, 0) + " 阈值" },
+  { key: "avgGen", type: "gen_timeout", label: "平均生成时长", sev: "serious",
+    hit: m => m.avgGen > TH.avg_gen_seconds_max,
+    text: m => "当前 " + fmtSec(m.avgGen) + "（P95 " + fmtSec(m.p95) + "），超过 "
+      + TH.avg_gen_seconds_max + "s 阈值" },
+  { key: "rejectRate", type: "review_reject", label: "审核拒绝率", sev: "warning",
+    hit: m => m.review_total > 0 && m.rejectRate > TH.reject_rate_max,
+    text: m => "当前 " + fmtPct(m.rejectRate) + "，超过 " + fmtPct(TH.reject_rate_max, 0) + " 阈值" },
+  { key: "onlineRate", type: "device_offline", label: "设备在线率", sev: "critical",
+    hit: m => m.onlineRate < TH.online_rate_min,
+    text: m => "当前 " + fmtPct(m.onlineRate) + "，低于 " + fmtPct(TH.online_rate_min, 0)
+      + " 阈值（损失 " + fmtInt((m.expected_minutes - m.online_minutes) / 60) + " 小时）" },
+  { key: "scanRate", type: "scan_rate", label: "扫码转化率", sev: "warning",
+    action: "现场观察是取码步骤太长还是二维码位置不显眼；缩短取图路径、把二维码放到出图同屏，并核对该点位的引导话术。",
+    hit: m => m.participants > 0 && m.scanRate < TH.scan_rate_min,
+    text: m => "当前 " + fmtPct(m.scanRate) + "，低于 " + fmtPct(TH.scan_rate_min, 0) + " 阈值" }
+];
+const SEV_ORDER = { critical: 0, serious: 1, warning: 2 };
+
+function renderAlerts(perDevice, records) {
+  const box = $("#alerts"); box.textContent = "";
+  const byDevDate = {};
+  for (const r of records) (byDevDate[r.device_id] = byDevDate[r.device_id] || []).push(r);
+  const out = [];
+  for (const d of perDevice) {
+    const recs = byDevDate[d.id] || [];
+    const perDay = recs.map(r => ({ date: r.date, m: computeMetrics([r]) }));
+    const last = perDay[perDay.length - 1];
+    for (const rule of RULES) {
+      const aggHit = rule.hit(d.m);
+      const lastHit = last ? rule.hit(last.m) : false;
+      if (!aggHit && !lastHit) continue;
+      const days = perDay.filter(x => rule.hit(x.m)).length;
+      out.push({
+        dev: d, rule: rule, days: days,
+        live: lastHit,                       // 最后一天仍在越界 = 现在就得管
+        scope: aggHit ? "区间合计" : "最近一天（" + last.date + "）",
+        text: aggHit ? rule.text(d.m) : rule.text(last.m)
+      });
+    }
+  }
+  // 还在发生的排前面, 再按严重程度, 再按越界天数
+  out.sort((a, b) => (b.live - a.live)
+    || (SEV_ORDER[a.rule.sev] - SEV_ORDER[b.rule.sev]) || (b.days - a.days));
+  if (!out.length) {
+    box.appendChild(el("p", "empty", "当前筛选范围内所有指标都在阈值内，没有需要处理的预警。"));
+    return;
+  }
+  const live = out.filter(a => a.live).length;
+  const head = el("p", "legend-note", "共 " + out.length + " 条，其中 " + live
+    + " 条在范围内最后一天仍然越界（标记为“仍在发生”）。级别以文字标注，不单靠颜色区分。");
+  box.appendChild(head);
+  const list = el("div", "alert-list");
+  out.forEach(a => {
+    const n = el("div", "alert-item " + a.rule.sev);
+    const h = el("div", "a-head");
+    const s = el("span", "sev sev-" + a.rule.sev);
+    s.appendChild(el("span", "dot"));
+    s.appendChild(el("span", null, SEV_LABEL[a.rule.sev]));
+    h.appendChild(s);
+    h.appendChild(el("span", null, a.dev.name));
+    h.appendChild(el("span", "pill", a.rule.label));
+    if (a.live) h.appendChild(el("span", "pill open", "仍在发生"));
+    n.appendChild(h);
+    n.appendChild(el("div", "a-body",
+      a.scope + "：" + a.text + "；范围内有 " + a.days + " 天单日越界。"));
+    n.appendChild(el("div", "a-act", "建议：" + (a.rule.action || ACTION[a.rule.type])));
+    list.appendChild(n);
+  });
+  box.appendChild(list);
+}
+
+/* ------------------------------------------------------------ 渲染: 设备 */
+function renderDevices(perDevice, lastDay) {
+  const wrap = $("#device-table"); wrap.textContent = "";
+  const order = { offline: 0, degraded: 1, online: 2 };
+  const rows = perDevice.slice().sort((a, b) =>
+    order[a.dev.status] - order[b.dev.status] || a.id.localeCompare(b.id));
+  const bad = rows.filter(r => r.dev.status !== "online").length;
+  $("#device-sub").textContent = rows.length + " 个点位在筛选范围内，"
+    + (bad ? bad + " 个当前不可正常服务（离线或降级）" : "全部在线")
+    + "；当日数据为 " + lastDay;
+
+  const table = el("table", "tbl");
+  const head = ["状态", "点位", "城市", "机型", "最后心跳", "当日参与", "当日成功率", "当日平均时长", "范围内在线率"];
+  const aligns = ["", "", "", "", "", "num", "num", "num", "num"];
+  const thead = el("thead"), tr = el("tr");
+  head.forEach((h, i) => tr.appendChild(el("th", aligns[i] === "num" ? "num" : null, h)));
+  thead.appendChild(tr); table.appendChild(thead);
+  const tb = el("tbody");
+  rows.forEach(r => {
+    const today = DAILY.find(x => x.date === lastDay && x.device_id === r.id);
+    const t1 = today ? computeMetrics([today]) : null;
+    const tr2 = el("tr");
+    const st = el("td");
+    const sp = el("span", "status s-" + r.dev.status);
+    sp.appendChild(el("span", "dot"));
+    sp.appendChild(el("span", null, STATUS_LABEL[r.dev.status]));   // 图标 + 文字, 不靠颜色单独表意
+    st.appendChild(sp); tr2.appendChild(st);
+    [r.name, r.city, r.dev.model, r.dev.last_heartbeat].forEach(v => tr2.appendChild(el("td", null, v)));
+    tr2.appendChild(el("td", "num", t1 ? fmtInt(t1.participants) : "—"));
+    tr2.appendChild(el("td", "num", t1 && t1.gen_requests ? fmtPct(t1.successRate) : "—"));
+    tr2.appendChild(el("td", "num", t1 && t1.gen_success ? fmtSec(t1.avgGen) : "—"));
+    tr2.appendChild(el("td", "num", fmtPct(r.m.onlineRate)));
+    tb.appendChild(tr2);
+  });
+  table.appendChild(tb); wrap.appendChild(table);
+}
+
+/* ------------------------------------------------------------ 渲染: 异常事件 */
+function renderIncidents(ids) {
+  const wrap = $("#inc-table"); wrap.textContent = "";
+  const set = new Set(ids);
+  const f = state.inc;
+  const rows = INCIDENTS.filter(e =>
+    set.has(e.device_id) && e.date >= state.start && e.date <= state.end
+    && (!f.sev || e.severity === f.sev)
+    && (!f.type || e.type === f.type)
+    && (!f.status || e.status === f.status));
+  if (!rows.length) {
+    wrap.appendChild(el("p", "empty", "当前筛选条件下没有异常事件。"));
+    return;
+  }
+  const table = el("table", "tbl");
+  const head = ["时间", "点位", "类型", "级别", "状态", "详情"];
+  const thead = el("thead"), tr = el("tr");
+  head.forEach(h => tr.appendChild(el("th", null, h)));
+  thead.appendChild(tr); table.appendChild(thead);
+  const tb = el("tbody");
+  rows.forEach(e => {
+    const dev = DEV_BY_ID[e.device_id];
+    const r = el("tr", "clickable");
+    r.setAttribute("tabindex", "0");
+    r.appendChild(el("td", null, e.time));
+    r.appendChild(el("td", null, dev ? dev.name : e.device_id));
+    r.appendChild(el("td", null, META.incident_type_labels[e.type] || e.type));
+    const sevTd = el("td");
+    const s = el("span", "sev sev-" + e.severity);
+    s.appendChild(el("span", "dot"));
+    s.appendChild(el("span", null, SEV_LABEL[e.severity]));
+    sevTd.appendChild(s); r.appendChild(sevTd);
+    const stTd = el("td");
+    stTd.appendChild(el("span", "pill" + (e.status === "open" ? " open" : ""),
+      e.status === "open" ? "未恢复" : "已恢复"));
+    r.appendChild(stTd);
+    r.appendChild(el("td", null, e.detail));
+    const detail = el("tr", "row-detail hidden");
+    const td = el("td", null, "建议处理：" + (ACTION[e.type] || "按设备运维标准流程处理。")
+      + "　｜　事件编号 " + e.id);
+    td.colSpan = head.length; detail.appendChild(td);
+    const toggle = () => detail.classList.toggle("hidden");
+    r.addEventListener("click", toggle);
+    r.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggle(); } });
+    tb.appendChild(r); tb.appendChild(detail);
+  });
+  table.appendChild(tb); wrap.appendChild(table);
+}
+
+/* ------------------------------------------------------------ 主渲染 */
+function render() {
+  const ids = activeDeviceIds();
+  const records = slice(state.start, state.end, ids);
+  const span = daysBetween(state.start, state.end) + 1;
+  const prevEnd = addDays(state.start, -1), prevStart = addDays(prevEnd, -(span - 1));
+  const prevRecords = prevStart >= MIN_DATE ? slice(prevStart, prevEnd, ids) : [];
+
+  const cur = computeMetrics(records);
+  const prev = prevRecords.length ? computeMetrics(prevRecords) : {};
+
+  // 按日聚合(跨选中的点位)
+  const byDate = {};
+  for (const r of records) (byDate[r.date] = byDate[r.date] || []).push(r);
+  const daily = Object.keys(byDate).sort().map(d => Object.assign({ date: d }, computeMetrics(byDate[d])));
+
+  // 按点位聚合
+  const byDev = {};
+  for (const r of records) (byDev[r.device_id] = byDev[r.device_id] || []).push(r);
+  const perDevice = ids.filter(id => byDev[id]).map(id => ({
+    id: id, name: DEV_BY_ID[id].name, city: DEV_BY_ID[id].city,
+    dev: DEV_BY_ID[id], m: computeMetrics(byDev[id])
+  }));
+
+  $("#scope-note").textContent = "当前范围：" + state.start + " 至 " + state.end
+    + "（共 " + span + " 天）· " + perDevice.length + " 个点位 · "
+    + (prevRecords.length ? "环比对照 " + prevStart + " 至 " + prevEnd : "环比对照数据不足");
+
+  renderKPIs(cur, prev, daily);
+  renderAlerts(perDevice, records);
+  renderTrend(daily);
+  renderSuccess(daily);
+  renderLatency(daily);
+  renderReview(daily);
+  renderRank(perDevice);
+  renderFunnel(cur);
+  renderHeat(records);
+  renderDevices(perDevice, state.end);
+  renderIncidents(ids);
+}
+
+/* ------------------------------------------------------------ 控件 */
+function setPreset(id) {
+  const p = PRESETS.find(x => x.id === id);
+  state.preset = id;
+  state.end = MAX_DATE;
+  state.start = clampDate(addDays(MAX_DATE, -(p.days - 1)));
+  $("#date-start").value = state.start;
+  $("#date-end").value = state.end;
+  syncPresetButtons();
+}
+function syncPresetButtons() {
+  document.querySelectorAll("#presets .btn").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.preset === state.preset)));
+}
+function buildControls() {
+  const pr = $("#presets");
+  PRESETS.forEach(p => {
+    const b = el("button", "btn", p.label);
+    b.type = "button"; b.dataset.preset = p.id;
+    b.addEventListener("click", () => { setPreset(p.id); render(); });
+    pr.appendChild(b);
+  });
+  const ds = $("#date-start"), de = $("#date-end");
+  [ds, de].forEach(i => { i.min = MIN_DATE; i.max = MAX_DATE; });
+  ds.value = state.start; de.value = state.end;
+  ds.addEventListener("change", () => {
+    state.start = clampDate(ds.value || state.start);
+    if (state.start > state.end) state.end = state.start;
+    de.value = state.end; state.preset = ""; syncPresetButtons(); render();
+  });
+  de.addEventListener("change", () => {
+    state.end = clampDate(de.value || state.end);
+    if (state.end < state.start) state.start = state.end;
+    ds.value = state.start; state.preset = ""; syncPresetButtons(); render();
+  });
+
+  const city = $("#city");
+  city.appendChild(new Option("全部城市", ""));
+  [...new Set(DEVICES.map(d => d.city))].forEach(c => city.appendChild(new Option(c, c)));
+  city.addEventListener("change", () => {
+    state.city = city.value;
+    // 城市变了就清掉不属于该城市的点位选择, 避免出现"选了却没数据"
+    [...state.devices].forEach(id => { if (state.city && DEV_BY_ID[id].city !== state.city) state.devices.delete(id); });
+    buildChips(); render();
+  });
+
+  buildChips();
+
+  const rm = $("#rank-metric");
+  rm.addEventListener("change", () => { state.rankMetric = rm.value; render(); });
+
+  const typeSel = $("#inc-type");
+  typeSel.appendChild(new Option("全部类型", ""));
+  Object.entries(META.incident_type_labels).forEach(([k, v]) => typeSel.appendChild(new Option(v, k)));
+  [["#inc-sev", "sev"], ["#inc-type", "type"], ["#inc-status", "status"]].forEach(([sel, key]) => {
+    $(sel).addEventListener("change", e => { state.inc[key] = e.target.value; renderIncidents(activeDeviceIds()); });
+  });
+
+  document.querySelectorAll("[data-table]").forEach(b => {
+    b.addEventListener("click", () => {
+      const id = b.dataset.table;
+      const box = document.getElementById("t-" + id);
+      const chartEl = document.getElementById("c-" + id);
+      const showTable = box.classList.contains("hidden");
+      box.classList.toggle("hidden", !showTable);
+      chartEl.classList.toggle("hidden", showTable);
+      b.setAttribute("aria-pressed", String(showTable));
+      b.textContent = showTable ? "图表" : "表格";
+      if (!showTable) charts[id] && charts[id].resize();
+    });
+  });
+
+  $("#reset").addEventListener("click", () => {
+    state.city = ""; $("#city").value = "";
+    state.devices.clear();
+    state.inc = { sev: "", type: "", status: "" };
+    $("#inc-sev").value = ""; $("#inc-type").value = ""; $("#inc-status").value = "";
+    setPreset("30d"); buildChips(); render();
+  });
+
+  const tt = $("#theme-toggle");
+  tt.addEventListener("click", () => {
+    const next = isDark() ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    tt.textContent = next === "dark" ? "切换浅色" : "切换深色";
+    render();
+  });
+  tt.textContent = isDark() ? "切换浅色" : "切换深色";
+}
+function buildChips() {
+  const box = $("#device-chips"); box.textContent = "";
+  DEVICES.filter(d => !state.city || d.city === state.city).forEach(d => {
+    const b = el("button", "chip", d.name);
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(state.devices.has(d.id)));
+    b.addEventListener("click", () => {
+      state.devices.has(d.id) ? state.devices.delete(d.id) : state.devices.add(d.id);
+      b.setAttribute("aria-pressed", String(state.devices.has(d.id)));
+      render();
+    });
+    box.appendChild(b);
+  });
+}
+
+/* ------------------------------------------------------------ 启动 */
+$("#head-sub").textContent = "模拟数据 " + MIN_DATE + " 至 " + MAX_DATE
+  + " · " + DEVICES.length + " 个点位 · 营业时段 " + META.open_hour + ":00–" + META.close_hour + ":00";
+buildControls();
+syncPresetButtons();
+render();
+
+let rt;
+addEventListener("resize", () => {
+  clearTimeout(rt);
+  rt = setTimeout(() => Object.values(charts).forEach(c => c.resize()), 150);
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+  if (!document.documentElement.getAttribute("data-theme")) {
+    $("#theme-toggle").textContent = isDark() ? "切换浅色" : "切换深色";
+    render();
+  }
+});
+})();
+</script>
+</body>
+</html>
