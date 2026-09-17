@@ -14,8 +14,12 @@ AIGC 互动大屏运营看板 —— 模拟数据生成器
 import json
 import math
 import random
+import statistics
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
+
+from hll import (HLL_B, HLL_M, hll_add, hll_decode, hll_encode, hll_estimate,
+                 hll_merge, hll_new)
 
 SEED = 42
 DAYS = 60                      # 生成 60 天, 看板默认展示近 30 天, 保证"近30天"也有等长的环比窗口
@@ -23,8 +27,19 @@ LAST_DAY = date(2026, 9, 15)   # 数据最后一个完整自然日
 OPEN_HOUR, CLOSE_HOUR = 10, 22 # 商场营业时间 10:00-22:00
 EXPECTED_MINUTES = (CLOSE_HOUR - OPEN_HOUR) * 60  # 每天应在线分钟数 = 720
 
-# 生成时长直方图分桶(秒), 用于跨天/跨点位聚合后仍能还原 P95
+# 生成时长直方图分桶(秒): 14 个边界 = 13 个桶。
+# 存分布而不是存每天的 P95, 是因为分位数不能加权平均 —— 跨切片时先合并
+# 直方图再插值。注意插值出的 P95 是**估算值**, 不是精确分位数。
 HIST_EDGES = [0, 2, 4, 6, 8, 10, 12, 15, 20, 25, 30, 40, 60, 120]
+
+# 用户重复参与的行为参数。participants 是**人次**(触屏会话数);
+# 去重人数要靠每条记录里的 HLL 草图跨切片合并才能得到。
+REPEAT_SAME_DEVICE = 0.18   # 该次参与是这个点位的回头客
+REPEAT_SAME_CITY = 0.03     # 是同城其他点位来过的人
+# 回访是聚集在近期的: 喜欢这个玩法的人几天内就会再来, 而不是均匀散在两个月里。
+# 所以回头客只从"最近见过的这么多人次"里抽 —— 对一个日均 500 人的点位,
+# 5000 大约是最近 10 天。不做这个近期加权的话, 30 天窗口内的复玩几乎观察不到。
+RECENT_POOL = 5000
 
 DEVICES = [
     # id,      名称,                  城市,     基准参与人数, 机型
@@ -54,6 +69,43 @@ CAMPAIGN_DAYS = {date(2026, 9, 12), date(2026, 9, 13)}
 LIVE_OFFLINE_DEVICE, LIVE_OFFLINE_FROM_HOUR = "CD-002", 20
 
 rng = random.Random(SEED)
+
+# 每个点位见过的用户 ID(用于抽回头客), 以及按城市索引
+_seen_by_device = {d[0]: [] for d in DEVICES}
+_seen_by_city = {}
+_next_uid = [0]
+
+
+def _new_uid() -> str:
+    _next_uid[0] += 1
+    return f"u{_next_uid[0]:07d}"
+
+
+def draw_users(dev_id: str, city: str, n: int):
+    """抽出这天这个点位的 n 次参与分别是谁。
+
+    绝大多数是第一次来的新人, 少数是本点位回头客, 极少数是同城其他点位来过的人。
+    返回的是**人次**列表, 里面可以有重复 —— 同一个人一天内玩两次是正常的。
+    """
+    seen_dev = _seen_by_device[dev_id]
+    seen_city = _seen_by_city.setdefault(city, [])
+    out = []
+    for _ in range(n):
+        r = rng.random()
+        if r < REPEAT_SAME_DEVICE and seen_dev:
+            lo = max(0, len(seen_dev) - RECENT_POOL)
+            out.append(seen_dev[rng.randrange(lo, len(seen_dev))])
+        elif r < REPEAT_SAME_DEVICE + REPEAT_SAME_CITY and seen_city:
+            lo = max(0, len(seen_city) - RECENT_POOL)
+            uid = seen_city[rng.randrange(lo, len(seen_city))]
+            out.append(uid)
+            seen_dev.append(uid)
+        else:
+            uid = _new_uid()
+            out.append(uid)
+            seen_dev.append(uid)
+            seen_city.append(uid)
+    return out
 
 
 def hist_bucket(seconds: float) -> int:
@@ -86,13 +138,16 @@ def gen_duration(slow_factor: float, failed: bool) -> float:
     return round(min(base, 119.0), 2)
 
 
-def build_daily():
+def build_daily(truth=None):
+    """truth 是给精度自测用的 (日期,点位) -> 真实用户集合, 不进交付数据。"""
+    if truth is None:
+        truth = {}
     records = []
     start = LAST_DAY - timedelta(days=DAYS - 1)
     for offset in range(DAYS):
         day = start + timedelta(days=offset)
         is_weekend = day.weekday() >= 5
-        for dev_id, _name, _city, base, model in DEVICES:
+        for dev_id, _name, city, base, model in DEVICES:
             # ---------- 参与人数 ----------
             factor = 1.0
             factor *= 1.55 if is_weekend else 1.0
@@ -199,10 +254,20 @@ def build_daily():
                 peak = LIVE_OFFLINE_FROM_HOUR if live_off else 19
                 hourly[peak] += left  # 余数并入晚高峰, 保证 sum(hourly) == participants
 
+            # 这天这个点位的每一次参与分别是谁 —— 人次列表, 可重复
+            visitors = draw_users(dev_id, city, participants)
+            unique_visitors = set(visitors)
+            truth[(day.isoformat(), dev_id)] = unique_visitors
+            regs = hll_new()
+            for uid in unique_visitors:
+                hll_add(regs, uid)
+
             records.append({
                 "date": day.isoformat(),
                 "device_id": dev_id,
                 "participants": participants,
+                "participants_unique": len(unique_visitors),
+                "participants_hll": hll_encode(regs),
                 "gen_users": gen_users,
                 "gen_requests": gen_requests,
                 "gen_success": gen_success,
@@ -249,9 +314,10 @@ def _emit_breach(add, info, dev, etype, ongoing=False):
     """把一段连续越界写成一条事件: 未恢复的标 open, 已恢复的标 resolved。"""
     days = info["days"]
     span = f"持续 {days} 天" if days > 1 else "当日"
-    detail = f"{info['text']} ({span}, 自 {info['start'].isoformat()} 起)"
+    detail = f"{info['text']} ({span}, {info['start'].isoformat()} 至 {info['last'].isoformat()})"
     add(info["start"], dev, etype, info["sev"], detail,
-        "open" if ongoing else "resolved", hour=info["start"].weekday() % 6 + 11)
+        "open" if ongoing else "resolved", hour=info["start"].weekday() % 6 + 11,
+        end_day=info["last"])
 
 
 def build_incidents(records):
@@ -260,15 +326,25 @@ def build_incidents(records):
     by_key = {(r["date"], r["device_id"]): r for r in records}
     start = LAST_DAY - timedelta(days=DAYS - 1)
 
-    def add(day, dev, etype, severity, detail, status, hour=None, minute=None):
+    def add(day, dev, etype, severity, detail, status, hour=None, minute=None, end_day=None):
+        """一条异常事件。
+
+        持续型异常必须带 end_date —— 只记开始日的话, 用户把日期筛到事故中段
+        就查不到它了(预警在报、事件表却空着)。看板按"区间相交"过滤。
+        """
         t = datetime.combine(day, time(
             hour if hour is not None else rng.randint(OPEN_HOUR, CLOSE_HOUR - 1),
             minute if minute is not None else rng.randint(0, 59),
         ))
+        ongoing = status == "open"
         events.append({
             "id": f"INC-{len(events) + 1:04d}",
             "time": t.strftime("%Y-%m-%d %H:%M"),
             "date": day.isoformat(),
+            "start_date": day.isoformat(),
+            # 未恢复的事件一直延续到数据最后一天
+            "end_date": (LAST_DAY if ongoing else (end_day or day)).isoformat(),
+            "ongoing": ongoing,
             "device_id": dev,
             "type": etype,
             "severity": severity,
@@ -277,11 +353,13 @@ def build_incidents(records):
         })
 
     # 故事 1: 整机离线
-    for d in sorted(OFFLINE_DAYS):
-        add(d, OFFLINE_DEVICE, "device_offline", "critical",
-            "机柜断电导致整机离线, 全天 0 参与", "resolved", hour=9, minute=41)
-        add(d, OFFLINE_DEVICE, "heartbeat_lost", "serious",
-            "连续 3 次心跳未上报, 判定为离线", "resolved", hour=9, minute=44)
+    off_start, off_end = min(OFFLINE_DAYS), max(OFFLINE_DAYS)
+    add(off_start, OFFLINE_DEVICE, "device_offline", "critical",
+        f"机柜断电导致整机离线, 全天 0 参与 (持续 {len(OFFLINE_DAYS)} 天, "
+        f"{off_start.isoformat()} 至 {off_end.isoformat()})",
+        "resolved", hour=9, minute=41, end_day=off_end)
+    add(off_start, OFFLINE_DEVICE, "heartbeat_lost", "serious",
+        "连续 3 次心跳未上报, 判定为离线", "resolved", hour=9, minute=44, end_day=off_end)
 
     # 故事 6: 最后一天晚间断网, 到现在还没恢复
     add(LAST_DAY, LIVE_OFFLINE_DEVICE, "device_offline", "critical",
@@ -376,8 +454,48 @@ def build_devices(records):
     return out
 
 
+def measure_hll_accuracy(records, truth, trials=200):
+    """随机切片上实测 HLL 估算误差。
+
+    文档里引用的是这里测出来的数, 不是 1.04/sqrt(m) 这个理论值 ——
+    理论标准误假设哈希理想均匀, 实际误差要靠对账才知道。
+    """
+    by_key = {(r["date"], r["device_id"]): r for r in records}
+    dates = sorted({r["date"] for r in records})
+    dev_ids = [d[0] for d in DEVICES]
+    check = random.Random(20260916)
+    errs = []
+    for _ in range(trials):
+        i = check.randrange(len(dates))
+        j = check.randrange(i, len(dates))
+        devs = check.sample(dev_ids, check.randint(1, len(dev_ids)))
+        keys = [(d, dv) for d in dates[i:j + 1] for dv in devs]
+        real = set()
+        regs = hll_new()
+        for k in keys:
+            r = by_key.get(k)
+            if not r:
+                continue
+            real |= truth[k]
+            hll_merge(regs, hll_decode(r["participants_hll"]))
+        if len(real) < 50:            # 基数太小时相对误差没有参考意义
+            continue
+        errs.append(abs(hll_estimate(regs) - len(real)) / len(real))
+    errs.sort()
+    return {
+        "slices_tested": len(errs),
+        "median_abs_err_pct": round(statistics.median(errs) * 100, 2),
+        "p95_abs_err_pct": round(errs[int(len(errs) * 0.95)] * 100, 2),
+        "max_abs_err_pct": round(errs[-1] * 100, 2),
+        "registers": HLL_M,
+        "theoretical_stderr_pct": round(104 / (HLL_M ** 0.5), 2),
+    }
+
+
 def main():
-    records = build_daily()
+    truth = {}
+    records = build_daily(truth)
+    hll_accuracy = measure_hll_accuracy(records, truth)
     incidents = build_incidents(records)
     devices = build_devices(records)
 
@@ -391,6 +509,9 @@ def main():
             "close_hour": CLOSE_HOUR,
             "expected_minutes_per_day": EXPECTED_MINUTES,
             "hist_edges": HIST_EDGES,
+            "hist_buckets": len(HIST_EDGES) - 1,
+            "hll_registers": HLL_M,
+            "hll_accuracy": hll_accuracy,
             "thresholds": {
                 "success_rate_min": 0.90,
                 "avg_gen_seconds_max": 12,
@@ -421,7 +542,17 @@ def main():
     print(f"devices       : {len(devices)}")
     print(f"incidents     : {len(incidents)}  (open={sum(1 for e in incidents if e['status']=='open')})")
     print(f"date range    : {records[0]['date']} .. {records[-1]['date']}")
-    print(f"success gens  : {total_gen}, overall P95 = {p95}s")
+    merged = hll_new()
+    for r in records:
+        hll_merge(merged, hll_decode(r["participants_hll"]))
+    sessions = sum(r["participants"] for r in records)
+    print(f"success gens  : {total_gen}, overall P95 (估算) = {p95}s")
+    print(f"participants  : {sessions:,} 人次 / 去重估算 {hll_estimate(merged):,.0f} 人 "
+          f"(真值 {len(set().union(*truth.values())):,})")
+    print(f"HLL accuracy  : {hll_accuracy['slices_tested']} 个随机切片, "
+          f"中位误差 {hll_accuracy['median_abs_err_pct']}%, "
+          f"P95 {hll_accuracy['p95_abs_err_pct']}%, "
+          f"最大 {hll_accuracy['max_abs_err_pct']}%")
 
 
 if __name__ == "__main__":

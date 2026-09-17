@@ -15,7 +15,7 @@
   --grid:#e1e0d9; --axis:#c3c2b7; --hairline:rgba(11,11,11,.10);
   --series-1:#2a78d6;           /* 分类槽位 1 */
   --series-2:#eb6834;           /* 分类槽位 2 */
-  --ord-1:#86b6ef; --ord-2:#3987e5; --ord-3:#256abf; --ord-4:#184f95;  /* 漏斗序数色 */
+  --ord-1:#86b6ef; --ord-2:#5598e7; --ord-3:#2a78d6; --ord-4:#1c5cab; --ord-5:#104281;  /* 漏斗序数色(5 档) */
   --seq-lo:#cde2fb; --seq-hi:#0d366b;                                   /* 热力图连续色 */
   --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
   --delta-good:#006300; --delta-bad:#c0392b;
@@ -28,7 +28,7 @@
     --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
     --grid:#2c2c2a; --axis:#383835; --hairline:rgba(255,255,255,.10);
     --series-1:#3987e5; --series-2:#d95926;
-    --ord-1:#b7d3f6; --ord-2:#86b6ef; --ord-3:#3987e5; --ord-4:#1c5cab;
+    --ord-1:#cde2fb; --ord-2:#9ec5f4; --ord-3:#5598e7; --ord-4:#2a78d6; --ord-5:#184f95;
     --seq-lo:#104281; --seq-hi:#cde2fb;
     --delta-good:#0ca30c; --delta-bad:#e66767;
     --wash:rgba(255,255,255,.06);
@@ -40,7 +40,7 @@
   --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
   --grid:#2c2c2a; --axis:#383835; --hairline:rgba(255,255,255,.10);
   --series-1:#3987e5; --series-2:#d95926;
-  --ord-1:#b7d3f6; --ord-2:#86b6ef; --ord-3:#3987e5; --ord-4:#1c5cab;
+  --ord-1:#cde2fb; --ord-2:#9ec5f4; --ord-3:#5598e7; --ord-4:#2a78d6; --ord-5:#184f95;
   --seq-lo:#104281; --seq-hi:#cde2fb;
   --delta-good:#0ca30c; --delta-bad:#e66767;
   --wash:rgba(255,255,255,.06);
@@ -277,7 +277,7 @@ footer.foot{margin-top:28px; color:var(--ink-muted); font-size:12px; line-height
   <section class="card">
     <div class="card-head">
       <h2>转化漏斗</h2>
-      <span class="sub">人数口径：参与 → 生成成功 → 扫码 → 分享</span>
+      <span class="sub">整条漏斗为人次口径（每日去重人数之和），与上方去重 KPI 不是同一个分母</span>
       <div class="tools"><button class="btn" data-table="funnel" type="button">表格</button></div>
     </div>
     <div class="chart tall" id="c-funnel"></div>
@@ -318,7 +318,8 @@ footer.foot{margin-top:28px; color:var(--ink-muted); font-size:12px; line-height
 
 <footer class="foot">
   数据为 <code>data/generate_mock.py</code> 生成的模拟数据（随机种子 42），与任何真实业务无关。<br>
-  指标定义与计算口径见 <code>docs/指标说明.md</code>。每张图都提供“表格”视图，数值不依赖悬浮提示即可读取。
+  指标定义与计算口径见 <code>docs/指标说明.md</code>，外部评审提出的问题与改法见 <code>docs/修订说明.md</code>。<br>
+  每张图都提供“表格”视图，数值不依赖悬浮提示即可读取。全部校验：<code>bash scripts/verify.sh</code>（60 项断言）。
 </footer>
 
 </div>
@@ -334,12 +335,12 @@ const DEVICES = D.devices, DAILY = D.daily, INCIDENTS = D.incidents;
 const DEV_BY_ID = Object.fromEntries(DEVICES.map(d => [d.id, d]));
 const ALL_DATES = [...new Set(DAILY.map(r => r.date))].sort();
 const MIN_DATE = ALL_DATES[0], MAX_DATE = ALL_DATES[ALL_DATES.length - 1];
-const SUM_KEYS = ["participants","gen_users","gen_requests","gen_success","gen_failed",
+const SUM_KEYS = ["participants","participants_unique","gen_users","gen_requests","gen_success","gen_failed",
   "gen_seconds_total","gen_success_users","qr_scans","shares","review_total","review_pass",
   "review_reject","review_pending","online_minutes","expected_minutes"];
 const WEEKDAYS = ["周一","周二","周三","周四","周五","周六","周日"];
 const SEV_LABEL = {critical:"严重", serious:"较重", warning:"提醒"};
-const STATUS_LABEL = {online:"在线", degraded:"降级", offline:"离线"};
+const STATUS_LABEL = {online:"在线", degraded:"降级", offline:"离线", "no-data":"无数据"};
 
 /* ------------------------------------------------------------ 工具函数 */
 const $ = s => document.querySelector(s);
@@ -356,6 +357,37 @@ const fmtInt = n => Math.round(n).toLocaleString("zh-CN");
 const fmtCompact = n => n >= 10000 ? (n / 10000).toFixed(1) + "万" : fmtInt(n);
 const fmtPct = (v, d = 1) => (v * 100).toFixed(d) + "%";
 const fmtSec = v => v.toFixed(1) + "s";
+
+/* ------------------------------------------------------------ HyperLogLog
+   与 data/hll.py 逐位一致的实现。人数和分位数一样不能把每格的标量相加:
+   同一个人今天来南京路、明天来环球港, 求和会算成 3 个人。所以每条记录存的是
+   可合并的草图, 任意切片下先合并再估算。
+   注意 Math.imul —— 32 位乘法用普通 * 会丢精度, 结果与 Python 端对不上。 */
+const HLL_B = 10, HLL_M = 1 << HLL_B, HLL_TAIL = 32 - HLL_B;
+const HLL_ALPHA = 0.7213 / (1 + 1.079 / HLL_M);
+
+function hllDecode(b64) {
+  const bin = atob(b64);
+  const regs = new Uint8Array(HLL_M);
+  for (let i = 0; i < HLL_M; i++) regs[i] = bin.charCodeAt(i);
+  return regs;
+}
+function hllNew() { return new Uint8Array(HLL_M); }
+function hllMerge(target, other) {          // 并集 = 寄存器逐位取最大
+  for (let i = 0; i < HLL_M; i++) if (other[i] > target[i]) target[i] = other[i];
+}
+function hllEstimate(regs) {
+  let zeros = 0, inv = 0;
+  for (let i = 0; i < HLL_M; i++) {
+    const r = regs[i];
+    if (r === 0) zeros++;
+    inv += Math.pow(2, -r);
+  }
+  const est = HLL_ALPHA * HLL_M * HLL_M / inv;
+  // 小基数时 HLL 的估计量偏差大, 改用线性计数
+  if (est <= 2.5 * HLL_M && zeros > 0) return HLL_M * Math.log(HLL_M / zeros);
+  return est;
+}
 
 /* 从直方图线性插值求分位数 —— 与 generate_mock.py 中的算法一致,
    保证任意日期 × 点位切片下 P95 都能正确聚合(平均值可以加权, 分位数不能)。 */
@@ -377,13 +409,31 @@ function percentileFromHist(hist, q) {
 function computeMetrics(records) {
   const a = {}; SUM_KEYS.forEach(k => a[k] = 0);
   const hist = new Array(EDGES.length - 1).fill(0);
+  const hll = hllNew();
   for (const r of records) {
     for (const k of SUM_KEYS) a[k] += r[k];
     for (let i = 0; i < hist.length; i++) hist[i] += r.gen_seconds_hist[i];
+    hllMerge(hll, hllDecode(r.participants_hll));
   }
   const safe = (x, y) => y ? x / y : 0;
+  /* participants 是人次; 去重人数要靠合并后的草图估算。
+     估算值再用两个已知的硬约束夹一下, 否则会出现"去重人数 > 人次"
+     (人均 0.98 次) 这种读者一眼就知道不对的数:
+       上界 = 人次总和           —— 一个人至少贡献一次参与
+       下界 = 单格去重人数的最大值 —— 并集不可能小于其中任何一个子集
+     只有一条记录时不用估, 直接取那天那个点位的精确去重数。 */
+  let uniqueVisitors = 0;
+  if (records.length === 1) {
+    uniqueVisitors = records[0].participants_unique;
+  } else if (records.length > 1) {
+    let floor = 0;
+    for (const r of records) if (r.participants_unique > floor) floor = r.participants_unique;
+    uniqueVisitors = Math.min(Math.max(hllEstimate(hll), floor), a.participants);
+  }
   return Object.assign(a, {
     hist,
+    uniqueVisitors,
+    visitsPerUser: uniqueVisitors ? a.participants / uniqueVisitors : 0,
     days: new Set(records.map(r => r.date)).size,
     successRate: safe(a.gen_success, a.gen_requests),
     failRate: safe(a.gen_failed, a.gen_requests),
@@ -436,7 +486,7 @@ function theme() {
     surface: tok("--surface"), ink: tok("--ink"), ink2: tok("--ink-2"),
     muted: tok("--ink-muted"), grid: tok("--grid"), axis: tok("--axis"),
     s1: tok("--series-1"), s2: tok("--series-2"),
-    ord: [tok("--ord-1"), tok("--ord-2"), tok("--ord-3"), tok("--ord-4")],
+    ord: [tok("--ord-1"), tok("--ord-2"), tok("--ord-3"), tok("--ord-4"), tok("--ord-5")],
     seqLo: tok("--seq-lo"), seqHi: tok("--seq-hi"),
     good: tok("--good"), warning: tok("--warning"),
     serious: tok("--serious"), critical: tok("--critical")
@@ -550,8 +600,10 @@ function renderKPIs(cur, prev, daily) {
   row.textContent = "";
   const series = k => daily.map(d => d[k]);
   const tiles = [
-    { label: "参与人数", value: fmtCompact(cur.participants), sub: "日均 " + fmtInt(cur.participants / Math.max(1, cur.days)) + " 人",
-      delta: deltaNode(cur.participants, prev.participants), spark: series("participants"), alert: false },
+    { label: "参与人数（去重·估算）", value: fmtCompact(cur.uniqueVisitors),
+      sub: fmtCompact(cur.participants) + " 人次 · 人均 " + cur.visitsPerUser.toFixed(2) + " 次",
+      delta: deltaNode(cur.uniqueVisitors, prev.uniqueVisitors),
+      spark: daily.map(d => d.participants_unique), alert: false },
     { label: "生成成功率", value: fmtPct(cur.successRate), sub: "失败 " + fmtInt(cur.gen_failed) + " 次 / 共 " + fmtCompact(cur.gen_requests) + " 次",
       delta: deltaNode(cur.successRate, prev.successRate, { pp: true }),
       spark: daily.map(d => d.successRate), alert: cur.successRate < TH.success_rate_min,
@@ -560,7 +612,7 @@ function renderKPIs(cur, prev, daily) {
       delta: deltaNode(cur.scanRate, prev.scanRate, { pp: true }),
       spark: daily.map(d => d.scanRate), alert: cur.scanRate < TH.scan_rate_min,
       flag: "低于 " + fmtPct(TH.scan_rate_min, 0) + " 阈值" },
-    { label: "平均生成时长", value: cur.avgGen.toFixed(1), unit: "秒", sub: "P95 " + fmtSec(cur.p95),
+    { label: "平均生成时长", value: cur.avgGen.toFixed(1), unit: "秒", sub: "P95（估算） " + fmtSec(cur.p95),
       delta: deltaNode(cur.avgGen, prev.avgGen, { abs: true, unit: "s", upIsBad: true }),
       spark: daily.map(d => d.avgGen), alert: cur.avgGen > TH.avg_gen_seconds_max,
       flag: "超过 " + TH.avg_gen_seconds_max + "s 阈值" },
@@ -801,8 +853,11 @@ function renderRank(perDevice) {
 
 function renderFunnel(m) {
   const t = theme();
+  // 五段。原来把"参与"直接连到"生成成功", 会把两类完全不同的流失混在一起:
+  // 一类是压根没点生成就走了(引导/兴趣问题), 一类是点了没成功(技术问题)。
   const stages = [
     { name: "参与（触屏开始）", value: m.participants },
+    { name: "发起生成", value: m.gen_users },
     { name: "生成成功", value: m.gen_success_users },
     { name: "扫码带走", value: m.qr_scans },
     { name: "分享出去", value: m.shares }
@@ -916,6 +971,10 @@ function renderAlerts(perDevice, records) {
   const box = $("#alerts"); box.textContent = "";
   const byDevDate = {};
   for (const r of records) (byDevDate[r.device_id] = byDevDate[r.device_id] || []).push(r);
+  // 整个数据集最后一天的指标 —— 用来判断"到现在为止恢复了没有",
+  // 这和"所选范围的最后一天"是两件事。
+  const latestByDevice = {};
+  for (const r of DAILY) if (r.date === MAX_DATE) latestByDevice[r.device_id] = computeMetrics([r]);
   const out = [];
   for (const d of perDevice) {
     const recs = byDevDate[d.id] || [];
@@ -926,24 +985,31 @@ function renderAlerts(perDevice, records) {
       const lastHit = last ? rule.hit(last.m) : false;
       if (!aggHit && !lastHit) continue;
       const days = perDay.filter(x => rule.hit(x.m)).length;
+      // 两件不同的事, 之前用同一个词表达是有歧义的:
+      //   endHit —— 所选范围的最后一天越界(筛历史区间时, 这不代表现在还没好)
+      //   unresolved —— 拿整个数据集的最后一天比, 才是"截至最新数据仍未恢复"
+      const latest = latestByDevice[d.id];
+      const unresolved = latest ? rule.hit(latest) : false;
       out.push({
         dev: d, rule: rule, days: days,
-        live: lastHit,                       // 最后一天仍在越界 = 现在就得管
-        scope: aggHit ? "区间合计" : "最近一天（" + last.date + "）",
+        endHit: lastHit, unresolved: unresolved,
+        urgent: unresolved,
+        scope: aggHit ? "区间合计" : "范围末日（" + last.date + "）",
         text: aggHit ? rule.text(d.m) : rule.text(last.m)
       });
     }
   }
   // 还在发生的排前面, 再按严重程度, 再按越界天数
-  out.sort((a, b) => (b.live - a.live)
+  out.sort((a, b) => (b.unresolved - a.unresolved) || (b.endHit - a.endHit)
     || (SEV_ORDER[a.rule.sev] - SEV_ORDER[b.rule.sev]) || (b.days - a.days));
   if (!out.length) {
     box.appendChild(el("p", "empty", "当前筛选范围内所有指标都在阈值内，没有需要处理的预警。"));
     return;
   }
-  const live = out.filter(a => a.live).length;
-  const head = el("p", "legend-note", "共 " + out.length + " 条，其中 " + live
-    + " 条在范围内最后一天仍然越界（标记为“仍在发生”）。级别以文字标注，不单靠颜色区分。");
+  const unres = out.filter(a => a.unresolved).length;
+  const head = el("p", "legend-note", "共 " + out.length + " 条，其中 " + unres
+    + " 条截至最新数据（" + MAX_DATE + "）仍未恢复，排在最前；其余为所选范围内的历史越界。"
+    + "级别以文字标注，不单靠颜色区分。");
   box.appendChild(head);
   const list = el("div", "alert-list");
   out.forEach(a => {
@@ -955,7 +1021,8 @@ function renderAlerts(perDevice, records) {
     h.appendChild(s);
     h.appendChild(el("span", null, a.dev.name));
     h.appendChild(el("span", "pill", a.rule.label));
-    if (a.live) h.appendChild(el("span", "pill open", "仍在发生"));
+    if (a.unresolved) h.appendChild(el("span", "pill open", "截至 " + MAX_DATE + " 未恢复"));
+    else if (a.endHit) h.appendChild(el("span", "pill", "范围末日越界"));
     n.appendChild(h);
     n.appendChild(el("div", "a-body",
       a.scope + "：" + a.text + "；范围内有 " + a.days + " 天单日越界。"));
@@ -968,35 +1035,58 @@ function renderAlerts(perDevice, records) {
 /* ------------------------------------------------------------ 渲染: 设备 */
 function renderDevices(perDevice, lastDay) {
   const wrap = $("#device-table"); wrap.textContent = "";
-  const order = { offline: 0, degraded: 1, online: 2 };
-  const rows = perDevice.slice().sort((a, b) =>
-    order[a.dev.status] - order[b.dev.status] || a.id.localeCompare(b.id));
-  const bad = rows.filter(r => r.dev.status !== "online").length;
-  $("#device-sub").textContent = rows.length + " 个点位在筛选范围内，"
-    + (bad ? bad + " 个当前不可正常服务（离线或降级）" : "全部在线")
-    + "；当日数据为 " + lastDay;
+  const isLatest = lastDay === MAX_DATE;
+
+  /* 状态的时间基准必须和同一行的"当日指标"一致。
+     - 选到数据集最新一天: 用设备上报的实时状态(心跳), 它能反映"此刻离线"——
+       某台设备 20:32 才断网, 当天在线率仍有 87.5%, 按日聚合是推不出来的。
+     - 选到历史日期: 实时心跳与那天无关, 改由那天的数据推导, 心跳列置空。
+     之前的写法是无论筛到哪天都显示实时快照, 和当日指标不是同一个时间点。 */
+  function statusOn(rec) {
+    if (!rec) return "no-data";
+    const m = computeMetrics([rec]);
+    if (m.onlineRate < 0.5) return "offline";
+    if ((m.gen_requests && m.successRate < TH.success_rate_min) || m.avgGen > TH.avg_gen_seconds_max)
+      return "degraded";
+    return "online";
+  }
+
+  const rows = perDevice.map(r => {
+    const rec = DAILY.find(x => x.date === lastDay && x.device_id === r.id);
+    return { r: r, rec: rec, m: rec ? computeMetrics([rec]) : null,
+             st: isLatest ? r.dev.status : statusOn(rec) };
+  });
+  const order = { offline: 0, degraded: 1, online: 2, "no-data": 3 };
+  rows.sort((a, b) => order[a.st] - order[b.st] || a.r.id.localeCompare(b.r.id));
+
+  const bad = rows.filter(x => x.st === "offline" || x.st === "degraded").length;
+  $("#device-sub").textContent = rows.length + " 个点位在筛选范围内；下表为 " + lastDay
+    + (isLatest ? "（数据集最新一天，状态取自设备心跳）" : "（历史日期，状态由当天数据推导，非实时）")
+    + " 的状态与当日指标，"
+    + (bad ? bad + " 个当天不可正常服务" : "当天全部正常");
 
   const table = el("table", "tbl");
-  const head = ["状态", "点位", "城市", "机型", "最后心跳", "当日参与", "当日成功率", "当日平均时长", "范围内在线率"];
+  const head = ["状态（" + lastDay + "）", "点位", "城市", "机型",
+    isLatest ? "最后心跳" : "最后心跳（仅最新日可用）",
+    "当日参与人次", "当日成功率", "当日平均时长", "范围内在线率"];
   const aligns = ["", "", "", "", "", "num", "num", "num", "num"];
   const thead = el("thead"), tr = el("tr");
   head.forEach((h, i) => tr.appendChild(el("th", aligns[i] === "num" ? "num" : null, h)));
   thead.appendChild(tr); table.appendChild(thead);
   const tb = el("tbody");
-  rows.forEach(r => {
-    const today = DAILY.find(x => x.date === lastDay && x.device_id === r.id);
-    const t1 = today ? computeMetrics([today]) : null;
-    const tr2 = el("tr");
+  rows.forEach(x => {
+    const t1 = x.m, tr2 = el("tr");
     const st = el("td");
-    const sp = el("span", "status s-" + r.dev.status);
+    const sp = el("span", "status s-" + (x.st === "no-data" ? "offline" : x.st));
     sp.appendChild(el("span", "dot"));
-    sp.appendChild(el("span", null, STATUS_LABEL[r.dev.status]));   // 图标 + 文字, 不靠颜色单独表意
+    sp.appendChild(el("span", null, STATUS_LABEL[x.st] || "无数据"));  // 图标 + 文字, 不靠颜色单独表意
     st.appendChild(sp); tr2.appendChild(st);
-    [r.name, r.city, r.dev.model, r.dev.last_heartbeat].forEach(v => tr2.appendChild(el("td", null, v)));
+    [x.r.name, x.r.city, x.r.dev.model].forEach(v => tr2.appendChild(el("td", null, v)));
+    tr2.appendChild(el("td", null, isLatest ? x.r.dev.last_heartbeat : "—"));
     tr2.appendChild(el("td", "num", t1 ? fmtInt(t1.participants) : "—"));
     tr2.appendChild(el("td", "num", t1 && t1.gen_requests ? fmtPct(t1.successRate) : "—"));
     tr2.appendChild(el("td", "num", t1 && t1.gen_success ? fmtSec(t1.avgGen) : "—"));
-    tr2.appendChild(el("td", "num", fmtPct(r.m.onlineRate)));
+    tr2.appendChild(el("td", "num", fmtPct(x.r.m.onlineRate)));
     tb.appendChild(tr2);
   });
   table.appendChild(tb); wrap.appendChild(table);
@@ -1007,8 +1097,11 @@ function renderIncidents(ids) {
   const wrap = $("#inc-table"); wrap.textContent = "";
   const set = new Set(ids);
   const f = state.inc;
+  // 按区间相交过滤。只比开始日的话, 一个 7/18 起持续 60 天的异常在"近 30 天"
+  // 视图里会整条消失 —— 预警在报, 事件表却查不到。
   const rows = INCIDENTS.filter(e =>
-    set.has(e.device_id) && e.date >= state.start && e.date <= state.end
+    set.has(e.device_id)
+    && e.start_date <= state.end && e.end_date >= state.start
     && (!f.sev || e.severity === f.sev)
     && (!f.type || e.type === f.type)
     && (!f.status || e.status === f.status));
@@ -1017,7 +1110,7 @@ function renderIncidents(ids) {
     return;
   }
   const table = el("table", "tbl");
-  const head = ["时间", "点位", "类型", "级别", "状态", "详情"];
+  const head = ["开始时间", "持续期间", "点位", "类型", "级别", "状态", "详情"];
   const thead = el("thead"), tr = el("tr");
   head.forEach(h => tr.appendChild(el("th", null, h)));
   thead.appendChild(tr); table.appendChild(thead);
@@ -1027,6 +1120,10 @@ function renderIncidents(ids) {
     const r = el("tr", "clickable");
     r.setAttribute("tabindex", "0");
     r.appendChild(el("td", null, e.time));
+    const span = e.start_date === e.end_date ? "当日"
+      : (daysBetween(e.start_date, e.end_date) + 1) + " 天（至 "
+        + (e.ongoing ? "今" : e.end_date.slice(5)) + "）";
+    r.appendChild(el("td", null, span));
     r.appendChild(el("td", null, dev ? dev.name : e.device_id));
     r.appendChild(el("td", null, META.incident_type_labels[e.type] || e.type));
     const sevTd = el("td");

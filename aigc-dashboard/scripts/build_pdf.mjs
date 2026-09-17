@@ -80,19 +80,20 @@ const CSS = `
 @page { size: A4; margin: 12mm 11mm; }
 *{box-sizing:border-box}
 body{font-family:"WenQuanYi Zen Hei","Noto Sans CJK SC","PingFang SC",system-ui,sans-serif;
-  font-size:8.9pt; line-height:1.48; color:#111; margin:0;}
+  font-size:8.5pt; line-height:1.42; color:#111; margin:0;}
 h1{font-size:14pt; margin:0 0 2.5mm; padding-bottom:1.5mm; border-bottom:1.5pt solid #2a78d6}
-h2{font-size:10.8pt; margin:3.5mm 0 1.5mm; color:#184f95}
+h2{font-size:10.2pt; margin:3mm 0 1.2mm; color:#184f95}
 h3{font-size:10pt; margin:4mm 0 1.5mm}
 h4{font-size:9.5pt; margin:3mm 0 1mm}
 p{margin:0 0 2mm}
-ul{margin:0 0 2.5mm; padding-left:5mm}
+ul{margin:0 0 2mm; padding-left:4.5mm}
 li{margin:0 0 1.2mm}
-table{width:100%; border-collapse:collapse; margin:1.5mm 0 2.5mm; font-size:7.9pt;
+table{width:100%; border-collapse:collapse; margin:1.5mm 0 2.5mm; font-size:7.5pt;
   table-layout:fixed; word-break:break-word}
-th,td{border:0.5pt solid #c9c9c4; padding:1.1mm 1.5mm; text-align:left; vertical-align:top}
+th,td{border:0.5pt solid #c9c9c4; padding:1mm 1.4mm; text-align:left; vertical-align:top}
+td code{white-space:normal; word-break:normal}
 th{background:#eef4fc; font-weight:600; color:#184f95}
-code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:8.2pt;
+code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:7.6pt;
   background:#f1f1ee; padding:0 1mm; border-radius:2px}
 pre{background:#f7f7f5; border:0.5pt solid #e1e0d9; border-radius:3px; padding:2mm;
   margin:0 0 2.5mm; overflow:hidden}
@@ -105,7 +106,9 @@ h2,h3,h4{break-after:avoid}
 table,pre,blockquote{break-inside:avoid}
 `;
 
-const files = fs.readdirSync(DOCS).filter(f => f.endsWith(".md"));
+// 跳过 *.template.md —— 它们是 build_docs.py 的输入, 不是给人读的文档
+const files = fs.readdirSync(DOCS)
+  .filter(f => f.endsWith(".md") && !f.endsWith(".template.md"));
 const browser = await chromium.launch();
 const page = await browser.newPage();
 for (const f of files) {
@@ -119,6 +122,11 @@ for (const f of files) {
   const fill = (h / 1031 * 100).toFixed(0);
   const pdf = path.join(DOCS, f.replace(/\.md$/, ".pdf"));
   await page.pdf({ path: pdf, format: "A4", printBackground: true });
+  // DOC_PNG=/某个目录 时额外出一张按 A4 版心截的图, 用来肉眼检查字号与排版
+  if (process.env.DOC_PNG) {
+    await page.screenshot({ path: path.join(process.env.DOC_PNG,
+      f.replace(/\.md$/, ".png")), fullPage: true });
+  }
   const pages = (fs.readFileSync(pdf).toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length;
   console.log(`${f}  →  ${path.basename(pdf)}  (${pages} 页, 内容占版心 ${fill}%, ${(fs.statSync(pdf).size / 1024).toFixed(0)} KB)`);
 }
