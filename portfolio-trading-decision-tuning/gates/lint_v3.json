@@ -1,6 +1,6 @@
 {
  "path": "skills/current/SKILL.md",
- "chars": 5376,
+ "chars": 5506,
  "red": {
   "R1": {
    "status": "OK",
@@ -165,9 +165,14 @@
    ]
   },
   "R2": {
-   "status": "OK",
-   "hits": [],
-   "count": 0,
+   "status": "RED",
+   "hits": [
+    {
+     "token": "算证券",
+     "context": "未完成。币种敞口须计入该币种现金，不得只算证券市值。  **批次台账**：可卖数量按批"
+    }
+   ],
+   "count": 1,
    "candidates": [
     {
      "token": "下一交易日",
@@ -182,8 +187,10 @@
  },
  "yellow": {
   "Y1": {
-   "prohibit_paras": 10,
-   "missing_alt": []
+   "prohibit_paras": 11,
+   "missing_alt": [
+    "**集中度分层**：单票、前三大、行业或主题、币种敞口逐层计算，题面设过上限的每一层都要判定并写进硬约束状态表，缺一层视为未完成。币种敞口须计入该币种现金，不得"
+   ]
   },
   "Y2": {
    "dup_groups": 0,
@@ -196,9 +203,9 @@
   },
   "Y4": {
    "bold_blocks": 12,
-   "bold_ratio": 0.0158,
+   "bold_ratio": 0.0154,
    "max": 0.33,
-   "prohibit_words": 35
+   "prohibit_words": 37
   },
   "Y5": {
    "must_read": 1,
@@ -215,6 +222,6 @@
  "skipped": [
   "Y6"
  ],
- "verdict": "全绿",
- "exit_code": 0
+ "verdict": "红项 1 类 —— 不可豁免，回 Patcher 重改，不计真机",
+ "exit_code": 2
 }

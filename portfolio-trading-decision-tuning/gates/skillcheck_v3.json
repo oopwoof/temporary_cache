@@ -1,6 +1,6 @@
 {
-  "target": "/tmp/vv2/portfolio-trading-decision",
-  "root": "/tmp/vv2/portfolio-trading-decision",
+  "target": "/tmp/vv4/portfolio-trading-decision",
+  "root": "/tmp/vv4/portfolio-trading-decision",
   "skill_md_exists": true,
   "files": {
     "references": [
@@ -86,6 +86,6 @@
   "clarity_signals": {
     "trigger": true,
     "flow": true,
-    "boundary": false
+    "boundary": true
   }
 }

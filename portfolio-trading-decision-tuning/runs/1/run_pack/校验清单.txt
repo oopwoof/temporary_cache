@@ -1,8 +1,8 @@
 # 校验清单
 #
 # 三个不同的东西，别混：
-#   1) zip 文件字节 sha256   = f1ea450701d99e6aa5bd780bc6e73b9291fc710464bfdb5a924ab5332cda82dc
-#   2) 解包后目录内容摘要     = b5082caece480718bfb59266ede22514aac9cf41fa24bc9554dae03ec331079b
+#   1) zip 文件字节 sha256   = 978d6417f7637e861f657fecdb77a5b2b1a5b2ff1ad63c9604904f0fd764e26b
+#   2) 解包后目录内容摘要     = cbea92bbe28fe0bcf9bfc67547648d5eb66c559e74c519de2c893e8195fe2f60
 #   3) 逐文件 sha256         = 见下表
 #
 # 1) 只证明这个 zip 传输没损坏。换台机器重新打包它就会变（zip 里存了时间戳、
@@ -11,8 +11,8 @@
 #       python3 校验.py portfolio-trading-decision
 # 3) 摘要对不上时，用下表定位是哪个文件变了。
 
-f17f32c1d48537da84d8f79346a51d54c4ed48d7a7d8b497c8d3005abcdd38ac  SKILL.md
-f685f32006586345ca9a93547614e6d5c4f11ffc0d2645ca3cd60752c768e683  references/calculation-contract.md
+a2ef5d348314de83a588bca760ed99d4d8ee0dab683214773dec129c60801dd4  SKILL.md
+80c56e4d386bc842f09b047120b310d5854ddd629765b47fc06ae86eed021650  references/calculation-contract.md
 8016ffc195c4b52856fdf8af9828b8147824131008bbad68eb9854b3fc89b3ad  references/excel-contract.md
-4af2a8ee108ceece96313ce4148d779824d93d79dcf5026f7849d14b4bdf87c1  references/output-skeleton.md
+3db3a02bdcd009ef1a2e9cb8d2c8723da6d865675a6b253619a2ed8ba4b73816  references/output-skeleton.md
 3b35bcf44c42a8bccfe1c2bdd71ed9227065fbcc90407843b157bab7c4bbec6f  references/routing.md

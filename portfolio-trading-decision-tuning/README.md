@@ -69,7 +69,7 @@ python3 <autotune>/scripts/make_run_pack.py --run runs/1 --skill skills/current 
     --prompts runs/inputs/prompts --attachments runs/inputs/attachments --rounds 2
 ```
 
-目录内容摘要 `b5082caece480718bfb59266ede22514aac9cf41fa24bc9554dae03ec331079b`（校验以此为准）。
+目录内容摘要 `cbea92bbe28fe0bcf9bfc67547648d5eb66c559e74c519de2c893e8195fe2f60`（校验以此为准）。
 仓库忽略 `*.zip`，所以 `run_pack/` 里的 skill zip 不在版本库里——上面那条命令会连它一起重建，
 重建后跑 `python3 校验.py portfolio-trading-decision` 应输出与上面一致的摘要。
 模板脚本**不进本仓库**，避免实例副本随模板升版变旧（经验沉淀 24）；用 autotune-template v1.6.0 的 `scripts/`。
@@ -79,5 +79,6 @@ python3 <autotune>/scripts/make_run_pack.py --run runs/1 --skill skills/current 
 1. 按 `runs/1/需求方待补清单.md` 补 platform/model/route，定死平局口径，**并要求判分方同时给强制无平排序**
    （上一轮 8 题的 verdict 里本来就有严格无平序，却只用了会打平的 1–5 分）。
 2. 跑题（8 题 + 噪声底复跑，建议并发 4）。
-3. 起草领域纪律包 `packs/portfolio-trading-decision.yaml`——判分包需要它，跑题包不需要。
+3. ~~起草领域纪律包~~ **已完成**：`packs/portfolio-trading-decision.yaml`（29 distinctions / 12 hard_gates / 8 never_regress），
+   覆盖核验见 `runs/1/rubric覆盖核验.yaml`——61 个可判点，初稿命中 54.1%，补条目后 100%。**改它等于换尺子，已冻结。**
 4. 判分回来先跑 `check_judge_quality.py`，再按 `改动台账.md` 的失败判据逐条核对哪条落地了。

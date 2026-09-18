@@ -1,0 +1,104 @@
+# rubric 覆盖核验｜portfolio-trading-decision
+# 做法：把 8 题的全部盲评备注（8 条排序理由 + 32 条逐方评分原因）拆成「可判点」，
+# 逐个映射到领域纪律包的条目；没映上的就是 rubric 的缺口。
+# 口径：一个可判点 = 备注里一处可独立判对错的主张。同一条备注可拆出多个。
+# 方别一律写成"某方"，本文件不外发。
+
+meta:
+  pack: packs/portfolio-trading-decision.yaml
+  corpus: 8 条排序理由 + 32 条逐方评分原因
+  初稿覆盖率: 0.541    # 33/61，初稿只有 14 条 distinctions、8 条 hard_gates 时
+  补条目后覆盖率: 1.000  # 61/61，补了 15 条 distinctions、4 条 hard_gates、2 条 never_regress
+  未覆盖: 0
+
+points:
+  # ── case01 ──
+  - {id: p01, case: "01", 可判点: "账户勾稽/T+1/费用滑点/交易后权重/CVaR 与独立复算一致", maps: [d.费用-总交易成本, nr.敏感性数值化], covered: true}
+  - {id: p02, case: "01", 可判点: "200日与50bps敏感性须有数值而非文字模板", maps: [nr.敏感性数值化], covered: true}
+  - {id: p03, case: "01", 可判点: "陈旧报价（quote_age 超时）仍标「通过」并计入交易后测算", maps: [d.有效报价-陈旧报价], covered: true, 补录: true}
+  - {id: p04, case: "01", 可判点: "主方案执行条件未再次要求报价时效与可卖量有效性", maps: [d.有效报价-陈旧报价], covered: true, 补录: true}
+  - {id: p05, case: "01", 可判点: "一键脚本不生成备忘录/硬编码本机路径导致不能重建", maps: [nr.脚本一键重建], covered: true}
+  - {id: p06, case: "01", 可判点: "多方案排序只用费用未含滑点", maps: [d.费用-总交易成本], covered: true}
+  - {id: p07, case: "01", 可判点: "下一交易日名义额与当日回款混列同一汇总", maps: [d.当日回款-次日名义额], covered: true, 补录: true}
+  - {id: p08, case: "01", 可判点: "约束证据过度汇总，缺逐订单数量/ADV参与率/报价证据", maps: [d.逐订单证据-汇总计数, nr.逐订单逐约束证据], covered: true, 补录: true}
+  - {id: p09, case: "01", 可判点: "把陈旧报价订单在批次表标为「可分配」", maps: [d.有效报价-陈旧报价], covered: true, 补录: true}
+
+  # ── case02 ──
+  - {id: p10, case: "02", 可判点: "风险贡献上限比权重上限更紧，须按更紧的反解", maps: [d.权重上限-风险贡献上限], covered: true}
+  - {id: p11, case: "02", 可判点: "把「继续减仓」与「接受约束违反」交客户选择", maps: [d.硬约束-软偏好, hg.软偏好覆盖硬约束], covered: true}
+  - {id: p12, case: "02", 可判点: "临界2472股按100股单位应取2400，写2500仍超限", maps: [d.临界数量-取整后数量], covered: true, 补录: true}
+  - {id: p13, case: "02", 可判点: "允许在仍超限时做T并回补以维持敞口", maps: [hg.超限期间扩大敞口], covered: true, 补录: true}
+  - {id: p14, case: "02", 可判点: "只设终态检查而无使RC达标的动作路径", maps: [d.硬约束-软偏好, hg.把超限方案标合规], covered: true}
+  - {id: p15, case: "02", 可判点: "组合波动率算错导致减仓量结论错", maps: [hg.分解型占比失去含义, d.权重上限-风险贡献上限], covered: true}
+  - {id: p16, case: "02", 可判点: "把未获交易授权的可赎回短债排除出低风险资产口径", maps: [d.可赎回性-交易授权], covered: true}
+  - {id: p17, case: "02", 可判点: "压力情景只计首日跌幅漏后续跳空复合", maps: [d.最不利情景-任一情景], covered: true}
+  - {id: p18, case: "02", 可判点: "manifest 未对无法计算项填 NOT_COMPUTED 及原因", maps: [d.逐订单证据-汇总计数], covered: true, 补录: true}
+  - {id: p19, case: "02", 可判点: "低置信OCR/送股成本异常/未来与盘中数据须排除", maps: [d.可用数据-低置信与未来数据], covered: true, 补录: true}
+
+  # ── case03 ──
+  - {id: p20, case: "03", 可判点: "两套总资产记录须并列并写明采用哪一个及理由", maps: [nr.双口径并列], covered: true}
+  - {id: p21, case: "03", 可判点: "保留3660元未决差异不自行解释", maps: [d.未决差异-已解释差异, nr.保留未决差异], covered: true}
+  - {id: p22, case: "03", 可判点: "跌停时不沿用正常成交结果，明确保留超限状态", maps: [d.拟卖出-实际可完成, nr.不把受限证券当确定资金来源], covered: true}
+  - {id: p23, case: "03", 可判点: "区分「拟卖出」与「实际可完成」", maps: [d.拟卖出-实际可完成, nr.区分拟卖出与实际可完成], covered: true}
+  - {id: p24, case: "03", 可判点: "附件金额算错使正文「满足全部约束」不可采信", maps: [hg.正文与附件矛盾], covered: true, 补录: true}
+  - {id: p25, case: "03", 可判点: "使用了另一研究日期并改动基础数据与阈值", maps: [hg.对象口径期间错误], covered: true}
+  - {id: p26, case: "03", 可判点: "外币敞口漏计该币种现金导致误判约束恢复", maps: [d.证券口径敞口-含现金敞口, nr.集中度逐层], covered: true, 补录: true}
+  - {id: p27, case: "03", 可判点: "情景表卖出所得计入现金却未同步扣减证券市值", maps: [hg.账户勾稽漏计或口径自相矛盾], covered: true, 补录: true}
+  - {id: p28, case: "03", 可判点: "当日买入批次受T+1限制须单独识别", maps: [tx.数量可得性四档], covered: true}
+
+  # ── case04 ──
+  - {id: p29, case: "04", 可判点: "保留全部某类持仓时最低卖出量取整错（3400应为3500）", maps: [d.临界数量-取整后数量], covered: true, 补录: true}
+  - {id: p30, case: "04", 可判点: "「跌幅超5%即继续减仓」的触发方向与自身测算矛盾", maps: [d.触发方向自检], covered: true, 补录: true}
+  - {id: p31, case: "04", 可判点: "误判三项约束均不可行，实际仅一项不可消除", maps: [d.可消除约束-不可消除约束], covered: true}
+  - {id: p32, case: "04", 可判点: "账户核对漏计ETF致净资产错且与后续口径矛盾", maps: [hg.账户勾稽漏计或口径自相矛盾], covered: true, 补录: true}
+  - {id: p33, case: "04", 可判点: "工作簿出现 #NAME? 且部分结果硬编码", maps: [hg.工作簿公式错误或硬编码], covered: true, 补录: true}
+  - {id: p34, case: "04", 可判点: "擅自把题面25%的冲击改成20%", maps: [hg.对象口径期间错误], covered: true}
+  - {id: p35, case: "04", 可判点: "两个批次未独立列示", maps: [d.批次归因-券商端可指定], covered: true, 补录: true}
+
+  # ── case05 ──
+  - {id: p36, case: "05", 可判点: "须完成盈亏与仓位影响、集中风险、三情景、if-then 纪律等核心件", maps: [hg.遗漏核心交付主工件], covered: true}
+  - {id: p37, case: "05", 可判点: "估值/行业数据/价格目标未说明来源", maps: [d.材料内派生指标-材料外来源], covered: true}
+  - {id: p38, case: "05", 可判点: "风险信息不足时仍给明确减仓比例，降级不足", maps: [d.单一路径-多情景降级], covered: true, 补录: true}
+  - {id: p39, case: "05", 可判点: "须明确数据截止时间并主动披露未知信息", maps: [d.材料内派生指标-材料外来源], covered: true}
+  - {id: p40, case: "05", 可判点: "动作应关注组合权重而非单纯个股涨跌", maps: [d.组合锚-个股涨跌锚], covered: true, 补录: true}
+  - {id: p41, case: "05", 可判点: "成本税费/可卖数量/交易费用等执行层约束未展开", maps: [d.执行层约束-只给观点], covered: true, 补录: true}
+  - {id: p42, case: "05", 可判点: "唯一交付件是行情走势展示，无完整持仓管理方案", maps: [d.决策交付件-行情展示件, hg.遗漏核心交付主工件], covered: true}
+  - {id: p43, case: "05", 可判点: "附件图表质量一般（不作为胜负依据）", maps: [nqs.图表是否精美], covered: true}
+
+  # ── case06 ──
+  - {id: p44, case: "06", 可判点: "把周六当成第三个交易日且与正文日期不一致", maps: [d.日历日-交易日], covered: true, 补录: true}
+  - {id: p45, case: "06", 可判点: "「确保成交」「确定性最高」这类表述说得太满", maps: [d.限价委托-确定成交], covered: true, 补录: true}
+  - {id: p46, case: "06", 可判点: "未把完全不依赖某标的成交的兜底路径算清楚", maps: [d.主路径-后手], covered: true, 补录: true}
+  - {id: p47, case: "06", 可判点: "主题集中度漏判某主题已超上限", maps: [d.证券口径敞口-含现金敞口, nr.集中度逐层], covered: true, 补录: true}
+  - {id: p48, case: "06", 可判点: "不拿一笔不确定成交去证明组合已合规", maps: [d.拟卖出-实际可完成], covered: true}
+
+  # ── case07 ──
+  - {id: p49, case: "07", 可判点: "收盘后仍把持仓列为「当前可执行」", maps: [d.账面数量-当下可执行, tx.数量可得性四档], covered: true}
+  - {id: p50, case: "07", 可判点: "三套NAV并列且不强行补平残差", maps: [nr.双口径并列, d.未决差异-已解释差异], covered: true}
+  - {id: p51, case: "07", 可判点: "风险贡献188.8%与附件58.20%矛盾且相加远超100%", maps: [hg.分解型占比失去含义, hg.正文与附件矛盾], covered: true}
+  - {id: p52, case: "07", 可判点: "用除息参考价替代重建成本得出0%总回报", maps: [d.重建成本-除息参考价], covered: true}
+  - {id: p53, case: "07", 可判点: "擅自假定资金已划出并用划出后NAV判硬约束", maps: [d.划出前净资产-划出后净资产], covered: true}
+  - {id: p54, case: "07", 可判点: "压力损失已超上限却仍标PASS并写入规则", maps: [hg.把超限方案标合规, d.最不利情景-任一情景], covered: true}
+  - {id: p55, case: "07", 可判点: "5%ADV参与率与100股单位等执行约束须覆盖", maps: [d.执行层约束-只给观点], covered: true, 补录: true}
+
+  # ── case08 ──
+  - {id: p56, case: "08", 可判点: "情景清单混用追加量与总量", maps: [d.累计总卖出量-本阶段追加量], covered: true}
+  - {id: p57, case: "08", 可判点: "自行新增材料外的截止日期", maps: [d.日历日-交易日], covered: true, 补录: true}
+  - {id: p58, case: "08", 可判点: "误读题面把可执行的风险预案判成不可执行", maps: [d.可消除约束-不可消除约束, hg.对象口径期间错误], covered: true}
+  - {id: p59, case: "08", 可判点: "表头把触发时点比例标成「支付后集中度」", maps: [d.指标标签-指标口径], covered: true, 补录: true}
+  - {id: p60, case: "08", 可判点: "部分成交只记实际，剩余需求超阈值即报不可执行风险", maps: [d.拟卖出-实际可完成, d.主路径-后手], covered: true}
+  - {id: p61, case: "08", 可判点: "批次归属只是经济归因，券商端能否指定须另行确认", maps: [d.批次归因-券商端可指定], covered: true, 补录: true}
+
+统计:
+  可判点总数: 61
+  初稿命中: 33
+  初稿覆盖率: 0.541
+  补条目后命中: 61
+  最终覆盖率: 1.000
+  补录点数: 28
+  说明: >-
+    「补录: true」表示该可判点在 14 条 distinctions 的初稿里没有对应条目，是这次覆盖核验逼出来的。
+    补录点集中在三类：执行层细节（报价时效、ADV、整手取整、跨日金额）、
+    交付物一致性（正文与附件、工作簿公式、勾稽漏项）、以及日历与表述纪律。
+    覆盖率 100% 不等于 rubric 正确，只说明没有已知可判点落在 rubric 之外；
+    rubric 是否判得准要靠 G0 一致率，而 G0 不能自评（见人审卡卡 4）。
