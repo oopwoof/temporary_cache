@@ -1,0 +1,22 @@
+# 依赖清单
+本脚本仅使用 Python 3.8+ 标准库：csv, math, os, argparse, json, collections。
+无需 pip 安装任何第三方包；不联网。
+
+# 运行说明
+在附件目录可访问的环境执行：
+
+    python3 run_portfolio_review.py \
+        --daily  <持仓标的日线_20240102_20251230.csv> \
+        --lots   <持仓批次_20251231T1445.csv> \
+        --quote  <持仓标的报价_20251231T1445.csv> \
+        --acct   <账户与交易约束_20251231T1445.csv> \
+        --plans  <候选减仓方案_20251231.csv> \
+        --outdir ./out
+
+输出（outdir 下）：
+- 当前持仓风险快照.csv
+- 候选方案约束矩阵.csv
+- 批次卖出分配.csv
+- run_summary.json（控制台摘要，含逐订单费用/参与率/CVaR）
+
+脚本不硬编码价格、数量或推荐方案；所有数字由五个原始附件重算。

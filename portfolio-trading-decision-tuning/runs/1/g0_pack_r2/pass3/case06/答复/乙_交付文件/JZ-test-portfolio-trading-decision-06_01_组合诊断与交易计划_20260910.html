@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>投资组合诊断与交易计划 | 审阅时点 2026-09-10 14:20</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  :root { --primary:#1a3a5c; --accent:#c0392b; --ok:#27ae60; --warn:#f39c12; --bg:#f7f8fa; --card:#fff; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:#2c3e50; line-height:1.7; }
+  .wrap { max-width:1100px; margin:0 auto; padding:24px 16px; }
+  header { background:linear-gradient(135deg,#1a3a5c,#2c5f8a); color:#fff; padding:32px 28px; border-radius:12px; margin-bottom:24px; }
+  header h1 { font-size:24px; margin-bottom:8px; }
+  header .meta { font-size:13px; opacity:.85; }
+  .alert { padding:14px 18px; border-radius:8px; margin:16px 0; font-size:14px; }
+  .alert-red { background:#fdecea; border-left:4px solid var(--accent); color:#922b21; }
+  .alert-yellow { background:#fef9e7; border-left:4px solid var(--warn); color:#7d6608; }
+  .alert-green { background:#eafaf1; border-left:4px solid var(--ok); color:#1e8449; }
+  .card { background:var(--card); border-radius:10px; padding:24px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .card h2 { font-size:18px; color:var(--primary); border-bottom:2px solid #eaecef; padding-bottom:10px; margin-bottom:16px; }
+  .card h3 { font-size:15px; color:var(--primary); margin:18px 0 10px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; margin:12px 0; }
+  th,td { padding:9px 10px; text-align:right; border-bottom:1px solid #eef0f2; }
+  th:first-child,td:first-child { text-align:left; }
+  th { background:#f0f3f7; color:var(--primary); font-weight:600; }
+  tr:hover td { background:#f8f9fb; }
+  .num { font-variant-numeric:tabular-nums; }
+  .pos { color:var(--ok); font-weight:600; }
+  .neg { color:var(--accent); font-weight:600; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+  .tag-ok { background:#eafaf1; color:var(--ok); }
+  .tag-bad { background:#fdecea; color:var(--accent); }
+  .tag-warn { background:#fef9e7; color:var(--warn); }
+  .chart { width:100%; height:340px; margin:12px 0; }
+  .chart-sm { height:280px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:768px){ .grid2{grid-template-columns:1fr;} }
+  .plan-day { border:1px solid #e0e4e8; border-radius:8px; padding:16px; margin:14px 0; }
+  .plan-day h4 { color:var(--primary); font-size:15px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px dashed #ddd; }
+  .trade { background:#f8f9fb; border-radius:6px; padding:12px 14px; margin:10px 0; font-size:13px; }
+  .trade .if-then { font-weight:600; color:var(--primary); }
+  .trade ul { margin:6px 0 0 18px; }
+  .trade li { margin:3px 0; }
+  .note { font-size:12px; color:#7f8c8d; margin-top:6px; }
+  .risk-level { display:flex; gap:10px; margin:10px 0; flex-wrap:wrap; }
+  .risk-box { flex:1; min-width:200px; padding:12px; border-radius:6px; font-size:13px; }
+  .risk-confirmed { background:#fdecea; border-left:3px solid var(--accent); }
+  .risk-inferred { background:#fef9e7; border-left:3px solid var(--warn); }
+  .risk-missing { background:#ebf5fb; border-left:3px solid #2980b9; }
+  .disclaimer { font-size:12px; color:#95a5a6; padding:16px; background:#f4f6f7; border-radius:8px; margin-top:20px; }
+  .summary-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
+  @media(max-width:768px){ .summary-grid{grid-template-columns:repeat(2,1fr);} }
+  .kpi { text-align:center; padding:14px 8px; border-radius:8px; background:#f0f3f7; }
+  .kpi .v { font-size:22px; font-weight:700; }
+  .kpi .l { font-size:12px; color:#7f8c8d; margin-top:4px; }
+  .kpi.bad .v { color:var(--accent); }
+  .kpi.ok .v { color:var(--ok); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>投资组合诊断与未来三个交易日执行计划</h1>
+  <div class="meta">审阅时点：2026-09-10 14:20（交易日未收盘） | 账户基础货币：人民币 | 客户约束：控制回撤、保留中期上涨机会</div>
+</header>
+
+<div class="alert alert-red">
+  <strong>核心结论：当前组合需立即调整。</strong>三项硬约束被突破——铜资源股A单一标的占比39.24%（上限22%）、风险资产仓位71.15%（上限70%）、指定压力情景损失9.07%（上限6%）。光模块股B停牌、新能源股C跌停导致可执行通道受限，须以铜A减仓+恒生科技ETF D减仓为主路径，分三日执行。
+</div>
+
+<div class="summary-grid">
+  <div class="kpi bad"><div class="v">1,009,200</div><div class="l">总资产（元）· 勾稽一致</div></div>
+  <div class="kpi bad"><div class="v">71.15%</div><div class="l">风险资产仓位 · 超限</div></div>
+  <div class="kpi bad"><div class="v">39.24%</div><div class="l">铜A单一标的 · 严重超限</div></div>
+  <div class="kpi bad"><div class="v">-9.07%</div><div class="l">压力情景损失 · 严重超限</div></div>
+</div>
+
+<!-- ==================== 一、勾稽核对 ==================== -->
+<div class="card">
+<h2>一、券商总资产勾稽核对</h2>
+<p>以2026-09-10 14:20为时点，将证券市值、人民币现金、港币现金（按0.9200折算）、冻结申购款逐项加总，与券商显示总资产核对。</p>
+<table>
+  <thead><tr><th>项目</th><th>金额（元）</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>铜资源股A 市值</td><td class="num">396,000.00</td><td>8000股 × 49.50元</td></tr>
+    <tr><td>光模块股B 市值</td><td class="num">216,000.00</td><td>1800股 × 120.00元（9/9收盘价，停牌）</td></tr>
+    <tr><td>新能源股C 市值</td><td class="num">60,000.00</td><td>1000股 × 60.00元（跌停价）</td></tr>
+    <tr><td>恒生科技ETF D 市值</td><td class="num">46,000.00</td><td>5000份 × 10.00港币 × 0.9200</td></tr>
+    <tr><td><strong>证券市值合计</strong></td><td class="num"><strong>718,000.00</strong></td><td></td></tr>
+    <tr><td>人民币可用现金</td><td class="num">220,000.00</td><td>未冻结</td></tr>
+    <tr><td>港币可用现金（折算）</td><td class="num">55,200.00</td><td>60,000 HKD × 0.9200</td></tr>
+    <tr><td>冻结申购款</td><td class="num">16,000.00</td><td>预计9/12解冻，计入总资产但不可自由使用</td></tr>
+    <tr><td><strong>现金类合计</strong></td><td class="num"><strong>291,200.00</strong></td><td></td></tr>
+    <tr style="background:#f0f3f7;font-weight:700;"><td>计算总资产</td><td class="num">1,009,200.00</td><td></td></tr>
+    <tr style="background:#eafaf1;font-weight:700;"><td>券商显示总资产</td><td class="num">1,009,200.00</td><td><span class="tag tag-ok">勾稽一致 ✓</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ==================== 二、持仓重算 ==================== -->
+<div class="card">
+<h2>二、持仓实际数量、调整后成本与未实现盈亏</h2>
+<p>依据成交确认单（L01–L07）、公司行动记录（CA01）及成交日汇率重新计算。低置信度OCR（D01）、客户口述成本（D02）均不予采用。</p>
+
+<h3>2.1 铜资源股A</h3>
+<table>
+  <thead><tr><th>成交日</th><th>方向</th><th>数量(股)</th><th>成交价(元)</th><th>费用(元)</th><th>成本金额(元)</th></tr></thead>
+  <tbody>
+    <tr><td>2026-05-08</td><td>买入</td><td class="num">4,000</td><td class="num">45.00</td><td class="num">225</td><td class="num">180,225</td></tr>
+    <tr><td>2026-07-16</td><td>买入</td><td class="num">2,000</td><td class="num">50.00</td><td class="num">100</td><td class="num">100,100</td></tr>
+    <tr><td>2026-09-10 10:05</td><td>买入</td><td class="num">2,000</td><td class="num">52.00</td><td class="num">104</td><td class="num">104,104</td></tr>
+    <tr style="font-weight:700;background:#f0f3f7;"><td>合计</td><td></td><td class="num">8,000</td><td></td><td class="num">429</td><td class="num">384,429</td></tr>
+  </tbody>
+</table>
+<p><strong>调整后平均成本 = 384,429 / 8,000 = 48.0536 元/股</strong>；当前市值 396,000 元；未实现盈亏 <span class="pos">+11,571 元（+3.01%）</span>。其中2000股为当日买入，受T+1限制，9/10可卖仅6000股。</p>
+<div class="alert alert-yellow"><strong>冲突处理：</strong>投资者口述成本约49.25元（D02，未经核对）与重算值48.05元不符。采用成交确认单+佣金规费重算值，口述值仅作参考，不纳入计算。</div>
+
+<h3>2.2 光模块股B</h3>
+<table>
+  <thead><tr><th>成交日</th><th>方向</th><th>数量(股)</th><th>成交价(元)</th><th>费用(元)</th><th>成本金额(元)</th></tr></thead>
+  <tbody>
+    <tr><td>2026-04-18</td><td>买入</td><td class="num">1,200</td><td class="num">150.00</td><td class="num">360</td><td class="num">180,360</td></tr>
+    <tr><td>2026-08-25 除权</td><td>10转5</td><td class="num">+600</td><td colspan="2" style="text-align:center">总成本不变，新增股份9/1起可交易</td><td class="num">0</td></tr>
+    <tr style="font-weight:700;background:#f0f3f7;"><td>合计</td><td></td><td class="num">1,800</td><td></td><td></td><td class="num">180,360</td></tr>
+  </tbody>
+</table>
+<p><strong>调整后平均成本 = 180,360 / 1,800 = 100.20 元/股</strong>（转增摊薄后）；当前市值 216,000 元（按9/9收盘价120元，9/10停牌无可成交实时价）；未实现盈亏 <span class="pos">+35,640 元（+19.76%）</span>。</p>
+<div class="alert alert-yellow"><strong>冲突处理：</strong>OCR截图显示1200股、成本150.15元（D01，置信度62%，截图时间不明）。该数据形成于转增股份到账前，且数量与当前1800股不符，不予采用。以交易所公司行动记录（CA01）+成交确认单为准。</div>
+
+<h3>2.3 新能源股C</h3>
+<table>
+  <thead><tr><th>成交日</th><th>方向</th><th>数量(股)</th><th>成交价(元)</th><th>费用(元)</th><th>成本金额(元)</th></tr></thead>
+  <tbody>
+    <tr><td>2026-06-03</td><td>买入</td><td class="num">1,000</td><td class="num">68.00</td><td class="num">102</td><td class="num">68,102</td></tr>
+  </tbody>
+</table>
+<p><strong>调整后平均成本 = 68.102 元/股</strong>；当前市值 60,000 元（当日跌停价60元，14:20买一无有效挂单）；未实现盈亏 <span class="neg">-8,102 元（-11.90%）</span>。</p>
+
+<h3>2.4 恒生科技ETF D</h3>
+<table>
+  <thead><tr><th>成交日</th><th>数量(份)</th><th>成交价(HKD)</th><th>费用(HKD)</th><th>成交日汇率</th><th>人民币成本(元)</th></tr></thead>
+  <tbody>
+    <tr><td>2026-03-12</td><td class="num">3,000</td><td class="num">11.60</td><td class="num">34.80</td><td class="num">0.9400</td><td class="num">32,744.71</td></tr>
+    <tr><td>2026-07-02</td><td class="num">2,000</td><td class="num">10.80</td><td class="num">21.60</td><td class="num">0.9300</td><td class="num">20,108.09</td></tr>
+    <tr style="font-weight:700;background:#f0f3f7;"><td>合计</td><td class="num">5,000</td><td></td><td class="num">56.40</td><td></td><td class="num">52,852.80</td></tr>
+  </tbody>
+</table>
+<p><strong>港币总成本 56,456.40 HKD → 平均成本 11.2913 HKD/份</strong>；<strong>人民币总成本（成交日汇率加权）52,852.80 元 → 平均成本 10.5706 元/份</strong>。当前港币市值50,000 HKD，按0.9200折人民币46,000元；未实现盈亏 <span class="neg">-6,852.80 元（-12.97%）</span>。允许T+0卖出，申报单位100份，卖出所得为港币需换汇后方可作A股资金。</p>
+
+<div class="alert alert-green"><strong>汇总：</strong>持仓总成本 685,743.80 元，当前市值 718,000.00 元，组合未实现盈亏 <span class="pos">+32,256.20 元（+4.70%）</span>。</div>
+</div>
+
+<!-- ==================== 三、风险约束 ==================== -->
+<div class="card">
+<h2>三、风险约束合规检查</h2>
+<p>客户书面约束（B03/B04）：风险资产≤70%、单一标的≤22%、同一主题≤35%、未对冲外币敞口≤25%、可自由现金≥25%、一周压力情景损失≤6%。比例均以总资产人民币价值计算。</p>
+
+<div id="chart-compliance" class="chart"></div>
+
+<table>
+  <thead><tr><th>约束项</th><th>当前值</th><th>上限/下限</th><th>状态</th><th>缺口</th></tr></thead>
+  <tbody>
+    <tr><td>风险资产仓位</td><td class="num">71.15%</td><td class="num">≤70%</td><td><span class="tag tag-bad">超限</span></td><td class="neg">+1.15pp</td></tr>
+    <tr><td>铜资源股A（单一标的）</td><td class="num">39.24%</td><td class="num">≤22%</td><td><span class="tag tag-bad">严重超限</span></td><td class="neg">+17.24pp</td></tr>
+    <tr><td>光模块股B（单一标的）</td><td class="num">21.40%</td><td class="num">≤22%</td><td><span class="tag tag-warn">接近上限</span></td><td class="num">+0.60pp</td></tr>
+    <tr><td>新能源股C（单一标的）</td><td class="num">5.95%</td><td class="num">≤22%</td><td><span class="tag tag-ok">合规</span></td><td></td></tr>
+    <tr><td>恒生科技ETF D（单一标的）</td><td class="num">4.56%</td><td class="num">≤22%</td><td><span class="tag tag-ok">合规</span></td><td></td></tr>
+    <tr><td>资源周期主题（铜A）</td><td class="num">39.24%</td><td class="num">≤35%</td><td><span class="tag tag-bad">超限</span></td><td class="neg">+4.24pp</td></tr>
+    <tr><td>科技成长主题（B+D）</td><td class="num">25.96%</td><td class="num">≤35%</td><td><span class="tag tag-ok">合规</span></td><td></td></tr>
+    <tr><td>新能源主题（C）</td><td class="num">5.95%</td><td class="num">≤35%</td><td><span class="tag tag-ok">合规</span></td><td></td></tr>
+    <tr><td>未对冲外币敞口</td><td class="num">10.03%</td><td class="num">≤25%</td><td><span class="tag tag-ok">合规</span></td><td></td></tr>
+    <tr><td>可自由使用现金</td><td class="num">27.27%</td><td class="num">≥25%</td><td><span class="tag tag-warn">接近下限</span></td><td class="num">+2.27pp</td></tr>
+    <tr><td>指定压力情景损失</td><td class="num neg">-9.07%</td><td class="num">≥-6%</td><td><span class="tag tag-bad">严重超限</span></td><td class="neg">-3.07pp</td></tr>
+  </tbody>
+</table>
+<div class="note">主题划分说明：按行业/投资主题归类——资源周期（铜A）、科技成长（光模块B+恒生科技ETF D，二者均属科技赛道且相关系数0.65）、新能源（C）。若将全部A股权益视为一个主题，则A股占比66.59%亦超限，但通常"主题"指行业/投资主题而非市场分类。</div>
+</div>
+
+<!-- ==================== 四、波动率与相关性 ==================== -->
+<div class="card">
+<h2>四、组合年化波动率与相关性聚集风险</h2>
+
+<div class="grid2">
+  <div>
+    <h3>4.1 资产配置与风险贡献</h3>
+    <div id="chart-allocation" class="chart chart-sm"></div>
+  </div>
+  <div>
+    <h3>4.2 相关性矩阵热力图</h3>
+    <div id="chart-corr" class="chart chart-sm"></div>
+  </div>
+</div>
+
+<h3>4.3 组合波动率测算</h3>
+<table>
+  <thead><tr><th>指标</th><th>数值</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>铜A 年化波动率</td><td class="num">42%</td><td>近一年估计（V01）</td></tr>
+    <tr><td>光模块B 年化波动率</td><td class="num">55%</td><td>近一年估计，停牌期间参数未更新（V02）</td></tr>
+    <tr><td>新能源C 年化波动率</td><td class="num">48%</td><td>近一年估计（V03）</td></tr>
+    <tr><td>恒生科技D 价格波动率</td><td class="num">32%</td><td>不含港币汇率波动（V04）</td></tr>
+    <tr><td>港币兑人民币 波动率</td><td class="num">4%</td><td>与ETF价格冲击分开处理（V05）</td></tr>
+    <tr><td>D 人民币收益波动率（含汇率）</td><td class="num">32.25%</td><td>√(32%²+4%²)，假设价格与汇率不相关</td></tr>
+    <tr style="font-weight:700;background:#f0f3f7;"><td>组合年化波动率（含现金）</td><td class="num">25.66%</td><td>现金权重28.85%，波动率为0</td></tr>
+    <tr><td>风险资产子集年化波动率</td><td class="num">36.06%</td><td>剔除现金后</td></tr>
+  </tbody>
+</table>
+
+<h3>4.4 边际风险贡献</h3>
+<table>
+  <thead><tr><th>标的</th><th>权重</th><th>对组合方差贡献</th><th>解读</th></tr></thead>
+  <tbody>
+    <tr><td>铜资源股A</td><td class="num">39.24%</td><td class="num neg">53.5%</td><td>权重最高且波动率不低，是组合风险第一来源</td></tr>
+    <tr><td>光模块股B</td><td class="num">21.40%</td><td class="num">33.8%</td><td>波动率最高(55%)，与C/D相关性高，风险贡献远超其权重</td></tr>
+    <tr><td>新能源股C</td><td class="num">5.95%</td><td class="num">8.2%</td><td>权重低但波动率高，与B相关性0.72</td></tr>
+    <tr><td>恒生科技ETF D</td><td class="num">4.56%</td><td class="num">4.5%</td><td>波动率最低，但与B/C相关性均>0.65，分散效果有限</td></tr>
+  </tbody>
+</table>
+
+<h3>4.5 相关性聚集风险</h3>
+<p><strong>已确认的聚集：</strong>光模块B、新能源C、恒生科技D三者两两相关系数分别为0.72、0.65、0.68，形成"科技成长"聚集块。在科技板块系统性下跌时，三者将同步承压，分散效果显著弱于表面权重所示。铜A与该聚集块相关性较低（0.25–0.55），提供一定分散，但其自身权重过大导致集中风险。</p>
+<p><strong>合理推断：</strong>B因重大资产重组停牌，复牌后可能出现跳空，其与市场的短期相关性可能偏离历史估计；C连续两日放量跌停，流动性恶化，实际可执行卖出价格可能差于账面值。</p>
+</div>
+
+<!-- ==================== 五、压力测试 ==================== -->
+<div class="card">
+<h2>五、指定压力情景损失测算（S01）</h2>
+<p>客户指定一周冲击：铜A -12%、光模块B -15%、新能源C -10%、恒生科技D价格 -8%、港币兑人民币 -2%。现金及冻结申购款面值不变。</p>
+
+<div id="chart-stress" class="chart chart-sm"></div>
+
+<table>
+  <thead><tr><th>项目</th><th>当前市值(元)</th><th>冲击后市值(元)</th><th>损失(元)</th><th>损失占比</th></tr></thead>
+  <tbody>
+    <tr><td>铜资源股A</td><td class="num">396,000</td><td class="num">348,480</td><td class="num neg">-47,520</td><td class="num">51.9%</td></tr>
+    <tr><td>光模块股B</td><td class="num">216,000</td><td class="num">183,600</td><td class="num neg">-32,400</td><td class="num">35.4%</td></tr>
+    <tr><td>新能源股C</td><td class="num">60,000</td><td class="num">54,000</td><td class="num neg">-6,000</td><td class="num">6.6%</td></tr>
+    <tr><td>恒生科技D（价格+汇率）</td><td class="num">46,000</td><td class="num">41,474</td><td class="num neg">-4,526</td><td class="num">4.9%</td></tr>
+    <tr><td>港币现金（汇率）</td><td class="num">55,200</td><td class="num">54,096</td><td class="num neg">-1,104</td><td class="num">1.2%</td></tr>
+    <tr><td>人民币现金+冻结</td><td class="num">236,000</td><td class="num">236,000</td><td class="num">0</td><td class="num">0%</td></tr>
+    <tr style="font-weight:700;background:#fdecea;"><td>合计</td><td class="num">1,009,200</td><td class="num">917,650</td><td class="num neg">-91,550</td><td class="num neg">-9.07%</td></tr>
+  </tbody>
+</table>
+<div class="alert alert-red"><strong>压力测试结论：</strong>指定情景下组合损失9.07%，远超客户6%上限3.07个百分点。铜A和光模块B合计贡献损失的87.3%，是降风险的核心靶点。B停牌无法操作，因此短期只能通过减仓铜A和D来降低压力损失。</div>
+
+<h3>减仓后压力测试对比</h3>
+<table>
+  <thead><tr><th>方案</th><th>铜A占比</th><th>风险仓位</th><th>压力损失</th><th>自由现金</th><th>全部约束</th></tr></thead>
+  <tbody>
+    <tr><td>当前（未调整）</td><td class="num">39.24%</td><td class="num">71.15%</td><td class="num neg">-9.07%</td><td class="num">27.27%</td><td><span class="tag tag-bad">不满足</span></td></tr>
+    <tr><td>卖3600股A+5000份D</td><td class="num">21.58%</td><td class="num">48.93%</td><td class="num neg">-6.50%</td><td class="num">49.48%</td><td><span class="tag tag-bad">压力仍超</span></td></tr>
+    <tr><td>卖4000股A+5000份D</td><td class="num">19.62%</td><td class="num">46.97%</td><td class="num neg">-6.27%</td><td class="num">51.45%</td><td><span class="tag tag-bad">压力仍超</span></td></tr>
+    <tr style="background:#eafaf1;"><td><strong>卖4500股A+5000份D（目标方案）</strong></td><td class="num">17.17%</td><td class="num">44.52%</td><td class="num pos">-5.97%</td><td class="num">53.90%</td><td><span class="tag tag-ok">全部满足 ✓</span></td></tr>
+    <tr><td>卖4000股A+5000份D+500股C</td><td class="num">19.62%</td><td class="num">44.00%</td><td class="num pos">-5.97%</td><td class="num">54.42%</td><td><span class="tag tag-ok">全部满足 ✓</span></td></tr>
+  </tbody>
+</table>
+<div class="note">在B停牌、C跌停无法有效成交的约束下，仅靠A和D减仓需至少卖出4500股铜A+全部5000份D才能使压力损失降至6%以内。若C在Day2/3开板可卖出500股，则铜A可少卖500股（卖4000股即可），更符合客户保留铜A的偏好。</div>
+</div>
+
+<!-- ==================== 六、技术状态 ==================== -->
+<div class="card">
+<h2>六、各标的技术状态分析</h2>
+<table>
+  <thead><tr><th>标的</th><th>现价</th><th>MA20</th><th>MA60</th><th>排列</th><th>RSI(14)</th><th>支撑</th><th>压力</th><th>技术状态</th></tr></thead>
+  <tbody>
+    <tr><td>铜资源股A</td><td class="num">49.50</td><td class="num">48.00</td><td class="num">44.00</td><td>多头</td><td class="num">63</td><td class="num">46.80</td><td class="num">52.00</td><td><span class="tag tag-ok">偏强，接近压力</span></td></tr>
+    <tr><td>光模块股B</td><td class="num">120.00*</td><td class="num">126.00</td><td class="num">110.00</td><td>中性</td><td class="num">48</td><td class="num">112.00</td><td class="num">135.00</td><td><span class="tag tag-warn">停牌，方向不明</span></td></tr>
+    <tr><td>新能源股C</td><td class="num">60.00</td><td class="num">65.00</td><td class="num">72.00</td><td>空头</td><td class="num">27</td><td class="num">60.00</td><td class="num">66.00</td><td><span class="tag tag-bad">极弱，跌停超卖</span></td></tr>
+    <tr><td>恒生科技ETF D</td><td class="num">10.00HKD</td><td class="num">10.40</td><td class="num">10.90</td><td>空头</td><td class="num">38</td><td class="num">9.80HKD</td><td class="num">10.60HKD</td><td><span class="tag tag-warn">偏弱， near支撑</span></td></tr>
+  </tbody>
+</table>
+<div class="note">*光模块B现价为9月9日收盘价，9月10日因筹划重大资产重组停牌，无可成交实时价格。停牌前价格位于MA20下方、MA60上方，RSI中性。复牌方向取决于重组方案，不得假设必然上涨或按120元成交。</div>
+
+<h3>技术面解读</h3>
+<ul style="margin-left:20px;font-size:14px;">
+  <li><strong>铜A：</strong>多头排列，RSI 63偏强但未超买，成交量为20日均量1.3倍，当前价49.50接近压力位52.00。技术面支持在当前价位减仓，但若跌破46.80支撑则趋势转弱，应加速减仓。</li>
+  <li><strong>光模块B：</strong>停牌中，技术指标失效。复牌后需重新评估。112元为关键支撑，135元为压力。</li>
+  <li><strong>新能源C：</strong>空头排列，RSI 27超卖，连续第二日放量下跌，当前价60.00即跌停价也是近端支撑。超卖可能引发技术性反弹，但趋势未反转前不宜加仓。跌停状态下卖出委托可能无法成交。</li>
+  <li><strong>恒生科技D：</strong>空头排列，RSI 38偏弱，现价10.00接近支撑9.80。T+0可卖，是当前流动性最好的减仓标的。</li>
+</ul>
+</div>
+
+<!-- ==================== 七、风险分级 ==================== -->
+<div class="card">
+<h2>七、风险分级：已确认 / 合理推断 / 缺少证据</h2>
+<div class="risk-level">
+  <div class="risk-box risk-confirmed">
+    <strong style="color:var(--accent);">已确认的风险</strong>
+    <ul style="margin:8px 0 0 16px;font-size:12px;">
+      <li>铜A单一标的39.24%超限（≤22%）</li>
+      <li>风险资产仓位71.15%超限（≤70%）</li>
+      <li>压力情景损失9.07%超限（≤6%）</li>
+      <li>资源周期主题39.24%超限（≤35%）</li>
+      <li>光模块B停牌，9/10–9/14无法交易</li>
+      <li>新能源C跌停，卖出不保证成交</li>
+      <li>铜A 2000股T+1锁定，9/10可卖仅6000股</li>
+      <li>B/C/D科技聚集，相关系数0.65–0.72</li>
+    </ul>
+  </div>
+  <div class="risk-box risk-inferred">
+    <strong style="color:var(--warn);">合理推断</strong>
+    <ul style="margin:8px 0 0 16px;font-size:12px;">
+      <li>B复牌后可能跳空（方向取决于重组方案），历史波动率55%意味着复牌波动可能较大</li>
+      <li>C连续放量跌停，流动性恶化，若开板实际成交价可能低于60元</li>
+      <li>铜A接近压力位52元，短期上行空间有限，减仓时机尚可</li>
+      <li>D接近支撑9.80港币，若跌破可能加速下行，宜在支撑上方减仓</li>
+      <li>港币兑人民币波动率仅4%，汇率风险相对可控，但压力情景中仍贡献1,104元损失</li>
+    </ul>
+  </div>
+  <div class="risk-box risk-missing">
+    <strong style="color:#2980b9;">仍缺少证据</strong>
+    <ul style="margin:8px 0 0 16px;font-size:12px;">
+      <li>光模块B重组方案细节、复牌确切日期和参考价</li>
+      <li>各标的实时买卖盘深度（无法判断限价单成交概率）</li>
+      <li>客户未来资金用途和税费个性化规则</li>
+      <li>投资者其他账户及负债情况</li>
+      <li>D价格与港币汇率的相关系数（计算中假设为0）</li>
+      <li>停牌期间B的公允价值估计（120元仅为停牌前价，非可成交价）</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ==================== 八、调整判断 ==================== -->
+<div class="card">
+<h2>八、调整必要性与调整顺序</h2>
+
+<div class="alert alert-red"><strong>判断：当前组合必须调整。</strong>三项硬约束被突破，其中铜A集中度和压力损失为严重超限。客户目标为"控制回撤优先、保留中期上涨机会"，当前组合在压力情景下损失9.07%，远超6%承受上限，不调整则客户风险约束被实质违反。</div>
+
+<h3>调整顺序（按优先级）</h3>
+<table>
+  <thead><tr><th>优先级</th><th>动作</th><th>标的</th><th>原因</th><th>可执行性</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>减仓</td><td>铜资源股A</td><td>单一标的+主题双超限，贡献53.5%组合方差和51.9%压力损失，是降风险最有效靶点</td><td>9/10可卖6000股，9/11起可卖8000股；技术面偏强利于卖出</td></tr>
+    <tr><td>2</td><td>减仓/清仓</td><td>恒生科技ETF D</td><td>客户愿意减少，T+0流动性最好，与B/C高相关分散效果差，减仓可同时降低外币敞口</td><td>T+0可卖5000份，申报单位100份；卖出得港币需换汇</td></tr>
+    <tr><td>3</td><td>减仓（条件性）</td><td>新能源股C</td><td>客户愿意减少，技术面极弱空头排列，但跌停限制成交；若能成交可减少铜A卖出量</td><td>9/10跌停可挂单但不保证成交；9/11起若开板可卖</td></tr>
+    <tr><td>4</td><td>持有观察（复牌后评估）</td><td>光模块股B</td><td>客户最希望保留，当前21.40%接近但未超22%上限；停牌无法操作；复牌后若占比超限或技术走弱再减</td><td>停牌中，预计不超过5个交易日（最早约9/17复牌），3个交易日内大概率无法操作</td></tr>
+  </tbody>
+</table>
+
+<h3>目标仓位（调整完成后）</h3>
+<table>
+  <thead><tr><th>标的</th><th>当前</th><th>目标</th><th>变动</th><th>目标占比</th></tr></thead>
+  <tbody>
+    <tr><td>铜资源股A</td><td class="num">8000股</td><td class="num">3500股</td><td class="num neg">-4500股</td><td class="num">17.17%</td></tr>
+    <tr><td>光模块股B</td><td class="num">1800股</td><td class="num">1800股（持有）</td><td class="num">0</td><td class="num">21.40%</td></tr>
+    <tr><td>新能源股C</td><td class="num">1000股</td><td class="num">500–1000股</td><td class="num neg">0–500股</td><td class="num">3.0–5.95%</td></tr>
+    <tr><td>恒生科技ETF D</td><td class="num">5000份</td><td class="num">0份（清仓）</td><td class="num neg">-5000份</td><td class="num">0%</td></tr>
+    <tr><td>现金类</td><td class="num">291,200元</td><td class="num">≈544,000元</td><td class="num pos">+253,000元</td><td class="num">≈53.9%</td></tr>
+    <tr style="font-weight:700;background:#f0f3f7;"><td>风险资产仓位</td><td class="num">71.15%</td><td class="num">≈44.5%</td><td></td><td></td></tr>
+    <tr style="font-weight:700;background:#eafaf1;"><td>压力情景损失</td><td class="num neg">-9.07%</td><td class="num pos">≈-5.97%</td><td></td><td></td></tr>
+  </tbody>
+</table>
+<div class="note">若C在Day2/3成功卖出500股，则铜A可仅减至4000股（占比19.62%），压力损失仍为-5.97%，更多保留客户偏好的铜A仓位。以下执行计划以"优先卖A+D，C能卖则替代部分A"为原则设计。</div>
+</div>
+
+<!-- ==================== 九、执行计划 ==================== -->
+<div class="card">
+<h2>九、未来三个交易日执行计划（if→then 条件化交易）</h2>
+<p>三个交易日：<strong>Day1 = 2026-09-10（周四，当日剩余时段）</strong>、<strong>Day2 = 2026-09-11（周五）</strong>、<strong>Day3 = 2026-09-14（周一，9/12–13为周末，冻结款预计9/12解冻后周一可用）</strong>。所有交易均为条件化建议，不代客户下单，不保证成交价格或止损有效性。</p>
+
+<!-- Day 1 -->
+<div class="plan-day">
+<h4>Day 1 — 2026-09-10（周四）当日剩余交易时段</h4>
+<p style="font-size:13px;color:#7f8c8d;">可操作：铜A（可卖6000股）、恒生科技D（T+0可卖5000份）、新能源C（跌停可挂单不保证成交）。不可操作：光模块B（停牌）。</p>
+
+<div class="trade">
+  <div class="if-then">交易①：卖出铜资源股A 3000股（30手）</div>
+  <ul>
+    <li><strong>if</strong> 铜A现价 ≥ 48.50元 且 买一量 ≥ 500股（流动性充足）<strong>→ then</strong> 以限价 49.00–49.50元 挂卖单3000股（100股整数倍）</li>
+    <li><strong>调整后目标：</strong>铜A剩余5000股，市值247,500元，占比24.52%（仍超22%，需Day2继续减仓）</li>
+    <li><strong>撤销条件：</strong>若铜A跌破46.80元（近端支撑），撤销未成交限价单，改为市价或更低限价尽快卖出（趋势转弱时降风险优先于价格）</li>
+    <li><strong>替代路径：</strong>若限价单在14:45前未成交，将限价下调至48.50元重新挂单；若仍无法成交，增加交易②中D的卖出量至5000份（清仓），铜A剩余减仓移至Day2</li>
+  </ul>
+</div>
+
+<div class="trade">
+  <div class="if-then">交易②：卖出恒生科技ETF D 3000份（30手）</div>
+  <ul>
+    <li><strong>if</strong> D现价 ≥ 9.80港币（近端支撑上方）<strong>→ then</strong> 以限价 9.90–10.00港币 挂卖单3000份（100份整数倍，T+0）</li>
+    <li><strong>调整后目标：</strong>D剩余2000份，市值18,400元，占比1.82%</li>
+    <li><strong>撤销条件：</strong>若D跌破9.80港币支撑，撤销限价单，观察是否加速下跌；若跌破9.60港币则以市价卖出剩余仓位</li>
+    <li><strong>跨币种注意：</strong>卖出所得为港币，到账后需发起港币→人民币换汇；换汇完成前不能作为A股可用资金。建议D卖出成交后立即发起换汇（保留约10,000港币备用即可）</li>
+  </ul>
+</div>
+
+<div class="trade">
+  <div class="if-then">交易③（尝试性）：卖出新能源股C 1000股</div>
+  <ul>
+    <li><strong>if</strong> C跌停板有买盘挂单（即使买一量小）<strong>→ then</strong> 以跌停价60.00元挂卖单1000股（排队等待成交）</li>
+    <li><strong>if</strong> C跌停板打开（现价回升至60元以上）<strong>→ then</strong> 以限价59.50–60.50元立即卖出1000股</li>
+    <li><strong>调整后目标：</strong>若成交，C清仓，可减少Day2铜A卖出量500股</li>
+    <li><strong>不成交处理：</strong>跌停状态下不保证成交，未成交委托收盘后自动失效，Day2继续挂单</li>
+    <li><strong>注意：</strong>不得因C超卖（RSI 27）而抄底加仓，趋势未反转前只减不加</li>
+  </ul>
+</div>
+</div>
+
+<!-- Day 2 -->
+<div class="plan-day">
+<h4>Day 2 — 2026-09-11（周五）</h4>
+<p style="font-size:13px;color:#7f8c8d;">铜A当日买入的2000股T+1解冻，可卖量增至8000股。光模块B大概率仍停牌。C若开板可正常卖出。</p>
+
+<div class="trade">
+  <div class="if-then">交易④：卖出铜资源股A 1500股（累计卖出4500股）</div>
+  <ul>
+    <li><strong>if</strong> Day1已卖出3000股 且 铜A现价 ≥ 47.50元 <strong>→ then</strong> 以限价 48.00–49.00元 挂卖单1500股</li>
+    <li><strong>if</strong> Day1铜A未成交或仅部分成交 <strong>→ then</strong> 将累计未卖出量合并，以限价47.50–48.50元挂单，目标当日累计卖出≥4000股</li>
+    <li><strong>调整后目标：</strong>铜A累计卖出4500股，剩余3500股，市值173,250元，占比17.17%（满足≤22%）</li>
+    <li><strong>止损/加速条件：</strong>若铜A跌破46.80元支撑，撤销限价单改市价卖出，确保降风险执行</li>
+    <li><strong>替代路径：</strong>若C在Day1或Day2已成功卖出≥500股，则铜A累计仅需卖出4000股（剩余4000股，占比19.62%），交易④数量减为1000股</li>
+  </ul>
+</div>
+
+<div class="trade">
+  <div class="if-then">交易⑤：卖出恒生科技ETF D 剩余2000份（清仓）</div>
+  <ul>
+    <li><strong>if</strong> Day1已卖出3000份 且 D现价 ≥ 9.70港币 <strong>→ then</strong> 以限价 9.80–10.00港币 挂卖单2000份，清仓D</li>
+    <li><strong>if</strong> Day1 D未成交 <strong>→ then</strong> 以限价9.70–9.90港币挂卖单5000份，目标当日清仓</li>
+    <li><strong>调整后目标：</strong>D清仓，外币敞口降至仅港币现金（约5.47%），远低于25%上限</li>
+    <li><strong>撤销条件：</strong>若D跌破9.60港币，撤销限价改市价卖出</li>
+    <li><strong>换汇：</strong>D全部卖出后，将港币现金中超出10,000港币的部分全部换为人民币，降低外币敞口</li>
+  </ul>
+</div>
+
+<div class="trade">
+  <div class="if-then">交易⑥：卖出新能源股C 500–1000股（若可成交）</div>
+  <ul>
+    <li><strong>if</strong> C未跌停 且 现价 ≥ 59.00元 <strong>→ then</strong> 以限价59.50–60.50元卖出500–1000股</li>
+    <li><strong>if</strong> C继续跌停 <strong>→ then</strong> 继续以跌停价挂卖单排队，不撤销</li>
+    <li><strong>调整后目标：</strong>若卖出500股，C剩余500股市值30,000元占比2.97%；若清仓则C占比0%</li>
+    <li><strong>联动：</strong>C每成功卖出500股，可相应减少铜A卖出量500股（见交易④替代路径）</li>
+  </ul>
+</div>
+
+<div class="trade">
+  <div class="if-then">港币换汇操作</div>
+  <ul>
+    <li><strong>if</strong> D卖出累计 ≥ 3000份 且 港币资金已到账 <strong>→ then</strong> 发起港币→人民币换汇，保留约10,000港币，其余全部兑换</li>
+    <li><strong>注意：</strong>换汇可能需要T+1或更长时间到账，换汇完成前不能作为A股可用资金；若Day2需要买入操作（本计划无买入），需预留人民币现金</li>
+  </ul>
+</div>
+</div>
+
+<!-- Day 3 -->
+<div class="plan-day">
+<h4>Day 3 — 2026-09-14（周一）</h4>
+<p style="font-size:13px;color:#7f8c8d;">冻结申购款16,000元预计9/12（周六）解冻，周一可用。光模块B预计仍停牌（停牌不超过5个交易日，从9/10起算第5日为9/16，复牌最早约9/17）。核心任务：检查约束是否全部满足，微调未达标项。</p>
+
+<div class="trade">
+  <div class="if-then">交易⑦：约束达标检查与微调</div>
+  <ul>
+    <li><strong>if</strong> 铜A占比仍 > 22% <strong>→ then</strong> 继续卖出铜A至占比≤20%（留安全边际），限价按当日市价±0.5元</li>
+    <li><strong>if</strong> 重算压力情景损失仍 > 6% <strong>→ then</strong> 进一步减仓铜A或C（若可卖），每多卖10000元市值约降低压力损失0.1个百分点</li>
+    <li><strong>if</strong> 风险资产仓位仍 > 70% <strong>→ then</strong> 卖出流动性最好的标的（铜A或C）至仓位≤68%</li>
+    <li><strong>if</strong> 所有约束已满足（铜A≤22%、风险仓位≤70%、压力损失≤6%、现金≥25%）<strong>→ then</strong> 停止减仓，持有剩余仓位观察，不再发起新的卖出委托</li>
+  </ul>
+</div>
+
+<div class="trade">
+  <div class="if-then">交易⑧：光模块B复牌应急处理（若复牌）</div>
+  <ul>
+    <li><strong>if</strong> B复牌 且 开盘价 < 112元（关键支撑）<strong>→ then</strong> 以限价110–112元卖出300股，降低集中度至约17.8%</li>
+    <li><strong>if</strong> B复牌 且 开盘价 > 135元（压力位）<strong>→ then</strong> 持有观察，设止盈限价135元卖出300股（若触及）</li>
+    <li><strong>if</strong> B复牌后占比 > 22%（因复牌大涨）<strong>→ then</strong> 必须卖出至少200股至占比≤22%</li>
+    <li><strong>注意：</strong>B复牌可能跳空，120元仅为停牌前参考价，不得假设按120元成交；复牌首日波动可能较大，建议使用限价单而非市价单</li>
+  </ul>
+</div>
+
+<div class="trade">
+  <div class="if-then">交易⑨：冻结资金到账后的现金管理</div>
+  <ul>
+    <li><strong>if</strong> 冻结申购款16,000元已解冻到账 <strong>→ then</strong> 计入可自由使用现金，此时现金比例进一步提升，无需操作</li>
+    <li><strong>if</strong> 新股申购中签需缴款 <strong>→ then</strong> 优先使用人民币可用现金缴款，不影响减仓计划</li>
+  </ul>
+</div>
+</div>
+
+<h3>全计划止损/止盈与撤销规则汇总</h3>
+<table>
+  <thead><tr><th>标的</th><th>止损位</th><th>止盈/减仓参考</th><th>委托撤销条件</th></tr></thead>
+  <tbody>
+    <tr><td>铜资源股A</td><td class="num">46.80元（跌破则加速减仓）</td><td class="num">52.00元（压力位，接近时可加快卖出）</td><td>跌破支撑撤销限价改市价；14:45未成交则下调限价</td></tr>
+    <tr><td>光模块股B</td><td class="num">112.00元（复牌后）</td><td class="num">135.00元（复牌后止盈）</td><td>停牌期间不挂单；复牌后按开盘价重新决策</td></tr>
+    <tr><td>新能源股C</td><td class="num">58.00元（若跌破60支撑）</td><td>—（只减不加）</td><td>跌停挂单不撤销，排队等成交；开板后立即改限价</td></tr>
+    <tr><td>恒生科技ETF D</td><td class="num">9.60港币（跌破则市价清仓）</td><td class="num">10.60港币（压力位，若反弹至此可加快卖出）</td><td>跌破9.80支撑撤销限价观察；跌破9.60改市价</td></tr>
+  </tbody>
+</table>
+
+<h3>交易规则合规检查</h3>
+<table>
+  <thead><tr><th>规则</th><th>本计划处理方式</th></tr></thead>
+  <tbody>
+    <tr><td>A股T+1（当日买入次日可卖）</td><td>铜A 9/10买入的2000股在Day1不可卖，计划Day1仅卖3000股（在可卖6000股范围内），Day2解冻后再卖剩余</td></tr>
+    <tr><td>停牌无法成交</td><td>光模块B停牌期间不挂单，列为"持有观察"，复牌后按交易⑧处理</td></tr>
+    <tr><td>跌停委托可能无法执行</td><td>新能源C跌停价挂单仅为排队，明确标注"不保证成交"；若未成交则Day2继续，并用铜A/D减仓替代</td></tr>
+    <tr><td>交易单位（100股/份）</td><td>所有卖出数量均为100的整数倍（3000股=30手，1500股=15手，3000份=30手等）</td></tr>
+    <tr><td>跨币种换汇限制</td><td>D卖出得港币，明确要求成交后发起换汇，换汇到账前不作A股资金；本计划无买入操作，不依赖换汇到账时间</td></tr>
+    <tr><td>不使用衍生品/融资融券</td><td>本计划仅涉及现货卖出，无融资融券、期权、期货操作</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ==================== 免责 ==================== -->
+<div class="disclaimer">
+  <strong>免责声明与授权边界：</strong>本报告仅基于附件提供的脱敏仿真数据，以2026-09-10 14:20为审阅时点进行分析。所有交易建议均为条件化计划（if→then），不构成对客户的下单指令，不代客户操作账户。证券名称、价格、账户、交易和风险参数均为仿真数据，不对应真实公司或真实行情。实际成交价格受市场流动性、买卖盘深度、涨跌停限制、停牌等因素影响，本报告不保证任何成交价格、收益或止损条件一定有效。压力情景损失为基于给定冲击参数的估算，不代表对未来市场走势的预测。光模块股B复牌价格、新能源股C开板时间等存在重大不确定性，实际执行时需根据实时行情调整。投资者应在充分理解风险的基础上自主决策。
+</div>
+
+</div>
+
+<script>
+// 合规检查图
+var c1 = echarts.init(document.getElementById('chart-compliance'));
+c1.setOption({
+  title:{text:'风险约束合规状态（红线为约束阈值）',left:'center',textStyle:{fontSize:14}},
+  tooltip:{trigger:'axis'},
+  grid:{left:120,right:40,top:50,bottom:30},
+  xAxis:{type:'value',max:45,axisLabel:{formatter:'{value}%'}},
+  yAxis:{type:'category',data:['可自由现金(≥25%)','外币敞口(≤25%)','科技成长主题(≤35%)','新能源主题(≤35%)','光模块B(≤22%)','新能源C(≤22%)','恒生D(≤22%)','风险仓位(≤70%)','资源周期主题(≤35%)','铜A单一标的(≤22%)'],axisLabel:{fontSize:11}},
+  series:[{
+    type:'bar',
+    data:[
+      {value:27.27,itemStyle:{color:'#f39c12'}},
+      {value:10.03,itemStyle:{color:'#27ae60'}},
+      {value:25.96,itemStyle:{color:'#27ae60'}},
+      {value:5.95,itemStyle:{color:'#27ae60'}},
+      {value:21.40,itemStyle:{color:'#f39c12'}},
+      {value:5.95,itemStyle:{color:'#27ae60'}},
+      {value:4.56,itemStyle:{color:'#27ae60'}},
+      {value:71.15,itemStyle:{color:'#c0392b'}},
+      {value:39.24,itemStyle:{color:'#c0392b'}},
+      {value:39.24,itemStyle:{color:'#c0392b'}}
+    ],
+    label:{show:true,position:'right',formatter:'{c}%',fontSize:11},
+    barWidth:16
+  }],
+  graphic:[
+    {type:'group',children:[
+      {type:'text',left:120+70*0.22-1,top:50,style:{text:'',fill:'#c0392b',fontSize:10}}
+    ]}
+  ]
+});
+
+// 资产配置饼图
+var c2 = echarts.init(document.getElementById('chart-allocation'));
+c2.setOption({
+  title:{text:'总资产配置（人民币）',left:'center',textStyle:{fontSize:13}},
+  tooltip:{trigger:'item',formatter:'{b}: {c}元 ({d}%)'},
+  series:[{
+    type:'pie',radius:['40%','70%'],center:['50%','55%'],
+    data:[
+      {value:396000,name:'铜资源股A',itemStyle:{color:'#c0392b'}},
+      {value:216000,name:'光模块股B',itemStyle:{color:'#e67e22'}},
+      {value:60000,name:'新能源股C',itemStyle:{color:'#f1c40f'}},
+      {value:46000,name:'恒生科技D',itemStyle:{color:'#3498db'}},
+      {value:220000,name:'人民币现金',itemStyle:{color:'#27ae60'}},
+      {value:55200,name:'港币现金',itemStyle:{color:'#2ecc71'}},
+      {value:16000,name:'冻结申购款',itemStyle:{color:'#95a5a6'}}
+    ],
+    label:{fontSize:11,formatter:'{b}\n{d}%'}
+  }]
+});
+
+// 相关性热力图
+var c3 = echarts.init(document.getElementById('chart-corr'));
+var corrData = [];
+var labels = ['铜A','光模块B','新能源C','恒生D'];
+var corrMatrix = [[1.00,0.25,0.40,0.55],[0.25,1.00,0.72,0.65],[0.40,0.72,1.00,0.68],[0.55,0.65,0.68,1.00]];
+for(var i=0;i<4;i++)for(var j=0;j<4;j++)corrData.push([j,i,corrMatrix[i][j]]);
+c3.setOption({
+  title:{text:'相关系数矩阵',left:'center',textStyle:{fontSize:13}},
+  tooltip:{position:'top'},
+  grid:{left:60,right:20,top:50,bottom:50},
+  xAxis:{type:'category',data:labels,splitArea:{show:true}},
+  yAxis:{type:'category',data:labels,splitArea:{show:true}},
+  visualMap:{min:0,max:1,calculable:true,orient:'horizontal',left:'center',bottom:5,inRange:{color:['#eafaf1','#f9e79f','#c0392b']},textStyle:{fontSize:10}},
+  series:[{type:'heatmap',data:corrData,label:{show:true,formatter:function(p){return p.value[2].toFixed(2);}},emphasis:{itemStyle:{shadowBlur:10}}}]
+});
+
+// 压力测试瀑布图
+var c4 = echarts.init(document.getElementById('chart-stress'));
+c4.setOption({
+  title:{text:'压力情景损失分解（元）',left:'center',textStyle:{fontSize:13}},
+  tooltip:{trigger:'axis'},
+  grid:{left:80,right:40,top:50,bottom:40},
+  xAxis:{type:'category',data:['铜A','光模块B','新能源C','恒生D','港币现金','合计损失'],axisLabel:{fontSize:11,interval:0}},
+  yAxis:{type:'value',axisLabel:{formatter:function(v){return (v/10000)+'万';}}},
+  series:[{
+    type:'bar',
+    data:[
+      {value:-47520,itemStyle:{color:'#c0392b'}},
+      {value:-32400,itemStyle:{color:'#e67e22'}},
+      {value:-6000,itemStyle:{color:'#f1c40f'}},
+      {value:-4526,itemStyle:{color:'#3498db'}},
+      {value:-1104,itemStyle:{color:'#2ecc71'}},
+      {value:-91550,itemStyle:{color:'#922b21'}}
+    ],
+    label:{show:true,position:'top',formatter:function(p){return (p.value/10000).toFixed(1)+'万';},fontSize:10},
+    barWidth:30
+  }]
+});
+
+window.addEventListener('resize',function(){c1.resize();c2.resize();c3.resize();c4.resize();});
+</script>
+</body>
+</html>

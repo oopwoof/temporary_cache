@@ -1,0 +1,93 @@
+{
+  "decision_point": {
+    "as_of_ts": "2026-09-18T15:30:00+08:00",
+    "timezone": "Asia/Shanghai",
+    "base_currency": "CNY",
+    "action_symbol": "SYN100.SZ",
+    "planning_window": "2026-09-21/2026-10-09 (10 synthetic trading days)"
+  },
+  "data_admission": {
+    "admitted": [
+      {"record": "MD-001 2026-09-18 FINAL close 21.55", "available_ts": "2026-09-18T15:05", "source_id": "MKT-OFFICIAL-001"},
+      {"record": "MD-002 2026-09-17 final_stale prev_close 21.30", "available_ts": "2026-09-17T15:05", "source_id": "MKT-VENDOR-002"},
+      {"record": "BRK-POS-001 official position 24000/21000/3000 frozen", "available_ts": "2026-09-18T15:05", "source_id": "BRK-POS-001"},
+      {"record": "LEDGER-001..005 trades & dividend & stock dividend", "source_id": "LEDGER-001..005"},
+      {"record": "CA-HIST-01/02 and CA-FUT-01 terms (known as-of 2026-09-10)", "source_id": "CA-001/002/003"},
+      {"record": "TECH-001/002 daily+weekly final (auxiliary only)", "source_id": "TECH-SRC-001/002"},
+      {"record": "RULE/FEE/LIQ/RISK/CORR/SCN/EV parameters", "source_id": "RULE-/FEE-/LIQ-/RISK-/CORR-/SCN-/EV-"}
+    ],
+    "excluded": [
+      {"record": "MD-003 2026-09-18 14:55 intraday partial 21.63", "reason": "intraday partial, DQ-004; close decision must use official close"},
+      {"record": "MD-004 2026-09-21 future final 22.10", "reason": "after as-of, DQ-005"},
+      {"record": "TECH-003 2026-09-21 future technical", "reason": "after as-of, DQ-005"},
+      {"record": "OCR-002 total_quantity 24800 conf 0.58", "reason": "low confidence; not used to derive sell quantities, DQ-002"}
+    ]
+  },
+  "account_caliber": {
+    "nav_detail_cny": 801048.00,
+    "nav_statement_cny": 803048.00,
+    "unreconciled_residual_cny": 2000.00,
+    "residual_treatment": "NOT plugged; weights reported as range; DQ-001 OPEN",
+    "settled_cash_cny": 72500.00,
+    "redeemable_low_risk_cny": 120000.00
+  },
+  "cost_caliber": {
+    "rebuilt_total_cost_cny": 288975.12,
+    "rebuilt_cost_per_share": 12.04063,
+    "provider_avg_cost_cny": 13.12,
+    "provider_total_cost_cny": 314880.00,
+    "provider_status": "UNVERIFIED_AFTER_STOCK_DIVIDEND (DQ-003); kept as conflicting caliber only",
+    "stock_dividend_treated": "每10送5 on LOT-01 (10000->15000), total cost unchanged"
+  },
+  "corporate_action": {
+    "received_cash_dividend_cny": 1000.00,
+    "future_dividend_per_share": 0.10,
+    "record_date": "2026-09-23",
+    "ex_date": "2026-09-24",
+    "pay_date": "2026-09-30",
+    "treatment": "not booked as fixed receivable before record date; post-ex triggers mechanically adjusted -0.10"
+  },
+  "fees_slippage": {
+    "commission": "max(0.00025*gross, 5.00)",
+    "transfer_fee": "0.00001*gross",
+    "stamp_duty_sell": "0.0005*gross",
+    "slippage_base_one_way": 0.0015,
+    "slippage_stress_one_way": 0.004,
+    "t_roundtrip_buffer": 0.003,
+    "effective_sell_cost_rate_base": 0.00226
+  },
+  "liquidity": {
+    "adv20_shares": 180000,
+    "max_daily_shares_5pct": 9000,
+    "lot_size": 100,
+    "t_plus_1_sell_settlement": "sell cash withdrawable next trading day"
+  },
+  "risk_parameters": {
+    "annual_vol": {"SYN100.SZ": 0.48, "SYN300ETF": 0.22, "SYNBOND": 0.035, "CASH": 0.0},
+    "correlation_matrix_check": "PASS: 4x4 symmetric, diagonal=1, range in [-1,1]",
+    "portfolio_vol_pre_trade": 0.324324,
+    "m_risk_contribution_pre_trade_fraction": 0.954020,
+    "portfolio_vol_post_21600": 0.182811,
+    "m_risk_contribution_post_21600_fraction": 0.590730
+  },
+  "principal_definitions": {
+    "P1_historical_cash_invested_cny": 288975.12,
+    "P2_net_after_dividend_cny": 287975.12,
+    "P3_current_holding_rebuilt_cost_cny": 288975.12
+  },
+  "open_items": [
+    "principal definition not confirmed by client",
+    "2000 CNY NAV residual source unknown",
+    "client willingness to waive 20.80 soft floor on downside",
+    "personal single-position max acceptable loss not provided"
+  ],
+  "output_files_sha256": {
+    "single_position_memo.md": "f1b63daae7b822294b71bb81a62838ca0da7b2aa8a30687015d04c03214e2c52",
+    "position_reconciliation.csv": "36ba8e2d89acf06f44e5e57bd0749bd1d7040ed9720e88b0bf61f79d2c07b507",
+    "principal_definitions.csv": "b1f014e7171e9b07b95d381750237290ab6434ef14cca1e4e9e5cf4441d9db17",
+    "risk_diagnosis.csv": "1f713b70b821193a8a45710bdb0d0172b1d2b34b0c0cce4de79c2768081a0c28",
+    "action_scenarios.csv": "69859d76af4004aadbc6acf9f852216e876e1f953586c1803066cb83313737dc",
+    "if_then_rules.csv": "c7e480843f9e90134fd95efd96196560f5ad412a7ac7f5c73b81bcb0347f8153",
+    "assumptions_manifest.json": "NOT_COMPUTED (self-hash excluded; cannot self-hash reliably)"
+  }
+}

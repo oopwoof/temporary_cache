@@ -1,0 +1,95 @@
+{
+  "as_of": "2026-08-28 15:20 Asia/Shanghai",
+  "deadline": "2026-09-02 10:00 Asia/Shanghai",
+  "base_currency": "CNY",
+  "decision_type": "持仓交易决策-短期用款与流动性排序(内部研究/客户沟通草案)",
+  "inputs_adopted_excluded": [
+    {
+      "sheet": "行情交易状态",
+      "record": "MKT-A-FUT 证券A 8/31 9:35 价格",
+      "status": "排除",
+      "reason": "available_ts=2026-08-31 09:36 晚于决策时点,前视数据不得进入"
+    },
+    {
+      "sheet": "OCR核验",
+      "record": "OCR-001 证券A total=13,000?",
+      "status": "低置信仅列异常",
+      "reason": "置信0.62<0.80,不覆盖官方18,000"
+    },
+    {
+      "sheet": "OCR核验",
+      "record": "OCR-005 证券D名称",
+      "status": "排除",
+      "reason": "置信0.74且识别错误,以security_id匹配"
+    },
+    {
+      "sheet": "账户与资金",
+      "record": "ACC-005 B股息3750",
+      "status": "排除出截止日现金",
+      "reason": "到账2026-09-03 09:00晚于截止"
+    },
+    {
+      "sheet": "行情交易状态",
+      "record": "MKT-C-01 证券C价15.20",
+      "status": "仅账面估值",
+      "reason": "8/25起停牌,不代表可成交价"
+    },
+    {
+      "sheet": "行情交易状态",
+      "record": "MKT-D-01 证券D跌停零买盘",
+      "status": "当前可执行=0",
+      "reason": "无有效买盘,不计入可变现"
+    }
+  ],
+  "nav_anchors": {
+    "broker_statement_total_assets": 1038800.0,
+    "detail_recomputed": 1040050.0,
+    "residual_unexplained": 1250.0,
+    "note": "残差不虚构其他资产补平"
+  },
+  "cash": {
+    "transferable_now": 58000.0,
+    "old_sale_net_831": 17985.82,
+    "transferable_after_831": 75985.82,
+    "net_gap": 184014.18,
+    "target": 260000.0
+  },
+  "fees": {
+    "A_commission": "max(amt*0.00025,5)",
+    "A_stamp": "amt*0.0005",
+    "A_transfer": "amt*0.00001",
+    "ETF_commission": "max(amt*0.0002,5)",
+    "ETF_stamp": 0,
+    "slip": "A 5bp/B 6bp/D 30bp(恢复后)/ETF 2bp"
+  },
+  "settlement": "A股卖出当日可用,次一交易日09:00可划转;T+1;整手100股;单日<=5%ADV",
+  "constraints_hard": {
+    "cash": ">=260000",
+    "equity": "<=0.75",
+    "single": "<=0.27",
+    "hi_vol(A+D)": "<=0.30",
+    "electronics(A+D)": "<=0.32",
+    "worst_stress": ">=-0.09",
+    "single_RC": "<=0.55",
+    "cash_floor": ">=30000"
+  },
+  "soft_conflict": "PREF-01保留A>=12000股 与 CON-04/05/06/07 不可兼得; D可卖时需把A减到约9600股, D不可卖时约4200股",
+  "open_items": [
+    "证券D恢复有效买盘时间未知",
+    "证券C复牌时间与跳空未知",
+    "客户是否接受A<12000股待确认",
+    "两口径1250元残差未解释",
+    "客户个人税务特殊情形未提供"
+  ],
+  "non_execution_statement": "不连接券商/不代下单/不划款/不融资;未成交与未结算款项现金记0;不承诺成交或收益",
+  "output_files": {
+    "liquidity_decision_memo.md": "1b89881c5946ec1da05d7cdfe049ef6b8512bc9991bcfe96964015d651f30422",
+    "position_reconciliation.csv": "260326f935430bc0eadef06c9985d1bdf8538c3e97aef4653c7d8b1175e2444c",
+    "cash_availability_schedule.csv": "9d027ae35ca11165ce6acc14d6a002eed5f6a6783508d56ed8f96c25303dcbcc",
+    "portfolio_diagnosis.csv": "0a6921c7e4b3854f8e314d6ba7d978364fabd71238358b070305b2d5f49dd617",
+    "action_priority.csv": "4c73dd745413485028ce4f3ee692fb2714b5b72d46522588da729ff15896ad03",
+    "scenario_comparison.csv": "3038867167cdeae30002f164e323a41f0e03e25a2e9ba5e7c956d1c2fc35b7e6",
+    "if_then_rules.csv": "7c63a3aba742161b00a2e62dc18e24bb84d462384884754c96d0d481f032ad21",
+    "assumptions_manifest.json": "NOT_COMPUTED(自引用,计算时文件尚未写完)"
+  }
+}
