@@ -1,0 +1,221 @@
+{
+ "path": "skills/v2.0/SKILL.md",
+ "chars": 2857,
+ "red": {
+  "R1": {
+   "status": "OK",
+   "hits": [],
+   "count": 0
+  },
+  "R3": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": [
+    {
+     "source": "lint_inputs/responses/case01_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case01_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case01_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case02_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case02_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case02_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case03_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case03_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case03_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case04_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case04_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case04_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case05_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case05_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case05_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case06_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case06_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case06_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case07_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case07_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case07_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case08_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case08_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case08_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case01_A.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case01_C.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case01_D.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case02_A.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case02_C.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "lint_inputs/responses/case02_D.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    }
+   ]
+  },
+  "R2": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": [
+    {
+     "token": "下一交易日",
+     "context": "否在交易时段内；已收盘或非交易日时改写\"下一交易日可执行\"，禁止把已收盘时段的数量标为当下"
+    }
+   ]
+  },
+  "R4": {
+   "status": "OK",
+   "candidates": []
+  }
+ },
+ "yellow": {
+  "Y1": {
+   "prohibit_paras": 5,
+   "missing_alt": [
+    "**随附脚本**输入输出用相对路径或命令行参数，禁止硬编码本机绝对路径；交付前实际运行一遍，抽查产出与正文一致。",
+    "提款先满足到账日、可划转金额和结算。材料表述为\"备妥/准备/预留\"资金时，默认资金仍在账内，禁止默认已划出：主口径风险与权重用\"交易后、资金仍在账内（已备妥可划"
+   ]
+  },
+  "Y2": {
+   "dup_groups": 0,
+   "samples": []
+  },
+  "Y3": {
+   "status": "NO_SECTION"
+  },
+  "Y4": {
+   "bold_blocks": 9,
+   "bold_ratio": 0.02,
+   "max": 0.33,
+   "prohibit_words": 20
+  },
+  "Y5": {
+   "must_read": 0,
+   "max": 2
+  },
+  "Y6": {
+   "status": "SKIPPED",
+   "need": "--pack + --skeleton"
+  },
+  "Y7": {
+   "status": "NO_SELFCHECK"
+  }
+ },
+ "skipped": [
+  "Y6"
+ ],
+ "verdict": "无红项，黄项 1 类 —— 需在卡 4 逐条写豁免理由",
+ "exit_code": 1
+}

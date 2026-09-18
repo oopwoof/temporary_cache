@@ -1,0 +1,220 @@
+{
+ "path": "skills/current/SKILL.md",
+ "chars": 5171,
+ "red": {
+  "R1": {
+   "status": "OK",
+   "hits": [],
+   "count": 0
+  },
+  "R3": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": [
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case01_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case01_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case01_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case02_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case02_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case02_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case03_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case03_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case03_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case04_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case04_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case04_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case05_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case05_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case05_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case06_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case06_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case06_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case07_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case07_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case07_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case08_A.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case08_C.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case08_D.md",
+     "fragment": "portfoliotradin",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case01_A.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case01_C.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case01_D.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case02_A.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case02_C.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    },
+    {
+     "source": "/tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/tune/lint_inputs/responses/case02_D.md",
+     "fragment": "ortfoliotrading",
+     "reason": "题面/附件里也有同一措辞，属题目指定用语"
+    }
+   ]
+  },
+  "R2": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": [
+    {
+     "token": "下一交易日",
+     "context": "否在交易时段内；已收盘或非交易日时改写\"下一交易日可执行\"，禁止把已收盘时段的数量标为当下"
+    }
+   ]
+  },
+  "R4": {
+   "status": "OK",
+   "candidates": []
+  }
+ },
+ "yellow": {
+  "Y1": {
+   "prohibit_paras": 10,
+   "missing_alt": []
+  },
+  "Y2": {
+   "dup_groups": 0,
+   "samples": []
+  },
+  "Y3": {
+   "items": 10,
+   "max": 12,
+   "over": false
+  },
+  "Y4": {
+   "bold_blocks": 12,
+   "bold_ratio": 0.0164,
+   "max": 0.33,
+   "prohibit_words": 34
+  },
+  "Y5": {
+   "must_read": 1,
+   "max": 2
+  },
+  "Y6": {
+   "status": "SKIPPED",
+   "need": "--pack + --skeleton"
+  },
+  "Y7": {
+   "unmatched": []
+  }
+ },
+ "skipped": [
+  "Y6"
+ ],
+ "verdict": "全绿",
+ "exit_code": 0
+}
