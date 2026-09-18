@@ -17,7 +17,7 @@ for f in sorted(d.rglob("*")):
         h.update(rel.encode()); h.update(b)
         per[rel] = hashlib.sha256(b).hexdigest()
 got = h.hexdigest()
-want = "6303709208c458b97559f2e72c686a1caa0dee0435e9ba5043abe1360148242d"
+want = "416f14e0f84c6eaeee09dcbeb317daa875c886ad8dced5c83d93632c84131e13"
 print(f"目录内容摘要 期望 {want}")
 print(f"             实测 {got}")
 if got == want:
