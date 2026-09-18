@@ -1,0 +1,18 @@
+# 校验清单
+#
+# 三个不同的东西，别混：
+#   1) zip 文件字节 sha256   = 7934a45541b12bc6269cb0db085de47c40fabe0a574ee07e0eb219f3031f2edc
+#   2) 解包后目录内容摘要     = 6303709208c458b97559f2e72c686a1caa0dee0435e9ba5043abe1360148242d
+#   3) 逐文件 sha256         = 见下表
+#
+# 1) 只证明这个 zip 传输没损坏。换台机器重新打包它就会变（zip 里存了时间戳、
+#    压缩参数和条目顺序），所以**不能用它判断内容一致**。
+# 2) 与打包方式无关，**校验以它为准**。解包后跑：
+#       python3 校验.py portfolio-trading-decision
+# 3) 摘要对不上时，用下表定位是哪个文件变了。
+
+885fa089576db0fec795dce3842fbafbd56d066e98969188e522c018da9745ef  SKILL.md
+80c56e4d386bc842f09b047120b310d5854ddd629765b47fc06ae86eed021650  references/calculation-contract.md
+8016ffc195c4b52856fdf8af9828b8147824131008bbad68eb9854b3fc89b3ad  references/excel-contract.md
+48ba3f3a01280701ca7818ee6a5ad1270b87dfd4cc302fd147a8948119adf96b  references/output-skeleton.md
+3b35bcf44c42a8bccfe1c2bdd71ed9227065fbcc90407843b157bab7c4bbec6f  references/routing.md

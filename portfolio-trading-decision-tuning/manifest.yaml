@@ -2,7 +2,7 @@
 # 需求变更 = 新版 manifest（version+1），不就地改。
 # 标 **待填** 的三项必须由需求方补，否则四方比较不成立（见 runs/1/需求方待补清单.md）。
 
-version: 1
+version: 2                       # v2：runs/1 跑完，把当时未知的 run_config 按回执补实
 task_id: portfolio-trading-decision-2026w38
 
 skill:
@@ -47,9 +47,12 @@ acceptance:
 
 run_config:
   concurrency: 4
-  platform: "**待填**"            # 必须与基线那批一致
-  model: "**待填**"               # 基线四方里的 base 是豆包，具体路线需需求方确认
-  route: "**待填**"
+  # 以下三项按 runs/1 跑题方回执补实（reports/run01_report.md、执行说明.md）。
+  # ⚠ 基线四方仍是历史产物且 config_known: false，所以「对裸模分差」里仍混着模型版本漂移。
+  # 渲染进跑题包的值不写品牌名（外发包扫描会当方别名命中）；路线 B + 与 runs/1 同 已足够定死。
+  platform: "云端浏览器 / 网页版「工作」模式（路线 B，与 runs/1 完全一致）"
+  model: "Doubao-Seed-2.1-Turbo"
+  route: "B"
   system_prefix: none
   round_minutes: 30
   version_budget: 3
@@ -62,3 +65,6 @@ judge:
 
 domain_pack: packs/portfolio-trading-decision.yaml   # ⚠ 尚未建，判分包需要它，跑题包不需要
 cadence: {due: "**待填**", recurring: weekly_tue}
+
+# runs/1 实测留痕：8 题 × 2 轮 16 次会话、零技术失败、交付件 24/23 件。
+# 判分侧三轮塌成一轮（check_judge_quality 退出码 2），runs/2 必须解决，见 runs/2/需求方待补清单.md
