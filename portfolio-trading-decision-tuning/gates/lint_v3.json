@@ -1,6 +1,6 @@
 {
  "path": "skills/current/SKILL.md",
- "chars": 5300,
+ "chars": 5376,
  "red": {
   "R1": {
    "status": "OK",
@@ -196,7 +196,7 @@
   },
   "Y4": {
    "bold_blocks": 12,
-   "bold_ratio": 0.016,
+   "bold_ratio": 0.0158,
    "max": 0.33,
    "prohibit_words": 35
   },

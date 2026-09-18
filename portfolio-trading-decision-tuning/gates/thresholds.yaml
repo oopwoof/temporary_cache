@@ -1,0 +1,65 @@
+# 阈值集中管理。仅当该 skill 确实特殊时才在实例里覆盖，并在 CHANGELOG 写明理由。
+#
+# 本实例的覆盖（题量 8 而非模板假设的 9，按 startup 第二节要求显式覆盖并写明理由）：
+#   · G0_rubric_consistency: 7/9→6/8、6→5、≤5→≤4   —— 按同比例换算（77.8%/66.7% 档位不变）
+#   · G2_offline_replay.new_rule_landing_rate: 9→8   —— 分母改为 8，仍要求满分
+#   · G4_release.min_cases_beating_baseline 保持 6   —— 模板注释已按 8 题写，无需改
+# 其余一行未动。同步模板时只改需要改的那几行，不要整文件覆盖（经验沉淀 25）。
+
+G0_rubric_consistency:
+  pass: 6            # /8，≥6 放行（模板 7/9 同比例换算）
+  degrade: 5         # =5 降级运行，每轮人工确认
+  stop: 4            # ≤4 停，重做 rubric（不质疑专家）
+
+G1_static:
+  red_items:         # 一票否决，不可豁免
+    - 题面数值泄露
+    - 题面专有名词泄露
+    - 题面人物代号泄露
+    - 对照组原句泄露
+    - 题目级规则进主文件
+  yellow_items:      # 带理由可放行，记入卡4
+    prohibition_without_alternative: 0
+    duplicate_constraint: 0
+    selfcheck_items_max: 12
+    bold_ratio_max: 0.33
+    must_read_reference_max: 2
+
+G2_offline_replay:
+  new_rule_landing_rate: 8      # /8，必须满分（题量 8）
+  budget_overflow_allowed: false
+
+G3_regression:
+  never_regress_all_pass: true  # 任一回退即自动回退版本
+
+# ⚠ 2026-09-14 起盲评改为 1-5 分打分，准出按分差 + 胜率核。
+# 本段必须与 gates/acceptance.yaml 的 default_scheme 逐项一致——
+# 两条路径算出的结果不一致是 selftest 会拦的。改一处就要改另一处。
+# 排序型的旧判据已作废，留档在 acceptance.yaml 的 four_way_first_7of9。
+G4_release:
+  baseline_party: base
+  primary_party: WB
+  min_score_gap_vs_baseline: 0.4        # 对裸模均分差 ≥0.4
+  min_winrate_vs_baseline: 0.60         # 对裸模胜率 >60%
+  min_cases_beating_baseline: 6         # 8 题至少 6 题超过
+  min_winrate_vs_primary: 0.60          # 对主要对照胜率 >60%（主路径）
+  relax_score_gap_vs_baseline: 0.50     # 松弛路径：对裸模分差 >0.5
+  relax_winrate_vs_primary: 0.50        #           且对主要对照胜率 ≥50%
+  # 平局算法。需求方 2026-09-17：平局要么重判，要么按判分方给的名次决断。
+  # rank = 分数打平时看名次，名次也相同才算平。三档定义见 score_release.py 的 _pick_wr()。
+  winrate_tie_mode: rank
+  denominator_excludes: [gpt]
+
+# 排序型判据。已不用于准出，但 aggregate_verdicts.py（成对判定那条路）仍读它。
+# 两套判据吃的是不同形态的评测数据，不是新旧覆盖关系，别合并。
+G4_release_legacy_ranking:
+  four_way_first_pass: 7
+  four_way_first_review_band: [5, 6]
+  no_loss_to_regression_floor: true
+  no_loss_to_any_non_gpt: true
+  denominator_excludes: [gpt]
+
+judge:
+  passes: 3
+  min_quote_chars: 10           # 扣分条目引原句下限，不足即作废
+  unjudgeable_tolerance: 2      # 不可判题 >2 时只认「明显」margin

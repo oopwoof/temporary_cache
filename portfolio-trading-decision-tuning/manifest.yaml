@@ -1,0 +1,64 @@
+# 实例化填写项 ① —— 本轮任务的唯一声明。下游所有角色读它，不读需求文档、不读聊天记录。
+# 需求变更 = 新版 manifest（version+1），不就地改。
+# 标 **待填** 的三项必须由需求方补，否则四方比较不成立（见 runs/1/需求方待补清单.md）。
+
+version: 1
+task_id: portfolio-trading-decision-2026w38
+
+skill:
+  name: portfolio-trading-decision
+  entry: SKILL.md
+  has_references: true
+  has_scripts: false
+
+cases:
+  count: 8
+  ids: ["01","02","03","04","05","06","07","08"]
+  # ⚠ tiers 按题面篇幅推断，**不是**领域纪律包口径（本 skill 还没有领域纪律包）。
+  # 只作索引用；Y6 档位余量因此记 SKIPPED，不得当作通过。
+  tiers:
+    direct: ["05","08","03"]      # 328 / 359 / 467 字符
+    brief:  ["06","04"]           # 541 / 939 字符
+    full:   ["01","02","07"]      # 4197 / 5242 / 5379 字符
+  with_attachments: ["01","02","03","04","05","06","07","08"]
+
+# 四方构成。ours = 豆包 + v3.0；base+skill = 上一轮被评测的 豆包 + v1.0，是回归底线。
+# 上一轮读数：base 15 / base+skill 23 / WB 27 / gpt 15（排序分，越小越好）；
+# 人评均分 3.75 / 3.00 / 2.38 / 3.88。新判据下对裸模分差 −0.75、超过题数 1/8、对 WB 胜率 62%。
+parties_mapping_known: true      # 槽位映射来自提需表「备注」字段原文，8 题固定，已交叉核验
+parties:
+  - {id: ours,        role: candidate}
+  - {id: base+skill,  role: regression_floor, status: static, config_known: false}
+  - {id: base,        role: floor,            status: static, config_known: false}
+  - {id: WB,          role: primary,          status: static, config_known: false}
+  - {id: gpt,         role: reference,        status: static, config_known: false}   # 参与比较，不进判据
+
+eval_signal:
+  expert_review: full
+  covered_cases: ["01","02","03","04","05","06","07","08"]
+  has_notes: true
+  # ⚠ case05 的专家备注有四条与被评答复原文不符（见 改动台账.md D 节）。
+  # 专家观点一律信任，但该题的归因在本轮标为低置信度，不作为主攻依据。
+
+acceptance:
+  scheme: score_1to5_20260914    # 判据全文在 gates/acceptance.yaml，别在这里复述
+  hard:    {no_loss_to: base+skill}
+  tech_failure_policy: separate
+
+run_config:
+  concurrency: 4
+  platform: "**待填**"            # 必须与基线那批一致
+  model: "**待填**"               # 基线四方里的 base 是豆包，具体路线需需求方确认
+  route: "**待填**"
+  system_prefix: none
+  round_minutes: 30
+  version_budget: 3
+
+judge:
+  passes: 3
+  mode: scoring
+  external_package: true
+  shards: 1                      # 默认不分片。开分片是口径变更，8 题不值得
+
+domain_pack: packs/portfolio-trading-decision.yaml   # ⚠ 尚未建，判分包需要它，跑题包不需要
+cadence: {due: "**待填**", recurring: weekly_tue}

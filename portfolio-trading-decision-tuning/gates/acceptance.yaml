@@ -1,0 +1,63 @@
+# 准出判据（可插拔）。manifest.yaml 里用 acceptance.scheme 选一个；
+# 需求方改口径时新增一个 scheme，不要就地改旧的——旧成绩要按旧 scheme 才可比。
+# 每个 scheme 都声明它吃什么形态的评测数据：ranking（名次）或 scoring（1-5 分）。
+
+default_scheme: score_1to5_20260914
+
+schemes:
+
+  # ── 2026-09-14 起的现行口径（需求方给定）────────────────────────
+  score_1to5_20260914:
+    input: scoring            # 每题每方一个 1-5 分
+    cases: 8
+    passes_rule: any          # 需求方 2026-09-15：多轮判定里**只需要有一次满足即可**
+                              # → 逐轮核，不要先平均（平均会把达标那轮抹掉）
+                              # → 用 score_release.py --per-pass
+    evaluation: per_pass_any  # per_pass_any | mean（与 passes_rule 同义，两名并存供旧脚本读）
+    winrate_tie_mode: rank    # 需求方 2026-09-17：平局要么重判，要么按判分方给的名次决断。
+                              # rank = 分数打平时看名次；名次也相同才算平。
+                              # 三档定义见 score_release.py 的 _pick_wr()，
+                              # ⚠ 口径一经用于判分就不改，要改就新增 scheme
+    note: 平局算「没超过」。gpt 参与比较但不进判据。
+          两条路径（对基线、对主要对照）必须**同一轮内同时**满足，不能跨轮拼。
+          「同时」= 且，不是或。2026-09-15 用需求方自己的起点表验证过：
+          衍生品/基金ETF/持仓交易决策 三个 skill 只满足 primary 不满足 floor，
+          表里一律判未达标并把「超过题数」列为还差项——若是「或」它们早就达标了。
+          条文也自洽：relax 路径的 base_mean_diff >0.5 比 floor 的 >=0.4 更严，
+          是用更大分差换取 primary 胜率从 >60% 放宽到 >=50%，只有「且」才讲得通。
+    floor:                    # 对豆包裸模：三条全过
+      party: base
+      all_of:
+        - {metric: mean_diff,  op: ">=", value: 0.4}
+        - {metric: win_rate,   op: ">",  value: 0.60}
+        - {metric: win_count,  op: ">=", value: 6}
+    primary:                  # 对 WorkBuddy：二选一
+      party: WB
+      any_of:
+        - all_of: [{metric: win_rate, op: ">", value: 0.60}]
+        - all_of:
+            - {metric: base_mean_diff, op: ">",  value: 0.5}   # 对裸模分差
+            - {metric: win_rate,       op: ">=", value: 0.50}  # 对 WB 胜率
+    reference_only: [gpt]
+
+  # ── 旧口径，保留以便重算历史成绩 ────────────────────────────────
+  four_way_first_7of9:
+    input: ranking
+    cases: 9
+    floor:   {party: base+skill, all_of: [{metric: loss_count, op: "==", value: 0}]}
+    primary: {party: null, all_of: [{metric: first_count, op: ">=", value: 7}]}
+    ladder:  {review_band: [5, 6], rerun_band_max: 4}
+
+  vs_wb_7to2:
+    input: ranking
+    cases: 9
+    note: 技术失败单列，不计入胜负
+    primary: {party: WB, all_of: [{metric: wins, op: ">=", value: 7}, {metric: losses, op: "<=", value: 2}]}
+
+# 对照组合理性预期：正常情况下 WB 应强于其余对照（专家排序的一般规律）。
+# 违反时不改判据，只标记该题需人工复核评测信号。
+baseline_sanity:
+  expect_order: [WB, base]          # 我方不参与本检查
+  flag_when: WB_below_other
+  action: 标为「评测信号存疑」，进人审卡，不自动剔除
+  threshold_cases: 2                # 超过 2 题异常则整轮评测信号存疑

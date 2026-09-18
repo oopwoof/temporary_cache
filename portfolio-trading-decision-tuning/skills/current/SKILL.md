@@ -1,6 +1,6 @@
 ---
 name: portfolio-trading-decision
-description: 基于用户提供的持仓、成本、可卖数量、现金、总资产、期限和风险约束，完成单票与组合体检、提款和减仓测算、止盈止损及 if→then 交易纪律。纯技术诊断转 equity-technical-analysis，策略回测转 quant-research。
+description: 当用户给出自己的持仓（成本、数量、可卖数量、现金、总资产、期限、风险上限）并问该不该减仓、怎么止盈止损、如何腾出用款资金、集中度是否超限时使用。完成单票与组合体检、提款与减仓测算、费用与压力测算，输出 if→then 交易纪律。纯技术诊断转 equity-technical-analysis，策略回测转 quant-research，复杂期权与杠杆结构转 derivatives-research。
 ---
 
 # 持仓交易决策

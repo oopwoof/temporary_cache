@@ -40,8 +40,8 @@ python3 <autotune>/scripts/lint_skill.py skills/current/SKILL.md \
 ```
 
 v3 **全绿**（v2 为「无红项、黄项 1 类」）；4 份 reference 单独扫描均无红项。
-**Y6 档位余量 SKIPPED**（无领域纪律包与骨架模板），**G3.5 `doubao-skill-check` 未测**（环境无此工具）——
-本轮新增了一份 reference，正是它专门抓的那类改动，上平台前务必补跑。
+G3.5 `doubao-skill-check` v1.0.9：**0 findings**（引用链完整、无孤儿 reference、无安全项、目录名与 name 一致）。
+**Y6 档位余量仍 SKIPPED**（无领域纪律包与骨架模板），skill-check 14 维里 8 维要人判或平台证据，本地记 SKIP。
 
 ## 重新打包（上平台用）
 
@@ -52,8 +52,32 @@ mkdir -p /tmp/pkg/portfolio-trading-decision && cp -r skills/current/. /tmp/pkg/
 
 跑题方会对 zip 做 sha256sum，注意 **zip 字节校验值 ≠ 目录内容摘要**，两者分开报。
 
+## 跑题包（阶段 3，已生成）
+
+```
+runs/inputs/prompts/          8 题题面（已剥掉迭代包加的元信息标题行）
+runs/inputs/attachments/      15 件原始附件（不含红项扫描用的 .txt 旁挂件）
+manifest.yaml                 本轮唯一声明；run_config 的 platform/model/route 待需求方补
+gates/thresholds.yaml         8 题的阈值覆盖（G0 6/8、G2 8/8），已注明理由
+runs/1/run_pack/              ★ 跑题包本体
+runs/1/需求方待补清单.md      ★ 跑题前要补什么、采集前要定死什么
+跑题包_run1.zip               跑题包打包（*.zip 被仓库忽略，用下方命令重建）
+```
+
+```bash
+python3 <autotune>/scripts/make_run_pack.py --run runs/1 --skill skills/current \
+    --prompts runs/inputs/prompts --attachments runs/inputs/attachments --rounds 2
+```
+
+目录内容摘要 `b5082caece480718bfb59266ede22514aac9cf41fa24bc9554dae03ec331079b`（校验以此为准）。
+仓库忽略 `*.zip`，所以 `run_pack/` 里的 skill zip 不在版本库里——上面那条命令会连它一起重建，
+重建后跑 `python3 校验.py portfolio-trading-decision` 应输出与上面一致的摘要。
+模板脚本**不进本仓库**，避免实例副本随模板升版变旧（经验沉淀 24）；用 autotune-template v1.6.0 的 `scripts/`。
+
 ## 下一步
 
-1. 人审卡卡 1 的确认（评审到底看到了什么）会影响 B-01 的修法方向，建议先问。
-2. 补跑 `doubao-skill-check`，确认 4 份 reference 都在引用链上。
-3. 跑题 + 三轮独立判分，按 `改动台账.md` 的失败判据逐条核对是否落地。
+1. 按 `runs/1/需求方待补清单.md` 补 platform/model/route，定死平局口径，**并要求判分方同时给强制无平排序**
+   （上一轮 8 题的 verdict 里本来就有严格无平序，却只用了会打平的 1–5 分）。
+2. 跑题（8 题 + 噪声底复跑，建议并发 4）。
+3. 起草领域纪律包 `packs/portfolio-trading-decision.yaml`——判分包需要它，跑题包不需要。
+4. 判分回来先跑 `check_judge_quality.py`，再按 `改动台账.md` 的失败判据逐条核对哪条落地了。
