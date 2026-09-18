@@ -1,0 +1,305 @@
+{
+  "decision_metadata": {
+    "decision_point": "2026-08-28 15:20:00 Asia/Shanghai",
+    "cash_deadline": "2026-09-02 10:00:00 Asia/Shanghai",
+    "cash_target_cny": 260000.0,
+    "base_currency": "CNY",
+    "market": "中国A股市场",
+    "planning_window": "2026-08-31至2026-09-02 10:00",
+    "post_cash_holding_period": "6至12个月",
+    "data_nature": "全部证券、行情、账户记录均为合成、已脱敏数据",
+    "external_data_policy": "禁止联网补充或替换附件数据"
+  },
+  "input_inventory": {
+    "file_name": "持仓交易决策_短期用款与流动性排序_附件.xlsx",
+    "sheets": {
+      "任务说明": {
+        "status": "采用",
+        "records": 12,
+        "note": "业务场景与授权边界"
+      },
+      "账户与资金": {
+        "status": "采用",
+        "records": 7,
+        "note": "券商总资产与明细项目分开使用"
+      },
+      "官方持仓": {
+        "status": "采用",
+        "records": 5,
+        "note": "正式数量起点"
+      },
+      "OCR核验": {
+        "status": "部分采用",
+        "records": 7,
+        "note": "OCR-001(0.62)和OCR-005(0.74)置信度<0.80,仅列异常不采用"
+      },
+      "交易批次": {
+        "status": "采用",
+        "records": 8,
+        "note": "含1笔已清仓旧证券卖出"
+      },
+      "行情交易状态": {
+        "status": "部分采用",
+        "records": 6,
+        "note": "MKT-A-FUT为未来测试记录,晚于决策时点,已排除"
+      },
+      "公司行动": {
+        "status": "采用",
+        "records": 2,
+        "note": "B除息和C停牌"
+      },
+      "风险参数": {
+        "status": "采用",
+        "records": 5,
+        "note": "60日年化估算"
+      },
+      "相关性矩阵": {
+        "status": "采用",
+        "records": 5,
+        "note": "检查通过:维度/对称/对角线/取值范围"
+      },
+      "压力情景": {
+        "status": "采用",
+        "records": 15,
+        "note": "3个情景×5个标的"
+      },
+      "约束与偏好": {
+        "status": "采用",
+        "records": 14,
+        "note": "10项hard+4项soft"
+      },
+      "费用与规则": {
+        "status": "采用",
+        "records": 15,
+        "note": "佣金/印花税/过户费/滑点/手数/T+1/ADV"
+      },
+      "资金日历": {
+        "status": "采用",
+        "records": 8,
+        "note": "结算与可划转时点"
+      }
+    }
+  },
+  "excluded_records": [
+    {
+      "record_id": "MKT-A-FUT",
+      "reason": "晚于决策时点(2026-08-31 09:35),未来测试记录,不得进入当前判断",
+      "source": "MKT-SRC-FUT"
+    },
+    {
+      "record_id": "OCR-001",
+      "reason": "置信度0.62<0.80,证券A总数量识别为'13,000?'与官方18,000冲突,仅列异常",
+      "source": "IMG-01"
+    },
+    {
+      "record_id": "OCR-005",
+      "reason": "置信度0.74<0.80,证券D名称识别错误,以security_id匹配",
+      "source": "IMG-02"
+    }
+  ],
+  "nav_reconciliation": {
+    "broker_statement_total_assets": 1038800.0,
+    "detail_nav_including_dividend": 1043785.82,
+    "detail_nav_excluding_dividend": 1040035.82,
+    "difference_incl_dividend": 4985.82,
+    "difference_excl_dividend": 1235.82,
+    "difference_source": "未在附件中消除;券商未明确股息是否计入总资产;可能存在其他未列明资产或负债",
+    "impact_on_weights": "两种口径下权重差异约0.05-0.2个百分点,不改变约束超限/合规的方向性判断",
+    "impact_on_cash_target": "不影响,现金目标基于可划转现金而非总资产"
+  },
+  "fees_and_slippage": {
+    "a_share_commission_rate": 0.00025,
+    "a_share_commission_min": 5.0,
+    "a_share_stamp_tax_rate": 0.0005,
+    "a_share_transfer_fee_rate": 1e-05,
+    "etf_commission_rate": 0.0002,
+    "etf_commission_min": 5.0,
+    "etf_stamp_tax_rate": 0.0,
+    "slippage": {
+      "SYN201.SH": 0.0005,
+      "SYN202.SZ": 0.0006,
+      "SYN203.SH": "N/A(停牌不可估算)",
+      "SYN204.SZ": 0.003,
+      "SYNETF.SH": 0.0002
+    },
+    "min_lot_shares": 100,
+    "adv_participation_limit": 0.05
+  },
+  "settlement_rules": {
+    "a_share_sale_settlement": "T+1,成交当日可用于交易,下一交易日09:00起可划转",
+    "t_plus_one": "当日买入股份当日不得卖出,下一交易日起可卖",
+    "dividend_settlement": "证券B股息3,750元,支付日2026-09-03 09:00,晚于现金截止日",
+    "old_sale_settlement": "旧证券卖出款毛额18,000元,扣费14.18元后净额17,985.82元,2026-08-31 09:00可划转"
+  },
+  "constraints_summary": {
+    "hard_constraints": [
+      {
+        "id": "CON-01",
+        "metric": "9/2 10:00前可划转现金≥260,000",
+        "current": "不满足(75,985.82)",
+        "plans": "方案1/2/3均满足"
+      },
+      {
+        "id": "CON-02",
+        "metric": "股票+ETF仓位≤75%",
+        "current": "不满足(92.80%)",
+        "plans": "方案1/2/3均不满足(C/D不可交易)"
+      },
+      {
+        "id": "CON-03",
+        "metric": "任一单票权重≤27%",
+        "current": "不满足(A 38.81%)",
+        "plans": "方案3满足,方案1/2不满足"
+      },
+      {
+        "id": "CON-04",
+        "metric": "高波动合计≤30%",
+        "current": "不满足(51.81%)",
+        "plans": "方案3满足,方案1/2不满足"
+      },
+      {
+        "id": "CON-05",
+        "metric": "电子行业≤32%",
+        "current": "不满足(51.81%)",
+        "plans": "方案3满足,方案1/2不满足"
+      },
+      {
+        "id": "CON-06",
+        "metric": "最不利压力损失≤9%",
+        "current": "不满足(-13.24%)",
+        "plans": "方案1/2/3均不满足(C/D不可交易)"
+      },
+      {
+        "id": "CON-07",
+        "metric": "任一风险贡献≤55%",
+        "current": "不满足(A 188.84%)",
+        "plans": "方案1/3满足,方案2不满足"
+      },
+      {
+        "id": "CON-08",
+        "metric": "单日成交量≤5% ADV",
+        "current": "待执行",
+        "plans": "所有计划卖出量均在5%ADV以内"
+      },
+      {
+        "id": "CON-09",
+        "metric": "任一时点可划转现金≥30,000",
+        "current": "满足(58,000)",
+        "plans": "方案3满足,方案1/2提现后不满足"
+      },
+      {
+        "id": "CON-10",
+        "metric": "当日买入股份当日卖出=0",
+        "current": "满足",
+        "plans": "所有方案均满足"
+      }
+    ],
+    "soft_preferences": [
+      {
+        "id": "PREF-01",
+        "metric": "证券A保留≥12,000股",
+        "plan1": "满足(12,000)",
+        "plan2": "满足(18,000)",
+        "plan3": "不满足(4,000)",
+        "conflict": "与CON-03/04/05冲突,保留12,000股无法满足hard约束"
+      },
+      {
+        "id": "PREF-02",
+        "metric": "实现亏损最小化",
+        "plan1": "A卖出有浮盈",
+        "plan2": "ETF卖出有浮盈",
+        "plan3": "A卖出有浮盈",
+        "note": "所有方案卖出标的均有浮盈,实现亏损为0"
+      },
+      {
+        "id": "PREF-03",
+        "metric": "交易证券数≤3只",
+        "plan1": "2只",
+        "plan2": "1只",
+        "plan3": "1只",
+        "note": "所有方案均满足"
+      },
+      {
+        "id": "PREF-04",
+        "metric": "避免派息日前卖B",
+        "plan1": "未卖B",
+        "plan2": "未卖B",
+        "plan3": "未卖B",
+        "note": "所有方案均满足"
+      }
+    ]
+  },
+  "unresolved_items": [
+    {
+      "item": "证券D何时恢复有效买盘",
+      "impact": "会改变立即动作",
+      "current_status": "跌停无买盘,可执行量=0"
+    },
+    {
+      "item": "客户是否接受少于12,000股保留证券A",
+      "impact": "会改变立即动作",
+      "current_status": "保留12,000股与hard约束冲突,需客户确认"
+    },
+    {
+      "item": "证券C复牌时间",
+      "impact": "会改变立即动作",
+      "current_status": "停牌中,复牌日未知"
+    },
+    {
+      "item": "券商总资产与明细差异4,985.82元来源",
+      "impact": "只影响精度",
+      "current_status": "未在附件中消除"
+    },
+    {
+      "item": "证券A券商均价与批次均价差异",
+      "impact": "只影响精度",
+      "current_status": "差异0.1256元/股"
+    },
+    {
+      "item": "客户个人税务特殊情形",
+      "impact": "只影响精度",
+      "current_status": "附件未提供"
+    },
+    {
+      "item": "未来入金",
+      "impact": "暂不影响当前方案",
+      "current_status": "客户确认无已确认未来入金"
+    },
+    {
+      "item": "证券B股息具体到账时间",
+      "impact": "暂不影响当前方案",
+      "current_status": "已知9月3日,晚于截止日"
+    }
+  ],
+  "infeasibility_analysis": {
+    "base_scenario": "C停牌+D跌停无买盘",
+    "infeasible_constraints": [
+      "CON-02(仓位≤75%)",
+      "CON-06(压力损失≤9%)"
+    ],
+    "reason": "C市值121,600元和D市值135,000元均无法在计划窗口内卖出,其风险暴露无法消除;即使卖出全部A和ETF,STRESS-02损失仍约-8.9%(接近但仍可能超限,取决于具体卖出量)",
+    "minimum_gap": "CON-06缺口约2.9个百分点(方案3最不利损失-11.89% vs 上限-9%);需D或C可交易才能消除",
+    "conditional_feasibility": "若D在9/1前恢复买盘并可卖出≥9,000股,CON-04/05可进一步改善;若C复牌且价格稳定,CON-06可能改善但需重新评估"
+  },
+  "output_files": {
+    "liquidity_decision_memo.md": "9fad748401cd23e50fc58709f70e1f7b85d0af48c38e3141a62c6fca81ea87b4",
+    "position_reconciliation.csv": "20556725f08475f302ae7a962d89f9b6f303d10afcd73c3e5e79f678bc2a6109",
+    "cash_availability_schedule.csv": "73e8433308d7b92df3be1a7de4e56274a889a0064bae5181865b3e354537d3c7",
+    "portfolio_diagnosis.csv": "655d9786e53b630607f0407387060d39435cd6e7d3fff65b0c7ddc12a63ba226",
+    "action_priority.csv": "e72b8ad97d64f1ceb8af9d3acf258c0a0ab4886cd83fe62993acdb6532b0dbbc",
+    "scenario_comparison.csv": "53539cd0d2d55e2335053c29bde8216130f8e809ea79c6ffc63fefaabbe7655f",
+    "if_then_rules.csv": "6b4905c15cba2f4499c7cd3c707740edc8e05f84c765e3968bc8ef04cbca32f4",
+    "assumptions_manifest.json": "SELF_REFERENTIAL: 本文件hash无法在文件内部精确存储，实际hash在交付时单独计算"
+  },
+  "authorization_boundary": {
+    "no_broker_connection": true,
+    "no_order_execution": true,
+    "no_fund_transfer": true,
+    "no_margin_or_short": true,
+    "no_credentials_requested": true,
+    "no_return_or_price_guarantee": true,
+    "deliverable_type": "内部研究和客户沟通草案"
+  },
+  "generated_at": "2026-08-28 (decision point)",
+  "hash_algorithm": "SHA-256"
+}

@@ -1,0 +1,72 @@
+{
+  "decision_asof": "2026-09-18 15:30:00 Asia/Shanghai",
+  "input": "/opt/tiger/workspace/response_d_run/prompt_inputs/JZ-test-portfolio-trading-decision-02/持仓交易决策_单票本金回收_附件.xlsx",
+  "adoption_manifest": [
+    {
+      "sheet": "行情快照",
+      "record": "MD-001",
+      "adopted": true,
+      "reason": "时点前正式收盘",
+      "source_id": "MKT-OFFICIAL-001"
+    },
+    {
+      "sheet": "行情快照",
+      "record": "MD-003",
+      "adopted": false,
+      "reason": "盘中未完成",
+      "source_id": "MKT-INTRA-003"
+    },
+    {
+      "sheet": "行情快照",
+      "record": "MD-004",
+      "adopted": false,
+      "reason": "晚于决策时点",
+      "source_id": "MKT-FUTURE-004"
+    },
+    {
+      "sheet": "技术状态",
+      "record": "TECH-003",
+      "adopted": false,
+      "reason": "未来记录",
+      "source_id": "TECH-SRC-003"
+    }
+  ],
+  "nav_basis": {
+    "detail": 801048.0,
+    "statement": 803048.0,
+    "unresolved_residual": 2000
+  },
+  "position_basis": "official quantity + ledger reconstruction; OCR low-confidence total excluded",
+  "corporate_actions": [
+    "LOT-01 stock dividend 10:5 adds 5,000 shares without cost increase",
+    "future dividend not booked before record date"
+  ],
+  "fees": {
+    "commission": 0.00025,
+    "minimum": 5,
+    "transfer": 1e-05,
+    "stamp_sell": 0.0005
+  },
+  "slippage": {
+    "base": 0.0015,
+    "stress": 0.004
+  },
+  "liquidity": {
+    "ADV20_shares": 180000,
+    "daily_cap": 9000
+  },
+  "unresolved": [
+    "principal definition",
+    "NAV residual",
+    "willingness below 20.80",
+    "loss tolerance"
+  ],
+  "outputs": {
+    "action_scenarios.csv": "baac9725a822b7df6a109d1fa4b59305e78335735769316523621a911e025de2",
+    "if_then_rules.csv": "4d2a79bdde27f8e5a9f85141d8917f58bf8d3f294d7eaa5dbf70efb4c28ea73c",
+    "position_reconciliation.csv": "e1cccc89199a3990435a624945369749c9b7f3976b6a96c7d1a3bd58d1429d75",
+    "principal_definitions.csv": "d2216fd994b192c7861043e55dc7142816fab0c502010dcad041bc5182fd555d",
+    "risk_diagnosis.csv": "73b1bcfb8c76b1ac57af7eb5ab8e2058a2f9595519a4e13b467ffa5fb25c7057",
+    "single_position_memo.md": "652c5832c8eb888827765603c928a4c4a595d0f48a45804d4ebb08da7f17b811"
+  }
+}

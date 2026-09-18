@@ -1,0 +1,448 @@
+{
+  "decision_timestamp": "2026-09-18 15:30:00 Asia/Shanghai",
+  "base_currency": "CNY",
+  "action_scope": "SYN100.SZ only",
+  "planning_horizon": {
+    "start": "2026-09-21",
+    "end": "2026-10-09",
+    "trading_days": 10,
+    "trading_day_list": [
+      "2026-09-21",
+      "2026-09-22",
+      "2026-09-23",
+      "2026-09-24",
+      "2026-09-25",
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-08",
+      "2026-10-09"
+    ]
+  },
+  "adopted_records": {
+    "market_data": [
+      {
+        "record_id": "MD-001",
+        "status": "FINAL",
+        "date": "2026-09-18",
+        "close": 21.55,
+        "available_ts": "2026-09-18 15:05:00 Asia/Shanghai",
+        "source_id": "MKT-OFFICIAL-001",
+        "adopted": true
+      },
+      {
+        "record_id": "MD-002",
+        "status": "FINAL_STALE",
+        "date": "2026-09-17",
+        "close": 21.3,
+        "source_id": "MKT-VENDOR-002",
+        "adopted": "reference_only"
+      }
+    ],
+    "excluded_records": [
+      {
+        "record_id": "MD-003",
+        "status": "INTRADAY_PARTIAL",
+        "reason": "盘中未完成价格，不得替代正式收盘价",
+        "source_id": "MKT-INTRA-003"
+      },
+      {
+        "record_id": "MD-004",
+        "status": "FUTURE_FINAL",
+        "reason": "晚于决策时点(2026-09-21)",
+        "source_id": "MKT-FUTURE-004"
+      },
+      {
+        "record_id": "TECH-003",
+        "status": "FUTURE_FINAL",
+        "reason": "晚于决策时点",
+        "source_id": "TECH-SRC-003"
+      }
+    ],
+    "technical_status": [
+      {
+        "record_id": "TECH-001",
+        "timeframe": "1D",
+        "close": 21.55,
+        "ma20": 20.95,
+        "ma60": 19.8,
+        "rsi14": 67,
+        "support": 20.8,
+        "resistance": 22.3,
+        "adopted": true,
+        "source_id": "TECH-SRC-001"
+      },
+      {
+        "record_id": "TECH-002",
+        "timeframe": "1W",
+        "close": 21.55,
+        "ma20": 20.1,
+        "ma60": 18.9,
+        "rsi14": 64,
+        "support": 19.7,
+        "resistance": 23.0,
+        "adopted": true,
+        "source_id": "TECH-SRC-002"
+      }
+    ]
+  },
+  "account_reconciliation": {
+    "detail_nav": 801048.0,
+    "statement_nav": 803048.0,
+    "unexplained_residual": 2000.0,
+    "residual_handling": "不得虚构其他资产补平；所有权重和风险指标使用NAV区间[801048, 803048]",
+    "detail_components": {
+      "SYN100.SZ_mv": 517200.0,
+      "SYN300ETF_mv": 80000.0,
+      "SYNBOND_mv": 120000.0,
+      "CASH": 72500.0,
+      "unsettled_receivable": 8960.0,
+      "other_receivable": 2400.0,
+      "accrued_fee_payable": -12.0
+    },
+    "source_ids": [
+      "ACCT-001",
+      "AST-001",
+      "AST-002",
+      "AST-003",
+      "AST-004",
+      "AST-005",
+      "AST-006",
+      "AST-007"
+    ]
+  },
+  "position_reconciliation": {
+    "reconstructed_total_shares": 24000,
+    "official_total_shares": 24000,
+    "ocr_total_shares": 24800,
+    "ocr_total_confidence": 0.58,
+    "ocr_usage": "低置信OCR数量不得用于卖出决策；仅作交叉核验",
+    "reconstructed_total_cost": 288975.12,
+    "reconstructed_avg_cost": 12.04063,
+    "provider_total_cost": 314880.0,
+    "provider_avg_cost": 13.12,
+    "provider_cost_status": "UNVERIFIED_AFTER_STOCK_DIVIDEND",
+    "cost_difference": 25904.88,
+    "sellable_asof_0918": 21000,
+    "frozen_today_buy": 3000,
+    "sellable_from_0921": 24000,
+    "batches": {
+      "LOT-01": {
+        "shares": 15000,
+        "cost": 120031.2,
+        "avg_cost": 8.00208,
+        "note": "初始10,000股@12.00+送股5,000股；已收分红1,000元"
+      },
+      "LOT-02": {
+        "shares": 6000,
+        "cost": 105027.3,
+        "avg_cost": 17.50455
+      },
+      "LOT-03": {
+        "shares": 3000,
+        "cost": 63916.62,
+        "avg_cost": 21.30554,
+        "note": "9/18当日买入，9/21起可卖"
+      }
+    },
+    "source_ids": [
+      "LEDGER-001",
+      "LEDGER-002",
+      "LEDGER-003",
+      "LEDGER-004",
+      "LEDGER-005",
+      "CA-001",
+      "CA-002",
+      "BRK-POS-001",
+      "OCR-002"
+    ]
+  },
+  "corporate_actions": {
+    "historical_cash_dividend": {
+      "date": "2026-04-15",
+      "per_share": 0.1,
+      "shares": 10000,
+      "total": 1000.0,
+      "status": "PAID"
+    },
+    "historical_stock_dividend": {
+      "date": "2026-06-30",
+      "terms": "每10股送5股",
+      "shares_added": 5000,
+      "price_factor_before": 0.6666667,
+      "cost_impact": "总成本不变，每股成本摊薄"
+    },
+    "future_cash_dividend": {
+      "record_date": "2026-09-23",
+      "ex_date": "2026-09-24",
+      "pay_date": "2026-09-30",
+      "per_share": 0.1,
+      "status": "FUTURE",
+      "handling": "登记日前不得确认为固定应收；除息后价格触发线机械下调0.10元"
+    }
+  },
+  "fees_slippage_liquidity": {
+    "commission": {
+      "rate": 0.00025,
+      "minimum_cny": 5.0,
+      "applies_to": "BUY/SELL"
+    },
+    "transfer_fee": {
+      "rate": 1e-05,
+      "applies_to": "BUY/SELL"
+    },
+    "stamp_duty": {
+      "rate": 0.0005,
+      "applies_to": "SELL only"
+    },
+    "slippage_base": {
+      "rate": 0.0015,
+      "scenario": "BASE"
+    },
+    "slippage_stress": {
+      "rate": 0.004,
+      "scenario": "STRESS"
+    },
+    "t_roundtrip_buffer": {
+      "rate": 0.003,
+      "note": "价差须覆盖双边费用+双边滑点+此缓冲"
+    },
+    "adv20_shares": 180000,
+    "max_daily_participation": "5%",
+    "max_daily_shares": 9000,
+    "lot_size": 100,
+    "source_ids": [
+      "FEE-SRC-001",
+      "FEE-SRC-002",
+      "FEE-SRC-003",
+      "LIQ-SRC-001",
+      "LIQ-SRC-002",
+      "PAR-016",
+      "LIQ-001",
+      "RULE-SRC-02",
+      "RULE-SRC-03"
+    ]
+  },
+  "risk_parameters": {
+    "assets": {
+      "SYN100.SZ": {
+        "mv": 517200.0,
+        "annualized_vol": 0.48,
+        "beta": 1.35
+      },
+      "SYN300ETF": {
+        "mv": 80000.0,
+        "annualized_vol": 0.22,
+        "beta": 1.0
+      },
+      "SYNBOND": {
+        "mv": 120000.0,
+        "annualized_vol": 0.035,
+        "beta": -0.05
+      },
+      "CASH": {
+        "mv": 83848.0,
+        "annualized_vol": 0.0,
+        "note": "含应收应付净额11,348"
+      }
+    },
+    "correlation_matrix_check": "PASS",
+    "hard_constraints": {
+      "single_position_weight_max": "35% NAV",
+      "portfolio_stress_loss_max": "8% NAV",
+      "syn100_risk_contribution_max": "60% of portfolio risk",
+      "low_risk_assets_min_by_20261009": "300,000 CNY",
+      "settled_cash_floor": "50,000 CNY at all times",
+      "max_daily_adv_participation": "5%"
+    },
+    "current_violations": {
+      "weight": "64.40%-64.57% > 35% (违反)",
+      "risk_contribution": "95.40% > 60% (违反)",
+      "stress_loss": "SCN-DOWN 9.71%-9.73% > 8% (违反); SCN-HALT 8.01%-8.03% > 8% (违反)",
+      "low_risk_assets": "205060.00 < 300,000 (需卖出约4500.0股)"
+    },
+    "source_ids": [
+      "RISK-001",
+      "RISK-002",
+      "RISK-003",
+      "RISK-004",
+      "CORR-001",
+      "CORR-002",
+      "CORR-003",
+      "CORR-004",
+      "SCN-001",
+      "SCN-002",
+      "SCN-003",
+      "SCN-004"
+    ]
+  },
+  "principal_definitions": {
+    "DEF1_historical_cash_invested": {
+      "amount": 288975.12,
+      "shares_sell_only": 13500,
+      "shares_with_assets": 4500
+    },
+    "DEF2_net_after_dividends": {
+      "amount": 287975.12,
+      "shares_sell_only": 13400,
+      "shares_with_assets": 4500
+    },
+    "DEF3_current_holding_cost": {
+      "amount": 288975.12,
+      "shares_sell_only": 13500,
+      "shares_with_assets": 4500
+    },
+    "status": "AMBIGUOUS - 客户尚未确认，不得自行选择最有利口径"
+  },
+  "t_trading_analysis": {
+    "max_daily_roundtrip_shares": 2000,
+    "max_daily_roundtrips": 1,
+    "required_spread_per_share": 0.1513,
+    "required_spread_pct": 0.007,
+    "total_roundtrip_fees": 173.26,
+    "buffer": 129.3,
+    "hard_constraint_impact": "日终持股不变，权重和风险贡献无改善；做T不能替代净减仓",
+    "failure_handling": "先卖后价格上涨无法回补=做T失败，转为净减仓，不得追加买入"
+  },
+  "unresolved_items": [
+    {
+      "item": "本金定义",
+      "priority": 1,
+      "impact": "决定所需卖出股数(13,400-13,500股仅靠卖出 vs 4,500股计入低风险资产)",
+      "status": "待客户确认"
+    },
+    {
+      "item": "2,000元净资产残差来源",
+      "priority": 2,
+      "impact": "影响NAV口径和权重精度(使用区间而非单一值)",
+      "status": "OPEN，不得虚构补平"
+    },
+    {
+      "item": "客户是否愿意在价格跌破20.80元时放弃卖价偏好",
+      "priority": 3,
+      "impact": "决定跌破偏好价时是否继续减仓(硬约束要求继续减仓)",
+      "status": "待客户确认"
+    },
+    {
+      "item": "个人单票最大可接受亏损金额",
+      "priority": 4,
+      "impact": "影响止损纪律和压力情景应对",
+      "status": "未提供"
+    },
+    {
+      "item": "保留12,000股与60%风险贡献硬约束的冲突",
+      "priority": 1,
+      "impact": "保留12,000股时RC约90%>60%，需客户确认是否授权继续减仓至约2,500股",
+      "status": "待客户确认"
+    }
+  ],
+  "event_calendar": [
+    {
+      "date": "2026-09-21",
+      "event": "LOT-03的3,000股转为可卖；结算应收8,960元到账；应付费用12元扣除"
+    },
+    {
+      "date": "2026-09-23",
+      "event": "未来现金分红股权登记日(收盘持股决定分红资格)"
+    },
+    {
+      "date": "2026-09-24",
+      "event": "除息日(每股0.10元；价格触发线机械下调0.10元)"
+    },
+    {
+      "date": "2026-09-25",
+      "event": "其他应收2,400元到账"
+    },
+    {
+      "date": "2026-09-30",
+      "event": "现金分红支付日(金额=9/23登记持股×0.10元)"
+    },
+    {
+      "date": "2026-10-09",
+      "event": "计划截止日(风险和低风险资产目标检查)"
+    }
+  ],
+  "data_quality_issues": [
+    {
+      "id": "DQ-001",
+      "issue": "NAV不勾稽，2,000元残差",
+      "handling": "使用NAV区间，不得虚构"
+    },
+    {
+      "id": "DQ-002",
+      "issue": "OCR总数量低置信(0.58)",
+      "handling": "不得用于卖出数量决策"
+    },
+    {
+      "id": "DQ-003",
+      "issue": "券商供应商成本送股后未更新",
+      "handling": "从流水重建成本，供应商成本仅作冲突口径保留"
+    },
+    {
+      "id": "DQ-004",
+      "issue": "盘中未完成价格记录",
+      "handling": "排除，使用正式收盘价"
+    },
+    {
+      "id": "DQ-005",
+      "issue": "未来行情和技术记录",
+      "handling": "排除"
+    },
+    {
+      "id": "DQ-006",
+      "issue": "当日买入3,000股不可卖",
+      "handling": "9/21起可卖"
+    },
+    {
+      "id": "DQ-007",
+      "issue": "技术偏强与硬风险约束冲突",
+      "handling": "硬约束优先"
+    },
+    {
+      "id": "DQ-008",
+      "issue": "软卖价偏好与硬约束在下跌时冲突",
+      "handling": "提供情景并说明取舍"
+    },
+    {
+      "id": "DQ-009",
+      "issue": "未来分红取决于登记日持仓",
+      "handling": "登记日前不确认固定应收"
+    },
+    {
+      "id": "DQ-010",
+      "issue": "本金定义不明确",
+      "handling": "计算三口径并请求确认"
+    }
+  ],
+  "output_files_sha256": {
+    "single_position_memo.md": {
+      "sha256": "80e1001c83f13551f1fb54b32d77981b88a8d7640f8d60747e55e262316af7a4",
+      "error": null
+    },
+    "position_reconciliation.csv": {
+      "sha256": "b4e2aa0bfef34bd31c9779a368878d262ea70cc4df4fee1ac79f7214d3411acb",
+      "error": null
+    },
+    "principal_definitions.csv": {
+      "sha256": "a86262476dd2f685de572eec3ea9de9c3457b139918050879544b8e41dfbca04",
+      "error": null
+    },
+    "risk_diagnosis.csv": {
+      "sha256": "65a479a154cef7460f31daf6cf0ed2eb0a3eab5bd5443a851e47a50ea2c72573",
+      "error": null
+    },
+    "action_scenarios.csv": {
+      "sha256": "3f81067fae1bf9010c94307e2e05793db3f02621d95d0dfefc2f53a863e62ada",
+      "error": null
+    },
+    "if_then_rules.csv": {
+      "sha256": "390f1869919fc1bd89548831e54e14361186040bd9a26a4a01bde7709535f5cc",
+      "error": null
+    },
+    "assumptions_manifest.json": {
+      "sha256": "NOT_COMPUTED",
+      "error": "manifest文件无法包含自身的SHA-256(循环引用)；生成后可单独计算"
+    }
+  },
+  "disclaimer": "本文件仅用于内部研究和客户沟通准备，不构成订单或收益承诺。所有数据均为已脱敏信息。"
+}

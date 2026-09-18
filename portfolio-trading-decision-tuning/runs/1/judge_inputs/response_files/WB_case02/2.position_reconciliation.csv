@@ -1,0 +1,8 @@
+batch_id,trade_date,settle_date,event_type,trade_shares,rebuilt_qty_after_event,official_qty_match,unit_price,gross_amount_cny,commission_cny,transfer_fee_cny,stamp_duty_cny,net_cash_flow_cny,available_cost_after_event_cny,available_avg_cost_per_share_cny,official_provider_total_cost_cny,official_provider_avg_cost_cny,ocr_total_quantity,ocr_confidence,data_quality_flag,source_id
+LOT-01,2025-11-03,2025-11-04,BUY,10000,10000,MISMATCH,12.0,120000.0,30.0,1.2,0.0,-120000.0,120031.2,12.0,314880.0,13.12,24800,0.58,OK,LEDGER-001
+LOT-01,2026-04-15,2026-04-15,CASH_DIVIDEND,10000,10000,MISMATCH,0.1,0.0,0.0,0.0,0.0,1000.0,120031.2,12.0,314880.0,13.12,24800,0.58,OK,LEDGER-002
+LOT-01,2026-06-30,2026-06-30,STOCK_DIVIDEND,5000,15000,MISMATCH,0.0,0.0,0.0,0.0,0.0,0.0,120031.2,8.0,314880.0,13.12,24800,0.58,OK,LEDGER-003
+LOT-02,2026-07-10,2026-07-13,BUY,6000,21000,MISMATCH,17.5,105000.0,26.25,1.05,0.0,-105000.0,225058.5,10.72,314880.0,13.12,24800,0.58,OK,LEDGER-004
+LOT-03,2026-09-18,2026-09-21,BUY,3000,24000,MATCH,21.3,63900.0,15.98,0.64,0.0,-63900.0,288975.12,12.04,314880.0,13.12,24800,0.58,LOT-03_UNFREEZE_2026-09-21,LEDGER-005
+
+SUMMARY,,,,,24000,MATCH,,288900.0,,,,287975.12,288975.12,12.04063,314880.0,13.12,24800,0.58,"成本差 25,904.88 CNY; OCR低置信不采",

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>招商银行（600036.SH）持仓分析图表</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f5f7fa;
+    color: #333;
+    padding: 24px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 22px;
+    color: #1a73e8;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 13px;
+    color: #888;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 4px solid #1a73e8;
+  }
+  .chart { width: 100%; height: 420px; }
+  .chart-wide { width: 100%; height: 380px; }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .summary-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .summary-item .label { font-size: 12px; color: #888; margin-bottom: 6px; }
+  .summary-item .value { font-size: 20px; font-weight: 700; color: #333; }
+  .summary-item .value.profit { color: #188038; }
+  .summary-item .value.price { color: #1a73e8; }
+  .disclaimer {
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin-top: 16px;
+    padding: 12px;
+    background: #fff8e1;
+    border-radius: 8px;
+  }
+  @media (max-width: 768px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .chart, .chart-wide { height: 320px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>招商银行（600036.SH）持仓分析</h1>
+    <p>数据基准：2026年9月11日收盘价 41.35元 | 本报告为分析参考，不构成投资建议</p>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-item">
+      <div class="label">当前股价</div>
+      <div class="value price">41.35 元</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">浮动盈亏</div>
+      <div class="value profit">+16,750 元</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">盈亏比例</div>
+      <div class="value profit">+8.82%</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">持仓占比</div>
+      <div class="value">45%</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">图1：2026年股价走势与关键价位</div>
+    <div id="chart1" class="chart"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">图2：持仓盈亏与资产结构</div>
+    <div id="chart2" class="chart-wide"></div>
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ 以上分析基于公开数据和量化模型，不构成任何投资建议，不保证收益。股市有风险，投资需谨慎。
+  </div>
+</div>
+
+<script>
+  // 图1：股价走势与关键价位
+  var chart1 = echarts.init(document.getElementById('chart1'));
+  var option1 = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      triggerOn: 'click',
+      renderMode: 'richText',
+      confine: true
+    },
+    legend: {
+      data: ['收盘价', '成本线(38元)', '压力位(44.5元)', '支撑位(39.5元)'],
+      bottom: 0,
+      textStyle: { fontSize: 12 }
+    },
+    grid: { left: '8%', right: '5%', top: '12%', bottom: '15%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: ['1/2','1/15','1/30','2/13','2/27','3/13','3/31','4/15','4/30','5/15','5/29','6/15','6/30','7/15','7/31','8/14','8/28','9/11'],
+      axisLabel: { fontSize: 11, rotate: 30 }
+    },
+    yAxis: {
+      type: 'value',
+      min: 36,
+      max: 46,
+      name: '元',
+      nameTextStyle: { fontSize: 12 },
+      axisLabel: { fontSize: 11 }
+    },
+    series: [
+      {
+        name: '收盘价',
+        type: 'line',
+        data: [39.46,39.51,43.15,40.96,40.77,41.51,40.06,41.38,41.82,42.13,41.39,41.76,42.30,42.19,43.02,42.98,39.35,41.35],
+        smooth: true,
+        lineStyle: { width: 2.5, color: '#1a73e8' },
+        itemStyle: { color: '#1a73e8' },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(26,115,232,0.25)' },
+              { offset: 1, color: 'rgba(26,115,232,0.02)' }
+            ]
+          }
+        },
+        markPoint: {
+          data: [
+            { type: 'max', name: '年内高点' },
+            { coord: ['9/11', 41.35], name: '当前价', value: '41.35' }
+          ],
+          symbolSize: 45,
+          label: { fontSize: 11 }
+        }
+      },
+      {
+        name: '成本线(38元)',
+        type: 'line',
+        data: [38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38],
+        lineStyle: { type: 'dashed', color: '#e8710a', width: 1.5 },
+        symbol: 'none'
+      },
+      {
+        name: '压力位(44.5元)',
+        type: 'line',
+        data: [44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5,44.5],
+        lineStyle: { type: 'dashed', color: '#d93025', width: 1.5 },
+        symbol: 'none'
+      },
+      {
+        name: '支撑位(39.5元)',
+        type: 'line',
+        data: [39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5,39.5],
+        lineStyle: { type: 'dashed', color: '#188038', width: 1.5 },
+        symbol: 'none'
+      }
+    ]
+  };
+  chart1.setOption(option1);
+
+  // 图2：持仓盈亏与资产结构
+  var chart2 = echarts.init(document.getElementById('chart2'));
+  var option2 = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'item',
+      triggerOn: 'click',
+      renderMode: 'richText',
+      confine: true,
+      formatter: function(params) {
+        return params.name + '<br/>金额：' + params.value.toLocaleString() + ' 元 (' + params.percent + '%)';
+      }
+    },
+    legend: { bottom: 0, textStyle: { fontSize: 12 } },
+    title: [
+      { text: '资产配置', left: '27%', top: '5%', textAlign: 'center', textStyle: { fontSize: 14, color: '#555' } },
+      { text: '持仓盈亏构成', left: '72%', top: '5%', textAlign: 'center', textStyle: { fontSize: 14, color: '#555' } }
+    ],
+    series: [
+      {
+        name: '资产配置',
+        type: 'pie',
+        radius: ['38%', '62%'],
+        center: ['27%', '55%'],
+        data: [
+          { value: 45, name: '招商银行 45%', itemStyle: { color: '#1a73e8' } },
+          { value: 55, name: '其他资产 55%', itemStyle: { color: '#dadce0' } }
+        ],
+        label: { fontSize: 12, formatter: '{b}\n{d}%' }
+      },
+      {
+        name: '盈亏构成',
+        type: 'pie',
+        radius: ['38%', '62%'],
+        center: ['72%', '55%'],
+        data: [
+          { value: 190000, name: '成本 19.0万', itemStyle: { color: '#5f6368' } },
+          { value: 16750, name: '浮盈 1.68万', itemStyle: { color: '#188038' } }
+        ],
+        label: { fontSize: 12, formatter: '{b}\n{d}%' }
+      }
+    ]
+  };
+  chart2.setOption(option2);
+
+  // 响应式
+  window.addEventListener('resize', function() {
+    chart1.resize();
+    chart2.resize();
+  });
+</script>
+</body>
+</html>

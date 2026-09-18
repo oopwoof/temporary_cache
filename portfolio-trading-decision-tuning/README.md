@@ -82,3 +82,17 @@ python3 <autotune>/scripts/make_run_pack.py --run runs/1 --skill skills/current 
 3. ~~起草领域纪律包~~ **已完成**：`packs/portfolio-trading-decision.yaml`（29 distinctions / 12 hard_gates / 8 never_regress），
    覆盖核验见 `runs/1/rubric覆盖核验.yaml`——61 个可判点，初稿命中 54.1%，补条目后 100%。**改它等于换尺子，已冻结。**
 4. 判分回来先跑 `check_judge_quality.py`，再按 `改动台账.md` 的失败判据逐条核对哪条落地了。
+
+## runs/1 状态（2026-09-18）
+
+| 阶段 | 状态 |
+|---|---|
+| 跑题 | **已完成**：8 题 × 2 轮，16 份正文全到，47 件交付件，零技术失败。**跑的是 v3.0**（摘要 `b5082cae…`），v3.1 未进本轮 |
+| G2 离线复演 | **已完成** → `runs/1/离线复演.md` |
+| 判分包 | **已出** → `runs/1/g0_pack`（四方 × 8 题 × 3 轮），说明见 `runs/1/判分包说明.md` |
+| G0 一致率 / 噪声底 | **未测**（不能自评；第 2 轮也还没判） |
+| 准出核算 | **待判分回来**，命令见判分包说明第六节 |
+
+判分包的关键取舍：四方是 ours/base/WB/gpt，**没放 base+skill**——判分方的 prompt 写死
+「四份答复（甲/乙/丙/丁）」且不许改措辞。代价是 `no_loss_to: base+skill` 这条硬条件本轮**未测**，
+要核须另发成对包。

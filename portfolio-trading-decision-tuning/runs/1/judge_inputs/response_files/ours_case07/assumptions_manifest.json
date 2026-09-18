@@ -1,0 +1,113 @@
+{
+  "decision_point": "2026-08-28 15:20 Asia/Shanghai 周五收盘后",
+  "plan_window": "2026-08-31~2026-09-02 10:00",
+  "base_currency": "CNY",
+  "cash_target": 260000.0,
+  "nav": {
+    "statement_total_assets": 1038800.0,
+    "detail_reconciled": 1040050.0,
+    "residual_detail_minus_statement": 1250.0,
+    "note": "明细=5只市值964050+现金76000(58000已结算+18000未结算毛额);残差1250元未用其他资产补平"
+  },
+  "fees": {
+    "A_stock": "佣金max(5,0.025%)+印花0.05%+过户0.001%+滑点0.05%",
+    "ETF": "佣金max(5,0.02%)+无印花+无过户+滑点0.02%",
+    "D": "恢复买盘后滑点0.3%",
+    "old_sale_net": 17985.82
+  },
+  "settlement": "A股卖出当日可用,下一交易日09:00可划转;T+1当日买入不可卖",
+  "constraints": {
+    "CON01_cash": ">=260000",
+    "CON02_position": "<=0.75",
+    "CON03_single": "<=0.27",
+    "CON04_highvol": "<=0.30",
+    "CON05_electronics": "<=0.32",
+    "CON06_worst_stress": "<=0.09",
+    "CON07_risk_contrib": "<=0.55",
+    "CON08_ADV": "<=0.05",
+    "CON09_min_cash": ">=30000",
+    "CON10_T1": "当日买当日卖=0"
+  },
+  "adopted": [
+    [
+      "官方持仓",
+      "BRK-POS-01..05 数量/可卖为正式起点"
+    ],
+    [
+      "交易批次",
+      "BRK-TRD-01..07 重建成本;TRD-A-03当日买4000不计当日可卖"
+    ],
+    [
+      "行情",
+      "MKT-A/B/D/E-01为正式收盘;MKT-A-FUT(8/31 09:35)晚于决策点,已排除"
+    ],
+    [
+      "旧卖出TRD-X-01",
+      "净额17985.82于8/31 09:00可划转"
+    ]
+  ],
+  "excluded": [
+    [
+      "MKT-A-FUT 2026-08-31 09:35 未来记录",
+      "晚于决策点,前视控制,排除"
+    ],
+    [
+      "OCR-001 证券A总量13000? 置信0.62",
+      "<0.80,仅列异常,不覆盖官方18000"
+    ],
+    [
+      "OCR-005 证券D名称错识 置信0.74",
+      "以security_id匹配"
+    ],
+    [
+      "证券B股息3750元9/3到账",
+      "晚于截止,不计入260000"
+    ],
+    [
+      "证券C停牌价15.20(8/24)",
+      "陈旧价,不计可变现"
+    ]
+  ],
+  "open_items": [
+    "证券D何时恢复买盘不可知:方案A/C依赖此,方案B不依赖",
+    "证券C复牌时间不可知,复牌跳空未计入",
+    "客户是否愿为硬约束接受A<12000股(PREF-01与CON-04/05/07冲突)",
+    "残差1250元未在附件内消除,影响权重约0.12%",
+    "客户个人税务特殊情形未提供"
+  ],
+  "scheme_summary": {
+    "A_preference": {
+      "keep_A": 12500,
+      "depends_on_D": true,
+      "cash": 302589.74,
+      "highvol": 0.2992,
+      "A_risk": 0.6103,
+      "note": "留A12500但需卖D7700;A风险贡献61.03%仍>55%,完全达标须破PREF-01"
+    },
+    "B_liquidity": {
+      "keep_A": 12500,
+      "depends_on_D": false,
+      "cash": 260394.03,
+      "highvol": 0.3991,
+      "A_risk": 0.5038,
+      "note": "现金确定;高波动39.91%与压力10.56%仍超限(D冻结所致)"
+    },
+    "C_risk": {
+      "keep_A": 8000,
+      "depends_on_D": true,
+      "cash": 393848.26,
+      "highvol": 0.2114,
+      "A_risk": 0.4688,
+      "note": "风险约束全部回限内,但破PREF-01(A<12000)且需D复牌"
+    }
+  },
+  "files": {
+    "position_reconciliation.csv": "b707a11eff6c729c785aef76bcbd3a5521972d2cb599b70c46b924af46a6adcb",
+    "cash_availability_schedule.csv": "7bb0bb5b74df6cf3b67f459e37acd6865930d8fd49e5df9eeca16b3c9edcde92",
+    "portfolio_diagnosis.csv": "df25bcd0f7923e463de7003d7304cc4abeb35424d4b36e3d4ba8516ba5e2c21a",
+    "action_priority.csv": "c82b51611f3e8c7a8aec0df5d4ed2764d253a0421ec2134fc024df778687ceee",
+    "scenario_comparison.csv": "0129671b690d58565db719f1b1ecd5190fb2924e217c1b93aab181b0a76803cb",
+    "if_then_rules.csv": "f349f2a01b2ab2621136321225e0678a9437afb06c5df6f988d358531926f68a",
+    "liquidity_decision_memo.md": "dcb36cfab41eda170d738493de0fc45a962e5579855201516b8df6595b2e87c8"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "as_of": "2026-09-18 15:30:00 Asia/Shanghai",
+  "base_currency": "CNY",
+  "decision_subject": "SYN100.SZ",
+  "plan_window": "2026-09-21 to 2026-10-09 (10 synthetic trading days)",
+  "data_admission": {
+    "adopted": [
+      {
+        "record": "MD-001 收盘价21.55 FINAL",
+        "reason": "available 2026-09-18 15:05 <= as-of",
+        "source_id": "MKT-OFFICIAL-001"
+      },
+      {
+        "record": "官方持仓 total 24000/sellable 21000/frozen 3000",
+        "reason": "券商正式持仓,数量优先于OCR",
+        "source_id": "BRK-POS-001"
+      },
+      {
+        "record": "交易流水 LEDGER-001~005 + 公司行动 CA-001/CA-HIST-01/CA-HIST-02",
+        "reason": "用于重建批次与成本",
+        "source_id": "LEDGER-*/CA-*"
+      },
+      {
+        "record": "风险参数/相关性矩阵/压力情景(参数日期<=as-of)",
+        "reason": "60日参数,as-of前可知",
+        "source_id": "RISK-*/CORR-*/SCN-*"
+      }
+    ],
+    "excluded": [
+      {
+        "record": "MD-003 14:55 INTRADAY_PARTIAL",
+        "reason": "盘中未完成价,不得用于收盘决策",
+        "source_id": "MKT-INTRA-003/DQ-004"
+      },
+      {
+        "record": "MD-004 + TECH-003 (2026-09-21)",
+        "reason": "晚于as-of的未来记录",
+        "source_id": "MKT-FUTURE-004/TECH-SRC-003/DQ-005"
+      },
+      {
+        "record": "OCR total_quantity 24800 (conf 0.58)",
+        "reason": "低置信,不用于生成卖出数量",
+        "source_id": "OCR-002/DQ-002"
+      },
+      {
+        "record": "provider_avg_cost 13.12",
+        "reason": "送股后未核验成本,仅作对照口径",
+        "source_id": "BRK-POS-001/DQ-003"
+      }
+    ]
+  },
+  "account_basis": {
+    "detail_nav": 801048.0,
+    "statement_nav": 803048.0,
+    "unexplained_residual": 2000.0,
+    "residual_note": "账单-明细=+2000,来源未解释,不虚构其他资产抹平(DQ-001);权重给上下界"
+  },
+  "cost_basis": {
+    "rebuilt_total_cost": 288975.12,
+    "rebuilt_avg_per_share": 12.0406,
+    "provider_total_cost": 314880.0,
+    "provider_avg_per_share": 13.12,
+    "cost_diff": 25904.88,
+    "stock_dividend": "2026-06-30 每10股送5股,LOT-01 10000->15000,总成本不增"
+  },
+  "company_actions": {
+    "received_dividend": 1000.0,
+    "future_dividend": "0.10/share,record 2026-09-23,ex 2026-09-24,pay 2026-09-30;不提前入账;除息后触发价-0.10"
+  },
+  "fees": {
+    "commission_rate": 0.00025,
+    "commission_min": 5.0,
+    "transfer_fee_rate": 1e-05,
+    "stamp_duty_rate": 0.0005,
+    "slippage_base": 0.0015,
+    "slippage_stress": 0.004,
+    "t_roundtrip_buffer": 0.003,
+    "min_commission_applied": "逐笔按max(gross*0.00025,5)"
+  },
+  "liquidity": {
+    "adv20_shares": 180000,
+    "max_participation": 0.05,
+    "max_daily_shares": 9000,
+    "lot_size": 100
+  },
+  "risk_params": {
+    "corr_matrix_check": "PASS(dim4/symmetric/diag=1/range[-1,1])",
+    "pre_portfolio_vol": 0.324324,
+    "pre_syn_rc": 0.309412,
+    "post_portfolio_vol": 0.182811,
+    "post_syn_rc": 0.167123,
+    "worst_pre_stress": -0.097315,
+    "worst_post_stress": -0.05444
+  },
+  "principal_definitions": {
+    "D1_gross_invested": 288975.12,
+    "D2_net_after_div": 287975.12,
+    "D3_rebuilt_cost": 288975.12,
+    "sell_only_shares": {
+      "D1": 13500,
+      "D2": 13400,
+      "D3": 13500
+    },
+    "incl_liquid_shares": {
+      "D1": 4500,
+      "D2": 4500,
+      "D3": 4500
+    },
+    "customer_liquid_counted": 192500.0
+  },
+  "main_plan": {
+    "sell_total": 11000,
+    "by_date": {
+      "2026-09-21": 9000,
+      "2026-09-22": 2000
+    },
+    "post_shares": 13000,
+    "post_weight": 0.349963,
+    "net_cash": 236514.27,
+    "retained_vs_soft_12000": "13000>=12000 PASS"
+  },
+  "open_items": [
+    "客户未确认本金口径(D1/D2/D3)",
+    "2000元净资产残差来源未明",
+    "客户是否接受跌破20.80仍减仓",
+    "个人单票最大可接受亏损额未提供"
+  ],
+  "non_execution_disclaimer": "本材料不构成订单/不代下单/不保证成交或回本",
+  "output_files": {
+    "single_position_memo.md": "2e16748944cb5508decec782bd70ba39577ece6bfd05bd25f0fc36dab63fe99a",
+    "position_reconciliation.csv": "237e8707b44b33f09c679ec92331fdc3c1790c2f8de50968fe440ffa3d034fd4",
+    "principal_definitions.csv": "8a51676338d8c1c1e2c4b728f2f0dabc97110409be2ad4c93cd29e03f67ece5a",
+    "risk_diagnosis.csv": "f9fe27e5882bba7bd6c819fb4c04bbac9df9919b56615d788f28b5f299759ca6",
+    "action_scenarios.csv": "864f24f5c44d7879428ec168ca21994c4b8843f8e9fe5e89ec731de6e0bed450",
+    "if_then_rules.csv": "1d6669d41b7decc537e3d27b8542954c52842b88117855b58ca6cf765b295ae4"
+  }
+}
