@@ -1,146 +1,170 @@
 {
  "pass1/case01": {
-  "甲": "gpt",
+  "甲": "WB",
   "乙": "ours",
-  "丙": "WB",
-  "丁": "base"
+  "丙": "base+skill",
+  "丁": "gpt",
+  "戊": "base"
  },
  "pass1/case02": {
-  "甲": "base",
-  "乙": "WB",
-  "丙": "gpt",
-  "丁": "ours"
+  "甲": "base+skill",
+  "乙": "ours",
+  "丙": "WB",
+  "丁": "gpt",
+  "戊": "base"
  },
  "pass1/case03": {
-  "甲": "base",
+  "甲": "ours",
   "乙": "WB",
-  "丙": "ours",
-  "丁": "gpt"
+  "丙": "base+skill",
+  "丁": "gpt",
+  "戊": "base"
  },
  "pass1/case04": {
-  "甲": "ours",
-  "乙": "gpt",
+  "甲": "base",
+  "乙": "base+skill",
   "丙": "WB",
-  "丁": "base"
+  "丁": "gpt",
+  "戊": "ours"
  },
  "pass1/case05": {
-  "甲": "base",
-  "乙": "WB",
+  "甲": "base+skill",
+  "乙": "base",
   "丙": "gpt",
-  "丁": "ours"
+  "丁": "WB",
+  "戊": "ours"
  },
  "pass1/case06": {
-  "甲": "WB",
-  "乙": "gpt",
+  "甲": "gpt",
+  "乙": "base+skill",
   "丙": "ours",
-  "丁": "base"
+  "丁": "base",
+  "戊": "WB"
  },
  "pass1/case07": {
   "甲": "ours",
-  "乙": "WB",
-  "丙": "gpt",
-  "丁": "base"
+  "乙": "gpt",
+  "丙": "base",
+  "丁": "WB",
+  "戊": "base+skill"
  },
  "pass1/case08": {
-  "甲": "gpt",
-  "乙": "WB",
-  "丙": "ours",
-  "丁": "base"
+  "甲": "base+skill",
+  "乙": "ours",
+  "丙": "gpt",
+  "丁": "base",
+  "戊": "WB"
  },
  "pass2/case01": {
   "甲": "base",
-  "乙": "WB",
-  "丙": "ours",
-  "丁": "gpt"
+  "乙": "base+skill",
+  "丙": "gpt",
+  "丁": "ours",
+  "戊": "WB"
  },
  "pass2/case02": {
-  "甲": "ours",
-  "乙": "gpt",
-  "丙": "WB",
-  "丁": "base"
+  "甲": "base+skill",
+  "乙": "ours",
+  "丙": "gpt",
+  "丁": "base",
+  "戊": "WB"
  },
  "pass2/case03": {
-  "甲": "WB",
-  "乙": "ours",
-  "丙": "gpt",
-  "丁": "base"
+  "甲": "base",
+  "乙": "WB",
+  "丙": "base+skill",
+  "丁": "gpt",
+  "戊": "ours"
  },
  "pass2/case04": {
-  "甲": "base",
-  "乙": "WB",
-  "丙": "gpt",
-  "丁": "ours"
+  "甲": "WB",
+  "乙": "base+skill",
+  "丙": "ours",
+  "丁": "base",
+  "戊": "gpt"
  },
  "pass2/case05": {
-  "甲": "gpt",
-  "乙": "WB",
-  "丙": "ours",
-  "丁": "base"
+  "甲": "base",
+  "乙": "ours",
+  "丙": "gpt",
+  "丁": "base+skill",
+  "戊": "WB"
  },
  "pass2/case06": {
-  "甲": "WB",
-  "乙": "ours",
-  "丙": "base",
-  "丁": "gpt"
- },
- "pass2/case07": {
   "甲": "ours",
   "乙": "base",
-  "丙": "WB",
-  "丁": "gpt"
+  "丙": "base+skill",
+  "丁": "WB",
+  "戊": "gpt"
  },
- "pass2/case08": {
+ "pass2/case07": {
   "甲": "gpt",
   "乙": "WB",
-  "丙": "ours",
-  "丁": "base"
+  "丙": "base+skill",
+  "丁": "ours",
+  "戊": "base"
+ },
+ "pass2/case08": {
+  "甲": "base+skill",
+  "乙": "base",
+  "丙": "WB",
+  "丁": "ours",
+  "戊": "gpt"
  },
  "pass3/case01": {
+  "甲": "WB",
+  "乙": "ours",
+  "丙": "gpt",
+  "丁": "base+skill",
+  "戊": "base"
+ },
+ "pass3/case02": {
+  "甲": "gpt",
+  "乙": "base+skill",
+  "丙": "ours",
+  "丁": "WB",
+  "戊": "base"
+ },
+ "pass3/case03": {
   "甲": "ours",
   "乙": "WB",
   "丙": "gpt",
-  "丁": "base"
- },
- "pass3/case02": {
-  "甲": "WB",
-  "乙": "gpt",
-  "丙": "ours",
-  "丁": "base"
- },
- "pass3/case03": {
-  "甲": "WB",
-  "乙": "gpt",
-  "丙": "ours",
-  "丁": "base"
+  "丁": "base",
+  "戊": "base+skill"
  },
  "pass3/case04": {
-  "甲": "ours",
-  "乙": "gpt",
-  "丙": "WB",
-  "丁": "base"
- },
- "pass3/case05": {
-  "甲": "gpt",
-  "乙": "ours",
-  "丙": "WB",
-  "丁": "base"
- },
- "pass3/case06": {
   "甲": "WB",
   "乙": "ours",
+  "丙": "base+skill",
+  "丁": "base",
+  "戊": "gpt"
+ },
+ "pass3/case05": {
+  "甲": "base+skill",
+  "乙": "ours",
   "丙": "base",
-  "丁": "gpt"
+  "丁": "WB",
+  "戊": "gpt"
+ },
+ "pass3/case06": {
+  "甲": "gpt",
+  "乙": "base+skill",
+  "丙": "ours",
+  "丁": "base",
+  "戊": "WB"
  },
  "pass3/case07": {
-  "甲": "base",
-  "乙": "WB",
-  "丙": "ours",
-  "丁": "gpt"
+  "甲": "WB",
+  "乙": "base",
+  "丙": "gpt",
+  "丁": "base+skill",
+  "戊": "ours"
  },
  "pass3/case08": {
   "甲": "gpt",
-  "乙": "ours",
-  "丙": "WB",
-  "丁": "base"
+  "乙": "base",
+  "丙": "ours",
+  "丁": "WB",
+  "戊": "base+skill"
  }
 }

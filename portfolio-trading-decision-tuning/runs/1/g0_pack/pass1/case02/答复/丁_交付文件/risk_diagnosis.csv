@@ -1,15 +1,19 @@
-﻿metric,unit,detail_nav_anchor,statement_nav_anchor,threshold,pre_status,post_main_sell_11000,post_status,source_id
-NAV(分母),CNY,801048.0,803048.0,-,残差2000未解释(DQ-001),800512.27(交易后),上下界并列,ACCT-001/AST-*
-SYN100市值,CNY,517200.0,517200.0,-,-,280150.0,-,BRK-POS-001
-SYN100权重,%NAV,0.645654,0.644046,≤0.3500,超限约29.5pct,0.349963,达标(余量0.000037),PAR-004
-组合年化波动率,%,0.324324,0.323614,-,-,0.182811,下降14.15pct,RISK-*/CORR-*
-SYN100风险贡献占比,%组合风险,0.309412,0.308761,≤0.6000,达标(余量29.06pct),0.167123,达标,PAR-006
-风险贡献加总校验,%,1.0,1.0,=1.0000,通过,1.0,通过,计算契约
-压力 SCN-BASE 损失,%NAV,-0.013762,-0.013728,≥-0.0800,达标,-0.007852,达标,SCN-001
-压力 SCN-UP 损益,%NAV,0.047192,0.047075,-,+4.72%(收益),0.026501,收益,SCN-002
-压力 SCN-DOWN 损失,%NAV,-0.097315,-0.097154,≥-0.0800,FAIL(超1.73pct),-0.05444,达标,SCN-003
-压力 SCN-HALT 损失,%NAV,-0.080324,-0.080185,≥-0.0800,FAIL(超0.03pct),-0.044844,达标,SCN-004
-最不利压力损失,%NAV,-0.097315,-0.097154,≥-0.0800,FAIL,-0.05444,达标,取SCN-DOWN
-现金+可赎回低风险,CNY,192500.0,192500.0,≥300000(10/9),缺口107500,440362.27,达标(含应收到账),PAR-007
-任一时点已结算现金,CNY,72500.0,72500.0,≥50000,达标,320362.27,达标,PAR-008
-相关性矩阵校验,-,dim4对称对角1范围合法,同,必须通过,通过,-,通过,CORR-001~004
+nav_basis,scenario,metric,actual_value,threshold,status,evidence
+明细NAV,当前,single_weight,0.64565419,0.35000000,不通过,PAR-004
+明细NAV,当前,portfolio_volatility,0.32432367,,信息项,RISK/CORR
+明细NAV,当前,M_risk_contribution_share,0.95402226,0.60000000,不通过,PAR-006
+明细NAV,基准震荡,portfolio_stress_loss,0.01376197,0.08000000,通过,SCN-BASE/NORMAL
+明细NAV,趋势延续,portfolio_stress_loss,-0.04719318,0.08000000,通过,SCN-UP/NORMAL
+明细NAV,跌停后跳空,portfolio_stress_loss,0.06826058,0.08000000,通过,SCN-DOWN/LIMIT_DOWN_NO_BID
+明细NAV,停牌后复牌,portfolio_stress_loss,0.08032477,0.08000000,不通过,SCN-HALT/SUSPENDED_3_TRADING_DAYS
+明细NAV,"净减仓21,600股后",single_weight,0.06465028,0.35000000,通过,风险恢复测算
+明细NAV,"净减仓21,600股后",M_risk_contribution_share,0.59072737,0.60000000,通过,风险恢复测算
+券商NAV,当前,single_weight,0.64404618,0.35000000,不通过,PAR-004
+券商NAV,当前,portfolio_volatility,0.32351594,,信息项,RISK/CORR
+券商NAV,当前,M_risk_contribution_share,0.95402226,0.60000000,不通过,PAR-006
+券商NAV,基准震荡,portfolio_stress_loss,0.01372770,0.08000000,通过,SCN-BASE/NORMAL
+券商NAV,趋势延续,portfolio_stress_loss,-0.04707564,0.08000000,通过,SCN-UP/NORMAL
+券商NAV,跌停后跳空,portfolio_stress_loss,0.06809057,0.08000000,通过,SCN-DOWN/LIMIT_DOWN_NO_BID
+券商NAV,停牌后复牌,portfolio_stress_loss,0.08012472,0.08000000,不通过,SCN-HALT/SUSPENDED_3_TRADING_DAYS
+券商NAV,"净减仓21,600股后",single_weight,0.06448906,0.35000000,通过,风险恢复测算
+券商NAV,"净减仓21,600股后",M_risk_contribution_share,0.59072737,0.60000000,通过,风险恢复测算

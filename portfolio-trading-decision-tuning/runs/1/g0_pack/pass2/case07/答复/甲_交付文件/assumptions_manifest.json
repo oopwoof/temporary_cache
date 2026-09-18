@@ -1,113 +1,292 @@
 {
-  "decision_point": "2026-08-28 15:20 Asia/Shanghai 周五收盘后",
-  "plan_window": "2026-08-31~2026-09-02 10:00",
-  "base_currency": "CNY",
-  "cash_target": 260000.0,
-  "nav": {
-    "statement_total_assets": 1038800.0,
-    "detail_reconciled": 1040050.0,
-    "residual_detail_minus_statement": 1250.0,
-    "note": "明细=5只市值964050+现金76000(58000已结算+18000未结算毛额);残差1250元未用其他资产补平"
+  "decision_context": {
+    "decision_ts": "2026-08-28 15:20:00 Asia/Shanghai",
+    "cash_deadline": "2026-09-02 10:00:00 Asia/Shanghai",
+    "currency": "CNY",
+    "cash_target_CNY": 260000,
+    "input_file": "持仓交易决策_短期用款与流动性排序_附件.xlsx",
+    "external_data_used": false,
+    "authorization": "research_and_client_communication_draft_only_no_order_no_cancel_no_transfer_no_financing"
   },
-  "fees": {
-    "A_stock": "佣金max(5,0.025%)+印花0.05%+过户0.001%+滑点0.05%",
-    "ETF": "佣金max(5,0.02%)+无印花+无过户+滑点0.02%",
-    "D": "恢复买盘后滑点0.3%",
-    "old_sale_net": 17985.82
-  },
-  "settlement": "A股卖出当日可用,下一交易日09:00可划转;T+1当日买入不可卖",
-  "constraints": {
-    "CON01_cash": ">=260000",
-    "CON02_position": "<=0.75",
-    "CON03_single": "<=0.27",
-    "CON04_highvol": "<=0.30",
-    "CON05_electronics": "<=0.32",
-    "CON06_worst_stress": "<=0.09",
-    "CON07_risk_contrib": "<=0.55",
-    "CON08_ADV": "<=0.05",
-    "CON09_min_cash": ">=30000",
-    "CON10_T1": "当日买当日卖=0"
-  },
-  "adopted": [
-    [
-      "官方持仓",
-      "BRK-POS-01..05 数量/可卖为正式起点"
-    ],
-    [
-      "交易批次",
-      "BRK-TRD-01..07 重建成本;TRD-A-03当日买4000不计当日可卖"
-    ],
-    [
-      "行情",
-      "MKT-A/B/D/E-01为正式收盘;MKT-A-FUT(8/31 09:35)晚于决策点,已排除"
-    ],
-    [
-      "旧卖出TRD-X-01",
-      "净额17985.82于8/31 09:00可划转"
-    ]
-  ],
-  "excluded": [
-    [
-      "MKT-A-FUT 2026-08-31 09:35 未来记录",
-      "晚于决策点,前视控制,排除"
-    ],
-    [
-      "OCR-001 证券A总量13000? 置信0.62",
-      "<0.80,仅列异常,不覆盖官方18000"
-    ],
-    [
-      "OCR-005 证券D名称错识 置信0.74",
-      "以security_id匹配"
-    ],
-    [
-      "证券B股息3750元9/3到账",
-      "晚于截止,不计入260000"
-    ],
-    [
-      "证券C停牌价15.20(8/24)",
-      "陈旧价,不计可变现"
-    ]
-  ],
-  "open_items": [
-    "证券D何时恢复买盘不可知:方案A/C依赖此,方案B不依赖",
-    "证券C复牌时间不可知,复牌跳空未计入",
-    "客户是否愿为硬约束接受A<12000股(PREF-01与CON-04/05/07冲突)",
-    "残差1250元未在附件内消除,影响权重约0.12%",
-    "客户个人税务特殊情形未提供"
-  ],
-  "scheme_summary": {
-    "A_preference": {
-      "keep_A": 12500,
-      "depends_on_D": true,
-      "cash": 302589.74,
-      "highvol": 0.2992,
-      "A_risk": 0.6103,
-      "note": "留A12500但需卖D7700;A风险贡献61.03%仍>55%,完全达标须破PREF-01"
+  "input_manifest": [
+    {
+      "sheet": "任务说明",
+      "record_time": "决策时点及任务级",
+      "key_fields": "时点/币种/授权/禁止联网",
+      "source_ids": "TASK-001..TASK-012",
+      "status": "ADOPTED",
+      "reason": "任务边界"
     },
-    "B_liquidity": {
-      "keep_A": 12500,
-      "depends_on_D": false,
-      "cash": 260394.03,
-      "highvol": 0.3991,
-      "A_risk": 0.5038,
-      "note": "现金确定;高波动39.91%与压力10.56%仍超限(D冻结所致)"
+    {
+      "sheet": "账户与资金",
+      "record_time": "2026-08-28 15:15及未来已知日历",
+      "key_fields": "statement_total_assets/withdrawable/available/unsettled/dividend/target",
+      "source_ids": "BRK-ACC-01..05|CLIENT-01..02",
+      "status": "ADOPTED_WITH_PARALLEL_NAV",
+      "reason": "汇总与明细不勾稽，保留两种口径"
     },
-    "C_risk": {
-      "keep_A": 8000,
-      "depends_on_D": true,
-      "cash": 393848.26,
-      "highvol": 0.2114,
-      "A_risk": 0.4688,
-      "note": "风险约束全部回限内,但破PREF-01(A<12000)且需D复牌"
+    {
+      "sheet": "官方持仓",
+      "record_time": "2026-08-28 15:00；C为8月24日",
+      "key_fields": "数量/可卖/均价/市值",
+      "source_ids": "BRK-POS-01..05",
+      "status": "ADOPTED",
+      "reason": "正式数量起点；可卖不等于可执行"
+    },
+    {
+      "sheet": "OCR核验",
+      "record_time": "截图",
+      "key_fields": "数量/名称/置信度",
+      "source_ids": "IMG-01|IMG-02",
+      "status": "CROSS_CHECK_ONLY",
+      "reason": "低于0.80字段排除；其余不覆盖官方"
+    },
+    {
+      "sheet": "交易批次",
+      "record_time": "各成交时点",
+      "key_fields": "数量/价格/费用/结算/可卖日",
+      "source_ids": "BRK-TRD-01..08",
+      "status": "ADOPTED",
+      "reason": "重建成本、T+1及旧证券净应收"
+    },
+    {
+      "sheet": "行情交易状态",
+      "record_time": "截至2026-08-28 15:03 available_ts",
+      "key_fields": "价格/状态/买盘/ADV/滑点辅助",
+      "source_ids": "MKT-SRC-01..05",
+      "status": "ADOPTED_EXCEPT_FUTURE",
+      "reason": "MKT-A-FUT available_ts晚于决策时点，排除"
+    },
+    {
+      "sheet": "公司行动",
+      "record_time": "截至决策时点可知",
+      "key_fields": "B除息/C停牌",
+      "source_ids": "ISSUER-CA-01|EXCH-CA-02",
+      "status": "ADOPTED",
+      "reason": "调整收益口径和执行状态"
+    },
+    {
+      "sheet": "风险参数",
+      "record_time": "近60日估算",
+      "key_fields": "波动/beta/标签/行业",
+      "source_ids": "RISK-01..05",
+      "status": "ADOPTED_WITH_LIMITATION",
+      "reason": "C历史波动可能低估复牌跳空"
+    },
+    {
+      "sheet": "相关性矩阵",
+      "record_time": "近60日估算",
+      "key_fields": "5x5相关系数",
+      "source_ids": "CORR-01..05",
+      "status": "ADOPTED",
+      "reason": "维度一致、对称、对角线1、范围有效"
+    },
+    {
+      "sheet": "压力情景",
+      "record_time": "研究假设",
+      "key_fields": "STRESS-01..03逐标的冲击",
+      "source_ids": "SCEN-01/02/03-*",
+      "status": "ADOPTED_AS_SCENARIO",
+      "reason": "不是预测；成交假设单独保留"
+    },
+    {
+      "sheet": "约束与偏好",
+      "record_time": "计划期",
+      "key_fields": "CON-01..10/PREF-01..04",
+      "source_ids": "CLIENT-01|CLIENT-03..06|POLICY-01..08|RULE-01",
+      "status": "ADOPTED",
+      "reason": "hard优先soft"
+    },
+    {
+      "sheet": "费用与规则",
+      "record_time": "当前适用",
+      "key_fields": "结算/T+1/100股/费用/滑点/5%ADV/做T",
+      "source_ids": "OPS-01..05|FEE-01..05|LIQ-01..05",
+      "status": "ADOPTED",
+      "reason": "唯一费用与规则口径"
+    },
+    {
+      "sheet": "资金日历",
+      "record_time": "2026-08-28至09-03",
+      "key_fields": "结算/可划转/截止/股息",
+      "source_ids": "CAL-SRC-01..08",
+      "status": "ADOPTED",
+      "reason": "现金可达性时点"
+    }
+  ],
+  "record_dispositions": [
+    {
+      "record": "MKT-A-FUT",
+      "status": "EXCLUDED",
+      "reason": "available_ts=2026-08-31 09:36，晚于决策时点"
+    },
+    {
+      "record": "OCR-001",
+      "status": "EXCLUDED_AS_QUANTITY",
+      "reason": "A数量置信度0.62且与官方冲突"
+    },
+    {
+      "record": "OCR-002",
+      "status": "CROSS_CHECK_ONLY",
+      "reason": "虽0.94但与OCR总量逻辑冲突，使用官方和批次"
+    },
+    {
+      "record": "OCR-005",
+      "status": "EXCLUDED_AS_NAME",
+      "reason": "D名称置信度0.74，按security_id"
+    },
+    {
+      "record": "MKT-C-01",
+      "status": "BOOK_VALUE_ONLY",
+      "reason": "停牌前陈旧价，不作为成交价"
+    },
+    {
+      "record": "MKT-D-01",
+      "status": "BOOK_VALUE_AND_SCENARIO_ONLY_AT_CUTOFF",
+      "reason": "跌停零买盘，当前不可成交"
+    }
+  ],
+  "nav_basis": {
+    "statement_NAV_CNY": 1038800.0,
+    "reconstructed_NAV_including_confirmed_dividend_CNY": 1043785.82,
+    "reconstructed_NAV_excluding_dividend_CNY": 1040035.82,
+    "residual_including_dividend_minus_statement_CNY": 4985.82,
+    "residual_excluding_dividend_minus_statement_CNY": 1235.82,
+    "policy": "两种主要NAV口径均检查；不虚构其他资产补平"
+  },
+  "cash_basis": {
+    "withdrawable_at_cutoff_CNY": 58000.0,
+    "unsettled_old_sale_gross_CNY": 18000.0,
+    "unsettled_old_sale_net_CNY": 17985.82,
+    "known_withdrawable_2026_08_31_09_CNY": 75985.82,
+    "required_incremental_net_sale_CNY": 184014.18,
+    "dividend_B_CNY": 3750.0,
+    "dividend_transferable": "2026-09-03 09:00 after deadline"
+  },
+  "fees_slippage": {
+    "A_stock_sell": {
+      "commission_rate": 0.00025,
+      "commission_min_CNY": 5,
+      "stamp_rate": 0.0005,
+      "transfer_rate": 1e-05,
+      "slippage": 0.0005
+    },
+    "B_stock_sell": {
+      "commission_rate": 0.00025,
+      "commission_min_CNY": 5,
+      "stamp_rate": 0.0005,
+      "transfer_rate": 1e-05,
+      "slippage": 0.0006
+    },
+    "C_stock_sell": {
+      "commission_rate": 0.00025,
+      "commission_min_CNY": 5,
+      "stamp_rate": 0.0005,
+      "transfer_rate": 1e-05,
+      "slippage": "UNKNOWN_UNTIL_RESUMPTION"
+    },
+    "D_stock_sell": {
+      "commission_rate": 0.00025,
+      "commission_min_CNY": 5,
+      "stamp_rate": 0.0005,
+      "transfer_rate": 1e-05,
+      "slippage": 0.003,
+      "only_if_valid_bid_returns": true
+    },
+    "ETF_sell": {
+      "commission_rate": 0.0002,
+      "commission_min_CNY": 5,
+      "stamp_rate": 0,
+      "transfer_rate": 0,
+      "slippage": 0.0002
     }
   },
-  "files": {
-    "position_reconciliation.csv": "b707a11eff6c729c785aef76bcbd3a5521972d2cb599b70c46b924af46a6adcb",
-    "cash_availability_schedule.csv": "7bb0bb5b74df6cf3b67f459e37acd6865930d8fd49e5df9eeca16b3c9edcde92",
-    "portfolio_diagnosis.csv": "df25bcd0f7923e463de7003d7304cc4abeb35424d4b36e3d4ba8516ba5e2c21a",
-    "action_priority.csv": "c82b51611f3e8c7a8aec0df5d4ed2764d253a0421ec2134fc024df778687ceee",
-    "scenario_comparison.csv": "0129671b690d58565db719f1b1ecd5190fb2924e217c1b93aab181b0a76803cb",
-    "if_then_rules.csv": "f349f2a01b2ab2621136321225e0678a9437afb06c5df6f988d358531926f68a",
-    "liquidity_decision_memo.md": "dcb36cfab41eda170d738493de0fc45a962e5579855201516b8df6595b2e87c8"
+  "settlement_rules": {
+    "A_share_sell_proceeds": "trade day available_for_trading; next trading day 09:00 transferable",
+    "lot_size_shares": 100,
+    "A_T_plus_1": "4000 shares bought 2026-08-28, expected sellable 2026-08-31 after broker recheck",
+    "ADV_cap": 0.05,
+    "D_daily_cap_shares": 9000,
+    "C_current_executable_shares": 0,
+    "D_current_executable_shares": 0
+  },
+  "constraints": {
+    "deadline_withdrawable_cash_min_CNY": 260000,
+    "risk_asset_weight_max": 0.75,
+    "single_security_weight_max": 0.27,
+    "high_vol_A_D_weight_max": 0.3,
+    "electronic_A_D_weight_max": 0.32,
+    "worst_down_stress_loss_max": 0.09,
+    "single_security_risk_contribution_share_max": 0.55,
+    "daily_ADV_participation_max": 0.05,
+    "withdrawable_cash_floor_CNY": 30000,
+    "same_day_sell_new_A_shares": 0
+  },
+  "modeling_assumptions": [
+    "现金波动率为0",
+    "组合波动率用持仓市值/NAV、附件年化波动率与通过校验的相关矩阵计算",
+    "边际风险贡献=(Sigma*w)/sigma_p；成分风险贡献=w_i*MRC_i；风险贡献占比=成分风险贡献/sigma_p",
+    "计划成交价=附件价格*(1-附件单边滑点)，仅为研究估算，不是承诺",
+    "交易后剩余持仓仍按附件账面价估值；NAV扣除滑点和费用",
+    "卖出成本按移动加权平均成本估算实现盈亏",
+    "所有计划数量为100股整数倍"
+  ],
+  "unresolved_items_ranked": {
+    "changes_immediate_action": [
+      "8/31 A实际可卖数",
+      "D是否恢复有效买盘及可成交量",
+      "A/ETF是否跌破-10%测试边界",
+      "C复牌日及有效报价",
+      "实际成交与结算回报"
+    ],
+    "precision_only": [
+      "账户残差来源",
+      "券商总资产是否含B股息应收",
+      "实际滑点和最低佣金取整"
+    ],
+    "not_currently_material": [
+      "个人税务特殊情形",
+      "未确认未来入金按0",
+      "B股息9/3到账晚于截止"
+    ]
+  },
+  "file_hashes": {
+    "liquidity_decision_memo.md": {
+      "sha256": "341835dfac19476e52548f053829be2531f7df33ad44fb1845fb4c997d8abec3",
+      "status": "COMPUTED"
+    },
+    "position_reconciliation.csv": {
+      "sha256": "6cf31db62e1f9643b982b585a8e3af3f75c5674e21597c5721581bd2f28b7f20",
+      "status": "COMPUTED"
+    },
+    "cash_availability_schedule.csv": {
+      "sha256": "855a1916247740d78ae49a2483137d99066283009d28fb25434bf9ca4391a15b",
+      "status": "COMPUTED"
+    },
+    "portfolio_diagnosis.csv": {
+      "sha256": "1e230be35549a72c8d13413545ada191f8fd00a3ea99d13ad610459df139cebb",
+      "status": "COMPUTED"
+    },
+    "action_priority.csv": {
+      "sha256": "a9b585cbd4a21598e5bdac11f1f58358eb5763d025f5f184a7f484632d300cd5",
+      "status": "COMPUTED"
+    },
+    "scenario_comparison.csv": {
+      "sha256": "23f37d338a6709a7eb5d2d915990e0ecc4adfb93a7ef8bfe9c11606e366fd310",
+      "status": "COMPUTED"
+    },
+    "if_then_rules.csv": {
+      "sha256": "90695fbc924bc4ffbbdd32d898ff5e523e1052e631e353611077c3e75f3c86bd",
+      "status": "COMPUTED"
+    },
+    "assumptions_manifest.json": {
+      "sha256": "NOT_COMPUTED",
+      "status": "SELF_REFERENTIAL",
+      "reason": "清单包含自身哈希字段；写入后哈希会变化，无法在同一文件内给出稳定自哈希，故按题面允许规则标记NOT_COMPUTED"
+    },
+    "response.md": {
+      "sha256": "2485a2ed559058c84c02501603fc92edc02385111e93138c3a233704771b6ed7",
+      "status": "COMPUTED"
+    }
   }
 }

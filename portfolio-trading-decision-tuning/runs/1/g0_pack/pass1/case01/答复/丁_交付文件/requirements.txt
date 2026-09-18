@@ -1,11 +1,2 @@
-# run_portfolio_review.py 依赖清单
-# Python 3.8+ 标准库即可运行，无需第三方包
-#
-# 标准库模块（随Python发行，无需安装）：
-#   - argparse, csv, json, math, os, sys
-#   - collections.defaultdict, datetime.datetime
-#
-# 如使用系统自带Python3，直接运行即可：
-#   python3 run_portfolio_review.py --input-dir <附件目录> --output-dir <输出目录>
-#
-# 本脚本不联网，不硬编码附件中的价格、数量或推荐方案。
+pandas
+numpy

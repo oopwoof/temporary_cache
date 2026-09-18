@@ -1,0 +1,211 @@
+diff -ru /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/CHANGELOG.md tpl/CHANGELOG.md
+--- /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/CHANGELOG.md	2026-09-17 06:24:50.000000000 +0000
++++ tpl/CHANGELOG.md	2026-09-18 10:09:19.893308989 +0000
+@@ -5,6 +5,48 @@
+ 
+ ---
+ 
++## v1.6.1 — 2026-09-18
++
++判分包的**参评方数解除写死**。起因：`portfolio-trading-decision` 实例要把回归底线
++（裸模+原 skill）和候选放进同一把尺子判，才能核 manifest 里 `hard: {no_loss_to: base+skill}`
++那条硬条件——而它优先于主判据，不核就不能说准出。
++
++打包脚本本来就支持 6 方（`labels = "甲乙丙丁戊己"`），**卡住的是判分方读到的文字**：
++三个 prompt 文件里 8 处硬写「四份 / 四方」，其中 `05_judge.md` 的
++`四方排序 + 1-5 分` 还是 selftest 用来区分 scoring / pairwise 两套协议的**模式标记**。
++
++### 改了什么
++
++| 文件 | 改动 |
++|---|---|
++| `prompts/05b_judge_subagent.md` | 「四份答复（甲/乙/丙/丁）」→ `{n_parties}` 份答复（`{labels}`）；「四方从好到差」→「{n_parties} 方从好到差」；「同一题里四份答复」→「各份答复」 |
++| `prompts/05a_judge_orchestrator.md` | 「同一题的四方不许拆开判」→「各方」 |
++| `prompts/05_judge.md` | 模式标记 `四方排序 + 1-5 分` → **`多方排序 + 1-5 分`**；目录树、协议里的「四方」「甲乙丙丁」改为与方数无关的表述 |
++| `scripts/make_g0_pack.py` | 渲染 `{n_parties}` / `{labels}`（与已有的 `{domain}` 同一处）；包内 README 的标题与标签列表按实际方数生成 |
++| `gates/parallel.yaml` | 「同一题的四方必须在同一次调用里判完」→「各方」。两个外发包都从它渲染，逐字一致仍成立 |
++| `scripts/selftest.sh` | **模式标记断言随之改成 `多方排序 + 1-5 分`** |
++
++### ⚠ 这次改动动了检查器本身
++
++`selftest.sh` 里的模式标记断言是跟着 `05_judge.md` 一起改的。按经验沉淀第 12 条，
++**改了检查器就必须标红上卡，不能自己判自己通过**。本次改动前后都跑了 selftest：
++改前 38/38，改后 38/38。但「38/38 通过」这个结论本身有一处是我改过的断言，
++**需要人工复核这一处**：确认 `多方排序 + 1-5 分` 仍然只出现在 scoring 段、不出现在 pairwise 段。
++
++### 历史实例要不要重跑
++
++**不要。** 这次改的是判分包里对方数的**表述**，没有改：判定顺序、打分档位、平局口径、
++硬门禁定义、三轮独立机制。四方包重新生成后渲染出来的文字与 v1.6.0 在语义上等价
++（「四方排序」→「多方排序」，实际方数仍由 `--parties` 决定）。
++已判完的历史读数继续有效，**不需要重评**。
++
++### 同步
++
++所有实例应同步 `prompts/05*.md`、`scripts/make_g0_pack.py`、`scripts/selftest.sh`、
++`gates/parallel.yaml` 四处。**不要整文件覆盖实例的 `gates/thresholds.yaml`**（经验沉淀 25）。
++
++---
++
+ ## v1.1 — 2026-09-14
+ 
+ 第一次真实实例化（fixed-income-research）时暴露的缺口，全部是"规格里写了、工程上没有"的项。
+diff -ru /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/gates/parallel.yaml tpl/gates/parallel.yaml
+--- /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/gates/parallel.yaml	2026-09-17 06:24:50.000000000 +0000
++++ tpl/gates/parallel.yaml	2026-09-18 10:08:45.082185203 +0000
+@@ -31,7 +31,7 @@
+ judge:
+   unit: pass                 # 并发单位：一轮一个互不可见的 subagent
+   atomic: |-
+-    **同一题的四方必须在同一次调用里判完。** 拆开四方就没有比较可言，这条不可并、不可分片。
++    **同一题的各方必须在同一次调用里判完。** 拆开就没有比较可言，这条不可并、不可分片。
+   parallel_ok: |-
+     三轮之间必须隔离，所以三轮**天然就该并发**：三个 subagent 一次性同时发起，
+     不要等第一轮判完再开第二轮——串行等待本身就给编排方开了一条「上一轮是怎么判的」记忆通道。
+diff -ru /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/prompts/05_judge.md tpl/prompts/05_judge.md
+--- /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/prompts/05_judge.md	2026-09-17 06:24:50.000000000 +0000
++++ tpl/prompts/05_judge.md	2026-09-18 10:08:03.726057769 +0000
+@@ -20,11 +20,11 @@
+ ├── 给编排方的调度说明.md               # 三轮如何隔离
+ ├── 给每个subagent的prompt.md           # 每轮判分方的任务书
+ ├── pass1|2|3/case<NN>/题面.md          # 题面，必要时附 题面附件/
+-├── pass1|2|3/case<NN>/答复/甲乙丙丁.md  # 四方答复，每轮重新打乱标签
++├── pass1|2|3/case<NN>/答复/甲乙丙….md   # 各方答复，每轮重新打乱标签
+ ├── templates/ranking.json             # 回填模板
+ └── README.md                          # 评审只能读本目录
+ ```
+-**本模式四方一起判**：没有成对包，也没有 A/B 两两比较；回填的是 `ranking.json`。
++**本模式各方一起判**：没有成对包，也没有 A/B 两两比较；回填的是 `ranking.json`。
+ <!-- /MODE:scoring -->
+ 
+ ## 判定顺序（不得跳步）
+@@ -49,7 +49,7 @@
+ ```
+ 
+ ## 协议
+-- 成对判定，不做四方排序（四方排序自由度太高，是方差主因）
++- 成对判定，不做多方排序（多方排序自由度太高，是方差主因）
+ - 3 轮独立，每轮重新打乱 A/B 位置，三轮由互不可见的会话完成
+ - 改 judge_prompt = 换尺子 = 全部历史版本重评
+ <!-- /MODE:pairwise -->
+@@ -63,8 +63,8 @@
+ ```
+ 
+ ## 协议
+-- **四方排序 + 1-5 分，两样都要**：排序决定胜负，分数决定差距，准出判据两个都用
++- **多方排序 + 1-5 分，两样都要**：排序决定胜负，分数决定差距，准出判据两个都用
+ - **分数允许打平**（真分不出就给同分，不要为了拉开差距硬给不同分）；**排序不允许并列**，必须是严格全序——分数打平时正是靠排序定胜负。
+-- 3 轮独立，每轮重新打乱甲乙丙丁的分配，三轮由互不可见的会话完成
++- 3 轮独立，每轮重新打乱标签分配，三轮由互不可见的会话完成
+ - 改 judge_prompt = 换尺子 = 全部历史版本重评
+ <!-- /MODE:scoring -->
+diff -ru /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/prompts/05a_judge_orchestrator.md tpl/prompts/05a_judge_orchestrator.md
+--- /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/prompts/05a_judge_orchestrator.md	2026-09-17 06:24:50.000000000 +0000
++++ tpl/prompts/05a_judge_orchestrator.md	2026-09-18 10:08:03.725929981 +0000
+@@ -39,7 +39,7 @@
+   写在 `调度清单.json` 的 `shards` 里。你自己再拆、或把几片并回一个会话，
+   都等于换了一把尺子——而这批答复要和别的版本比。
+   清单里怎么写就怎么起，觉得不合适就回来说一声，不要自己调。
+-- ❌ **同一题的四方不许拆开判。** 拆开就没有比较可言。
++- ❌ **同一题的各方不许拆开判。** 拆开就没有比较可言。
+ 
+ ## 三、回收时只做这四项格式核验，不碰分数
+ 
+diff -ru /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/prompts/05b_judge_subagent.md tpl/prompts/05b_judge_subagent.md
+--- /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/prompts/05b_judge_subagent.md	2026-09-17 06:24:50.000000000 +0000
++++ tpl/prompts/05b_judge_subagent.md	2026-09-18 10:08:03.725757532 +0000
+@@ -9,7 +9,7 @@
+ ## 你能读的
+ 
+ - 指派给你的 `pass<N>/case<NN>/题面.md` 与 `pass<N>/case<NN>/题面附件/`
+-- `pass<N>/case<NN>/答复/` 下的四份答复（甲 / 乙 / 丙 / 丁），
++- `pass<N>/case<NN>/答复/` 下的 {n_parties} 份答复（{labels}），
+   带 `_交付文件` 目录的要连交付文件一起看
+ - `judge_prompt.md`（判定顺序与硬性要求）
+ - `domain_pack.yaml`（本垂类的必辨概念、硬门禁、不计分项）
+@@ -23,7 +23,7 @@
+ 对每一题，按 `judge_prompt.md` 的**三步判定顺序**（技术失败 → 硬门禁 → 能力比较）
+ 给出：
+ 
+-1. **四方从好到差的完整排序**
++1. **{n_parties} 方从好到差的完整排序**
+ 2. **每一份的 1-5 分**。先按能力给分，再按硬门禁在能力分上**降 2 分、下限 2 分**
+    （多条硬门禁只降一次）。硬门禁是大幅降位，**不是直接判最低分**——
+    1 分只留给能力面本身就不及格的答复。
+@@ -38,4 +38,4 @@
+   不要为了让排序好看而编一个理由，也不要为了拉开差距硬给不同分。
+ - **篇幅长短、表格数量、语气自信、免责声明数量、用没用代码，都不计分。**
+   用不用工具不计分，交付物能否复算才计分。
+-- 同一题里四份答复**允许出现相同分数**。
++- 同一题里各份答复**允许出现相同分数**。
+Only in tpl/scripts/__pycache__: make_g0_pack.cpython-311.pyc
+Binary files /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/scripts/__pycache__/pack_utils.cpython-311.pyc and tpl/scripts/__pycache__/pack_utils.cpython-311.pyc differ
+Only in tpl/scripts/__pycache__: score_release.cpython-311.pyc
+diff -ru /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/scripts/make_g0_pack.py tpl/scripts/make_g0_pack.py
+--- /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/scripts/make_g0_pack.py	2026-09-17 06:24:50.000000000 +0000
++++ tpl/scripts/make_g0_pack.py	2026-09-18 10:08:32.578674208 +0000
+@@ -157,7 +157,11 @@
+             t = _select_mode(pathlib.Path(src).read_text(encoding="utf-8"), mode)
+             # 评审人设按 manifest 的垂类填。写死成某个垂类，换实例就会把
+             # 「你是一位固定收益方向的评审」发给判量化题的人。
+-            (pack / dst).write_text(t.replace("{domain}", domain), encoding="utf-8")
++            (pack / dst).write_text(
++                t.replace("{domain}", domain)
++                 .replace("{n_parties}", str(len(parties)))
++                 .replace("{labels}", " / ".join("甲乙丙丁戊己"[:len(parties)])),
++                encoding="utf-8")
+     dp = pathlib.Path(man["domain_pack"])
+     if dp.exists():
+         # 领域纪律包必须脱敏后才能外发：原文里的 (caseNN X 得第一) 出处标注
+@@ -230,7 +234,8 @@
+ 不要因为篇幅长就加分。分数与排序必须自洽：排序靠前的分不得低于排序靠后的。
+ """ if a.scoring else "")
+ 
+-    (pack / "README.md").write_text(f"""# 四方盲测包
++    lab_list = " / ".join("甲乙丙丁戊己"[:len(parties)])
++    (pack / "README.md").write_text(f"""# {len(parties)} 方盲测包
+ 
+ {len(ids)} 题 × {a.passes} 轮{shard_note}。**各轮必须由互不可见的会话完成**，不要在同一个会话里判两轮。
+ 调度照 `调度清单.json`：里面每个 unit 一个 subagent，**一次性同时发起**，不要判完一轮再开下一轮。
+@@ -238,7 +243,7 @@
+ ## 你要做的
+ 
+ 对每一题，读 `题面.md`（有附件时连 `题面附件/` 一起读），再读 `答复/` 下的几份答复
+-（甲乙丙丁…，有交付文件的在 `答复/<标签>_交付文件/`），
++（{lab_list}，有交付文件的在 `答复/<标签>_交付文件/`），
+ 按 `judge_prompt.md` 的三步判定顺序给出**从好到差的完整排序**{scoring_extra}。
+ 
+ 三步顺序不得跳步：① 技术失败单列 → ② 硬门禁（见 `domain_pack.yaml` 的 `hard_gates`）
+@@ -256,7 +261,7 @@
+ 
+ ## 注意
+ 
+-- 每轮的甲乙丙丁**重新打乱**，pass1 的甲和 pass2 的甲不是同一份答复
++- 每轮的标签**重新打乱**，pass1 的甲和 pass2 的甲不是同一份答复
+ - 本目录**不含方别信息、不含答案键、不含专家备注**
+ - 篇幅长短、表格数量、语气自信、免责声明数量、用没用代码都**不计分**
+ """, encoding="utf-8")
+@@ -286,7 +291,7 @@
+                 f.read_text(encoding="utf-8", errors="ignore")
+             ):
+                 leaks.append((rel, kind, frag))
+-    print(f"四方排序包 {n} 个题次（{len(ids)} 题 × {a.passes} 轮"
++    print(f"{len(parties)} 方排序包 {n} 个题次（{len(ids)} 题 × {a.passes} 轮"
+           + (f" × {a.shards} 片" if a.shards > 1 else "") + f"）→ {pack}")
+     if skipped_meta:
+         uniq = sorted(set(skipped_meta))
+diff -ru /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/scripts/selftest.sh tpl/scripts/selftest.sh
+--- /tmp/claude-0/-home-user-temporary-cache/b58fd9de-b3da-5acb-a15f-e4b99e2ac177/scratchpad/unz/e21f0322-autotune_v1.6.0_1/autotune_v1.6.0/autotune-template/scripts/selftest.sh	2026-09-17 06:24:50.000000000 +0000
++++ tpl/scripts/selftest.sh	2026-09-18 10:08:03.726329771 +0000
+@@ -193,9 +193,9 @@
+ from make_g0_pack import _select_mode
+ raw = open("prompts/05_judge.md", encoding="utf-8").read()
+ sc, pw = _select_mode(raw, "scoring"), _select_mode(raw, "pairwise")
+-if "成对判定" in sc or "四方排序 + 1-5 分" not in sc:
++if "成对判定" in sc or "多方排序 + 1-5 分" not in sc:
+     sys.exit("打分模式里混进了成对协议")
+-if "四方排序 + 1-5 分" in pw or "成对判定" not in pw:
++if "多方排序 + 1-5 分" in pw or "成对判定" not in pw:
+     sys.exit("成对模式里混进了打分协议")
+ if "MODE:" in sc or "MODE:" in pw:
+     sys.exit("模式标记没清干净")

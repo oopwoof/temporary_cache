@@ -89,10 +89,11 @@ python3 <autotune>/scripts/make_run_pack.py --run runs/1 --skill skills/current 
 |---|---|
 | 跑题 | **已完成**：8 题 × 2 轮，16 份正文全到，47 件交付件，零技术失败。**跑的是 v3.0**（摘要 `b5082cae…`），v3.1 未进本轮 |
 | G2 离线复演 | **已完成** → `runs/1/离线复演.md` |
-| 判分包 | **已出** → `runs/1/g0_pack`（四方 × 8 题 × 3 轮），说明见 `runs/1/判分包说明.md` |
+| 判分包 | **已出** → `runs/1/g0_pack`（**五方** × 8 题 × 3 轮），说明见 `runs/1/判分包说明.md` |
 | G0 一致率 / 噪声底 | **未测**（不能自评；第 2 轮也还没判） |
 | 准出核算 | **待判分回来**，命令见判分包说明第六节 |
 
-判分包的关键取舍：四方是 ours/base/WB/gpt，**没放 base+skill**——判分方的 prompt 写死
-「四份答复（甲/乙/丙/丁）」且不许改措辞。代价是 `no_loss_to: base+skill` 这条硬条件本轮**未测**，
-要核须另发成对包。
+五方 = ours / base / base+skill / WB / gpt。放 `base+skill`（回归底线）是为了核
+`hard: {no_loss_to: base+skill}`——它优先于主判据，不核就不能说准出。
+为此把模板升到 **v1.6.1**（方数参数化），补丁在 `autotune-template-patch/`，
+**请同步到 skill-autotune 仓库**。改动含一处检查器自身的断言，已标红上人审卡卡 7。
