@@ -1,0 +1,162 @@
+{
+ "case01": {
+  "expert_rank_slots": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ],
+  "expert_rank_parties": [
+   "base+skill",
+   "base",
+   "gpt",
+   "WB"
+  ],
+  "expert_scores": {
+   "base": 4,
+   "base+skill": 4,
+   "WB": 2,
+   "gpt": 4
+  }
+ },
+ "case02": {
+  "expert_rank_slots": [
+   "D",
+   "A",
+   "B",
+   "C"
+  ],
+  "expert_rank_parties": [
+   "gpt",
+   "base",
+   "base+skill",
+   "WB"
+  ],
+  "expert_scores": {
+   "base": 3,
+   "base+skill": 2,
+   "WB": 1,
+   "gpt": 4
+  }
+ },
+ "case03": {
+  "expert_rank_slots": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ],
+  "expert_rank_parties": [
+   "base+skill",
+   "base",
+   "gpt",
+   "WB"
+  ],
+  "expert_scores": {
+   "base": 4,
+   "base+skill": 5,
+   "WB": 1,
+   "gpt": 2
+  }
+ },
+ "case04": {
+  "expert_rank_slots": [
+   "A",
+   "D",
+   "B",
+   "C"
+  ],
+  "expert_rank_parties": [
+   "base",
+   "gpt",
+   "base+skill",
+   "WB"
+  ],
+  "expert_scores": {
+   "base": 4,
+   "base+skill": 3,
+   "WB": 2,
+   "gpt": 3
+  }
+ },
+ "case05": {
+  "expert_rank_slots": [
+   "D",
+   "A",
+   "C",
+   "B"
+  ],
+  "expert_rank_parties": [
+   "gpt",
+   "base",
+   "WB",
+   "base+skill"
+  ],
+  "expert_scores": {
+   "base": 4,
+   "base+skill": 2,
+   "WB": 3,
+   "gpt": 5
+  }
+ },
+ "case06": {
+  "expert_rank_slots": [
+   "C",
+   "A",
+   "D",
+   "B"
+  ],
+  "expert_rank_parties": [
+   "WB",
+   "base",
+   "gpt",
+   "base+skill"
+  ],
+  "expert_scores": {
+   "base": 4,
+   "base+skill": 2,
+   "WB": 5,
+   "gpt": 3
+  }
+ },
+ "case07": {
+  "expert_rank_slots": [
+   "D",
+   "A",
+   "C",
+   "B"
+  ],
+  "expert_rank_parties": [
+   "gpt",
+   "base",
+   "WB",
+   "base+skill"
+  ],
+  "expert_scores": {
+   "base": 3,
+   "base+skill": 2,
+   "WB": 3,
+   "gpt": 5
+  }
+ },
+ "case08": {
+  "expert_rank_slots": [
+   "D",
+   "A",
+   "B",
+   "C"
+  ],
+  "expert_rank_parties": [
+   "gpt",
+   "base",
+   "base+skill",
+   "WB"
+  ],
+  "expert_scores": {
+   "base": 4,
+   "base+skill": 4,
+   "WB": 2,
+   "gpt": 5
+  }
+ }
+}
