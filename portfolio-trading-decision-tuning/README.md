@@ -7,7 +7,8 @@
 ```
 skills/v1.0/      被评测的原始包（8 题四方盲评的 B 方），冻结
 skills/v2.0/      搭档调过的版本，冻结
-skills/current/   v3 = 本轮产出
+skills/v3.1/      runs/1 实际跑的版本 + 未测的 8 条，冻结
+skills/current/   **v4** = 按 runs/1 实测结果做的置换版
 portfolio-trading-decision.zip   v3 打包（顶层目录 portfolio-trading-decision/，*.zip 被仓库忽略，按下方命令重建）
 SKILL.diff        v2 → v3 全量 diff
 改动台账.md       ★ 逐条改动 → 证据（caseNN + 专家原话）→ 失败判据
