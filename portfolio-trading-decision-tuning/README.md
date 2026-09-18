@@ -8,7 +8,7 @@
 skills/v1.0/      被评测的原始包（8 题四方盲评的 B 方），冻结
 skills/v2.0/      搭档调过的版本，冻结
 skills/current/   v3 = 本轮产出
-portfolio-trading-decision.zip   v3 打包（顶层目录 portfolio-trading-decision/）
+portfolio-trading-decision.zip   v3 打包（顶层目录 portfolio-trading-decision/，*.zip 被仓库忽略，按下方命令重建）
 SKILL.diff        v2 → v3 全量 diff
 改动台账.md       ★ 逐条改动 → 证据（caseNN + 专家原话）→ 失败判据
 人审卡.md         ★ 4 张卡，含「我没把握的地方」
@@ -42,6 +42,15 @@ python3 <autotune>/scripts/lint_skill.py skills/current/SKILL.md \
 v3 **全绿**（v2 为「无红项、黄项 1 类」）；4 份 reference 单独扫描均无红项。
 **Y6 档位余量 SKIPPED**（无领域纪律包与骨架模板），**G3.5 `doubao-skill-check` 未测**（环境无此工具）——
 本轮新增了一份 reference，正是它专门抓的那类改动，上平台前务必补跑。
+
+## 重新打包（上平台用）
+
+```bash
+mkdir -p /tmp/pkg/portfolio-trading-decision && cp -r skills/current/. /tmp/pkg/portfolio-trading-decision/
+(cd /tmp/pkg && zip -r <目标路径>/portfolio-trading-decision.zip portfolio-trading-decision)
+```
+
+跑题方会对 zip 做 sha256sum，注意 **zip 字节校验值 ≠ 目录内容摘要**，两者分开报。
 
 ## 下一步
 
