@@ -64,23 +64,29 @@ def collect(run, rnd, case):
                 files += docx_text(f)
     return body, body + files, names
 
-# v4 的五条载体。每条给「在不在」与「填没填」两级——在不在容易，填没填才是 v4 的赌注。
+# v4 的五条载体。**按内容判，不按列名判**——第一版按列名写的正则报了假阴性：
+# case02 实际逐条反解了（「风险贡献 95.40%（限 60%）→ 需卖出 21,600 股才达标」），
+# 但因为它是列表而不是名为「反解值」的表格列，被判成没落地。教训同经验沉淀第 6 条。
+SOLVE = re.compile(
+    r"(限\s*[\d.]+\s*%|上限[^|\n]{0,10}[\d.]+\s*%)[^|\n]{0,60}?([\d][\d,]{2,})\s*(股|份)[^|\n]{0,20}?(达标|才|需|可)"
+    r"|(达标|反解)[^|\n]{0,12}?([\d][\d,]{2,})\s*(股|份)")
+CLAIM = re.compile(
+    r"(?:交付|产出|生成|附上|已附)\s*(?:了)?\s*(\d+)\s*(?:份|件|个)\s*(?:文件|交付物|交付件|附件)?"
+    r"|(?:全部\s*)?(\d+)\s*(?:份|件)\s*交付(?:物|件)")
 CARRIERS = {
-    "C-03 决策摘要表在开头": lambda b, a, n: bool(
-        re.match(r"\s*(#+\s*)?\|?\s*(决策摘要|结论先行)", b)) or "决策摘要" in b[:400],
-    "C-01 自检回执表存在": lambda b, a, n: bool(re.search(r"自检回执|交付自检|自检项", a)),
-    "C-01 回执填了件数": lambda b, a, n: bool(re.search(r"声明\s*\d+\s*件|实际\s*\d+\s*件|\d+\s*件\s*/\s*\d+\s*件", a)),
-    "C-02 反解值列存在": lambda b, a, n: bool(re.search(r"反解值|达标所需|反解达标", a)),
-    "C-02 反解值填了数量": lambda b, a, n: bool(re.search(r"(反解值|达标所需[^|\n]{0,8})[^|\n]{0,20}?[\d,]{3,}\s*股", a)),
+    "C-03 决策摘要表在开头": lambda b, a, n: bool(re.match(r"\s*(?:#+\s*)?\|?\s*(决策摘要|结论先行)", b)),
+    "C-01 自检回执表": lambda b, a, n: bool(re.search(r"自检回执|交付自检|自检项|声明\s*\d+\s*件", a)),
+    "C-02 硬约束反解出数量": lambda b, a, n: bool(SOLVE.search(a)),
     "C-04 规则表有口径列": lambda b, a, n: bool(re.search(r"数量口径|累计总卖出量|本阶段追加量", a)),
     "C-05 写出相邻一手验证": lambda b, a, n: bool(re.search(r"少(卖|一手|100\s*股)[^。\n]{0,40}(超限|不满足|回到)", a)),
 }
-# 直击 runs/1 两处硬门禁的核验（能机械判的部分）
+
 def claim_vs_actual(body, names):
-    m = re.search(r"(?:全部\s*)?(\d+)\s*(?:份|件)\s*交付(?:物|件)", body)
+    """正文声称的件数 vs 实际产出。runs/1 与 runs/2 的同一处失分点。"""
+    m = CLAIM.search(body)
     if not m:
         return None
-    return int(m.group(1)), len(names)
+    return int(m.group(1) or m.group(2)), len(names)
 
 def main():
     ap = argparse.ArgumentParser()

@@ -1,0 +1,15 @@
+﻿项,值
+cash_balance_cny,4800000.0
+accrued_fees_payable_cny,59850.0
+net_cash,4740150.0
+market_value(300750.SZ),11017800.00
+market_value(002594.SZ),8794800.00
+market_value(600519.SH),6885900.00
+market_value(000858.SZ),6886100.00
+market_value(000333.SZ),5861250.00
+market_value(601318.SH),5814000.00
+sum_market_value,45259850.00
+recomputed_net_asset,50000000.00
+reported_net_asset,50000000.00
+diff,0.00
+reconcile_pass,True

@@ -1,0 +1,27 @@
+metric,value_low_nav,value_high_nav,threshold,unit,pass_fail,calc_basis,source_ids
+SYN100_weight,64.5654%,64.4046%,35.0000%,%NAV,FAIL,517200 / NAV,"AST-001,PAR-004"
+weight_over_limit_pp,29.5654pp,29.4046pp,0pp,pp,FAIL,weight - 35%,PAR-004
+portfolio_annualized_vol,32.8984%,32.8984%,N/A,%,INFO,sqrt(variance),"RISK-001..004,CORR-001..004"
+SYN100_risk_contribution,95.4022%,95.4022%,60.0000%,%portfolio_risk,FAIL,w_M*MCR_M/sigma_p,"PAR-006,CORR-001"
+risk_contribution_over,35.4022pp,35.4022pp,0pp,pp,FAIL,RC% - 60%,PAR-006
+ETF_risk_contribution,4.4834%,4.4834%,-,%,INFO,,CORR-002
+Bond_risk_contribution,0.1143%,0.1143%,-,%,INFO,,CORR-003
+Cash_risk_contribution,0.0000%,0.0000%,-,%,INFO,,CORR-004
+RC_sum_check,100.0000%,100.0000%,100%,%,PASS,RC components sum,PAR-006
+stress_BASE_loss,1.3762%,1.3762%,8.0000%,%NAV,PASS,M -2% ETF -1% Bond +0.1%,SCN-001
+stress_UP_loss,-4.7193%,-4.7193%,8.0000%,%NAV,PASS,M +7% ETF +2%,SCN-002
+stress_DOWN_loss,9.7315%,9.7074%,8.0000%,%NAV,FAIL,"M -10% day1 no bid, -5% gap day2",SCN-003
+stress_HALT_loss,8.0325%,8.0124%,8.0000%,%NAV,FAIL,M -12% after 3-day suspension,SCN-004
+worst_stress_loss,9.7315%,9.7074%,8.0000%,%NAV,FAIL,SCN-DOWN worst,SCN-003
+settled_cash_plus_lowrisk,192500.00,192500.00,300000,CNY,FAIL,72500 cash + 120000 bond,"AST-003,AST-004"
+cash_floor,72500.00,72500.00,50000,CNY,PASS,settled cash,AST-004
+post_trade_weight_11000,34.9963%,34.9091%,35.0000%,%NAV,PASS,After selling 11000 @21.55,CALC
+post_trade_RC_11000,91.4187%,91.4187%,60.0000%,%,FAIL,Still dominated by M,CALC
+post_trade_stress_DOWN_11000,5.4442%,5.4350%,8.0000%,%NAV,PASS,After 11000 sold,CALC
+post_trade_lowrisk_11000,429014.27,429014.27,300000,CNY,PASS,72500+120000+236514.27,CALC
+shares_for_RC_60pct,21600,21600,-,shares,CONFLICT,Leaves only 2400 < 12000 soft min,CALC
+post_trade_weight_21600,6.4650%,6.4562%,35%,%NAV,PASS,After 21600 sold,CALC
+post_trade_RC_21600,59.0727%,59.0727%,60%,%,PASS,Meets hard limit,CALC
+post_trade_stress_21600,1.3074%,1.3056%,8%,%NAV,PASS,After 21600 sold,CALC
+post_trade_lowrisk_21600,656928.02,656928.02,300000,CNY,PASS,,CALC
+remaining_shares_21600,2400,2400,12000 (soft),shares,SOFT_FAIL,Breaches soft minimum,PAR-012

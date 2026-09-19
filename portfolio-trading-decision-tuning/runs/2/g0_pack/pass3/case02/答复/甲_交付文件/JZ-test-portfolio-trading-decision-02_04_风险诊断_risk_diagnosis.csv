@@ -1,0 +1,12 @@
+﻿category,item,nav_basis,nav_value,m_market_value,m_weight,weight_limit,weight_excess,portfolio_vol,m_marginal_risk_contrib,m_risk_contrib,m_risk_contrib_pct,risk_contrib_limit,risk_contrib_pass,scenario,total_loss_cny,loss_pct_nav,stress_limit,stress_pass,m_value_after_stress,weight_after_stress,day1_tradeable,day1_status,shares_to_35pct,source_ids,note
+POSITION_WEIGHT,证券M当前权重,DETAIL_NAV_LOW,801048.0,517200.0,0.645654,0.35,0.295654,0.324324,0.479222,0.31,0.954022,0.6,False,,,,,,,,,11000,PAR-004;PAR-006;AST-001;ACCT-001;RISK-001~004;CORR-001~004,权重64.57%远超35%；风险贡献95.40%远超60%
+POSITION_WEIGHT,证券M当前权重,STATEMENT_NAV_HIGH,803048.0,517200.0,0.644046,0.35,0.294046,0.323516,0.479222,0.31,0.954022,0.6,False,,,,,,,,,11000,PAR-004;PAR-006;AST-001;ACCT-001;RISK-001~004;CORR-001~004,权重64.40%远超35%；风险贡献95.40%远超60%
+STRESS_TEST,基准震荡,low,801048.0,517200.0,,,,,,,,,,SCN-BASE,11024.0,0.013762,0.08,True,506856.0,0.64157,True,NORMAL,,PAR-005;SCN-001~004;RISK-001~004,首日可成交；损失占NAV 1.38%
+STRESS_TEST,基准震荡,high,803048.0,517200.0,,,,,,,,,,SCN-BASE,11024.0,0.013728,0.08,True,506856.0,0.63995,True,NORMAL,,PAR-005;SCN-001~004;RISK-001~004,首日可成交；损失占NAV 1.37%
+STRESS_TEST,趋势延续,low,801048.0,517200.0,,,,,,,,,,SCN-UP,-37804.0,-0.047193,0.08,True,553404.0,0.659716,True,NORMAL,,PAR-005;SCN-001~004;RISK-001~004,首日可成交；损失占NAV -4.72%
+STRESS_TEST,趋势延续,high,803048.0,517200.0,,,,,,,,,,SCN-UP,-37804.0,-0.047076,0.08,True,553404.0,0.658147,True,NORMAL,,PAR-005;SCN-001~004;RISK-001~004,首日可成交；损失占NAV -4.71%
+STRESS_TEST,跌停后跳空,low,801048.0,517200.0,,,,,,,,,,SCN-DOWN,77954.0,0.097315,0.08,False,442206.0,0.611547,False,LIMIT_DOWN_NO_BID,,PAR-005;SCN-001~004;RISK-001~004,首日不可成交；损失占NAV 9.73%
+STRESS_TEST,跌停后跳空,high,803048.0,517200.0,,,,,,,,,,SCN-DOWN,77954.0,0.097073,0.08,False,442206.0,0.60986,False,LIMIT_DOWN_NO_BID,,PAR-005;SCN-001~004;RISK-001~004,首日不可成交；损失占NAV 9.71%
+STRESS_TEST,停牌后复牌,low,801048.0,517200.0,,,,,,,,,,SCN-HALT,64344.0,0.080325,0.08,False,455136.0,0.6178,False,SUSPENDED_3_DAYS,,PAR-005;SCN-001~004;RISK-001~004,首日不可成交；损失占NAV 8.03%
+STRESS_TEST,停牌后复牌,high,803048.0,517200.0,,,,,,,,,,SCN-HALT,64344.0,0.080125,0.08,False,455136.0,0.616128,False,SUSPENDED_3_DAYS,,PAR-005;SCN-001~004;RISK-001~004,首日不可成交；损失占NAV 8.01%
+CORRELATION_CHECK,4x4矩阵对称性/对角线/范围,—,—,—,—,—,—,—,—,—,—,—,True,—,—,—,—,—,—,—,—,—,—,CORR-001~004,"4资产×4矩阵；对称✓ 对角线=1✓ 范围[-1,1]✓；检查通过，可计算风险贡献"

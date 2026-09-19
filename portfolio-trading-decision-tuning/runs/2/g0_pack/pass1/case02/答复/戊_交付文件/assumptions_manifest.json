@@ -1,0 +1,183 @@
+{
+  "as_of": "2026-09-18 15:30:00 Asia/Shanghai",
+  "base_currency": "CNY",
+  "action_scope": "SYN100.SZ",
+  "planning_horizon": "2026-09-21 to 2026-10-09 (10 trading days)",
+  "price_basis": {
+    "close_price_used": 21.55,
+    "source": "MD-001 FINAL, available_ts 2026-09-18 15:05",
+    "excluded_records": [
+      {
+        "record": "MD-002",
+        "reason": "FINAL_STALE (9/17 close)"
+      },
+      {
+        "record": "MD-003",
+        "reason": "INTRADAY_PARTIAL at 14:55 (DQ-004)"
+      },
+      {
+        "record": "MD-004",
+        "reason": "FUTURE_FINAL (9/21, after as-of) (DQ-005)"
+      },
+      {
+        "record": "TECH-003",
+        "reason": "FUTURE_FINAL (9/21, after as-of) (DQ-005)"
+      }
+    ]
+  },
+  "data_admission": [
+    {
+      "table": "决策参数",
+      "adopted": true,
+      "note": "All hard/soft parameters adopted"
+    },
+    {
+      "table": "账户汇总",
+      "adopted": true,
+      "note": "statement_total_assets=803048; residual 2000 vs detail"
+    },
+    {
+      "table": "资产背景",
+      "adopted": true,
+      "note": "Detail NAV=801048; residual 2000 unresolved"
+    },
+    {
+      "table": "官方持仓",
+      "adopted": true,
+      "note": "Total=24000, sellable=21000, frozen=3000; provider cost stale"
+    },
+    {
+      "table": "OCR持仓",
+      "adopted": "PARTIAL",
+      "note": "total_quantity=24800 LOW conf(0.58) EXCLUDED; sellable=21000 conf(0.95) cross-check only"
+    },
+    {
+      "table": "交易流水",
+      "adopted": true,
+      "note": "All 5 ledger entries used for reconstruction"
+    },
+    {
+      "table": "公司行动",
+      "adopted": true,
+      "note": "Stock dividend 10送5 applied; future dividend not booked"
+    },
+    {
+      "table": "行情快照",
+      "adopted": "PARTIAL",
+      "note": "MD-001 only; excluded intraday and future"
+    },
+    {
+      "table": "技术状态",
+      "adopted": "AUX",
+      "note": "TECH-001/002 only as auxiliary; TECH-003 excluded"
+    },
+    {
+      "table": "交易规则",
+      "adopted": true,
+      "note": "T+1, 100-share lot, price limits"
+    },
+    {
+      "table": "费用滑点",
+      "adopted": true,
+      "note": "Commission 0.025% min 5, transfer 0.001%, stamp 0.05% sell, slip 0.15% base/0.4% stress"
+    },
+    {
+      "table": "流动性",
+      "adopted": true,
+      "note": "ADV20=180000, max daily=9000"
+    },
+    {
+      "table": "风险参数",
+      "adopted": true,
+      "note": "Volatilities from RISK-001..004"
+    },
+    {
+      "table": "相关性矩阵",
+      "adopted": true,
+      "note": "Checks passed: 4x4, symmetric, diagonal=1, range [-1,1]"
+    },
+    {
+      "table": "压力情景",
+      "adopted": true,
+      "note": "4 scenarios; SCN-DOWN/SCN-HALT compounded"
+    },
+    {
+      "table": "事件日历",
+      "adopted": true,
+      "note": "All events known as of as-of"
+    },
+    {
+      "table": "数据质量",
+      "adopted": true,
+      "note": "All 10 issues tracked; hard issues handled per expected_handling"
+    }
+  ],
+  "nav_reconciliation": {
+    "detail_nav": 801048.0,
+    "statement_nav": 803048.0,
+    "residual": 2000.0,
+    "residual_source": "DQ-001: NAV_NOT_RECONCILED; no other assets created to fill gap",
+    "weight_uses": "Range: 64.40% (high NAV) to 64.57% (low NAV)"
+  },
+  "cost_basis": {
+    "reconstructed_total_cost": 288975.12,
+    "reconstructed_per_share": 12.04063,
+    "provider_avg_cost": 13.12,
+    "provider_total_cost": 314880.0,
+    "discrepancy": 25904.88,
+    "basis": "LOT-01 (10000@12+fees, 10送5->15000 shares, cost 120031.20), LOT-02 (6000@17.50, cost 105027.30), LOT-03 (3000@21.30, cost 63916.62)"
+  },
+  "principal_definitions": {
+    "DEF1_historical_cash_invested": 288975.12,
+    "DEF2_net_after_dividends": 287975.12,
+    "DEF3_current_position_reconstructed_cost": 288975.12,
+    "customer_confirmation_status": "AMBIGUOUS - awaiting client choice (PAR-015)"
+  },
+  "fees": {
+    "commission_rate": 0.00025,
+    "commission_min": 5.0,
+    "transfer_rate": 1e-05,
+    "stamp_duty_rate": 0.0005,
+    "slippage_base": 0.0015,
+    "slippage_stress": 0.004,
+    "t_roundtrip_buffer": 0.003
+  },
+  "liquidity": {
+    "adv20_shares": 180000,
+    "max_daily_participation": 0.05,
+    "max_daily_shares": 9000,
+    "planned_lot_size": 100
+  },
+  "risk_parameters": {
+    "correlation_check": "PASSED",
+    "portfolio_vol_pre_trade": 0.328984,
+    "rc_m_pre_trade": 0.954022,
+    "rc_max": 0.6,
+    "weight_max": 0.35,
+    "stress_loss_max": 0.08
+  },
+  "hard_constraint_status": {
+    "weight_35pct": "BREACHED at 64.57%; requires selling 11000 shares",
+    "rc_60pct": "BREACHED at 95.40%; requires selling 21600 shares (conflicts with 12000 soft min)",
+    "stress_8pct": "BREACHED at 9.73% (SCN-DOWN); resolved after selling 11000 (5.44%)",
+    "low_risk_300k": "BREACHED at 192500; resolved after selling 11000 (429014)",
+    "cash_floor_50k": "PASSED at 72500"
+  },
+  "unresolved_items": [
+    "Principal definition not confirmed by client (DEF1/DEF2/DEF3)",
+    "2000 CNY NAV residual unidentified (DQ-001)",
+    "Client willingness to sell below 20.80 in downside not confirmed (DQ-008)",
+    "Personal max acceptable loss amount not provided",
+    "RC 60% constraint requires selling to 2400 shares vs soft 12000 minimum - client decision needed",
+    "OCR total_quantity 24800 (0.58 conf) not reconciled; official 24000 adopted"
+  ],
+  "deliverable_files": {
+    "action_scenarios.csv": "d73197a35c6492149bf1d815c6ed944a15485710264ff5b697e2fdde3b85117f",
+    "assumptions_manifest.json": "11b46f5811392007e45973a14211c42fb340f7b3e8bf7f017652ac39ebe94b28",
+    "if_then_rules.csv": "b02d98e5d67a1785fc2e939b79127a85cd277c1c87a4a90a150905a702c14e1d",
+    "position_reconciliation.csv": "5eaa986675592d8506643c0218b1e18cd27fd0186a2798484ba0c22cea8782cd",
+    "principal_definitions.csv": "47453c7e19bfc2a6f3722fd1fafe897a21edb2ce023f24d8dd3cbbfa15d76848",
+    "risk_diagnosis.csv": "63e0f105777b4873337872c0db821bf93edb536d7d9bae8cd392c2d347e258e3",
+    "single_position_memo.md": "af66b88c05dd3d8cb3a8f58c4acb6a1f0cb70638b67ca32e9f4db9f4e0d0d71d"
+  }
+}

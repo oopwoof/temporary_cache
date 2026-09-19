@@ -1,0 +1,11 @@
+batch_id,trade_date,settle_date,event_type,quantity,price,gross_amount,commission,transfer_fee,stamp_duty,net_cash_flow,shares_after_event,batch_cost_total,batch_cost_per_share,sellable_from,official_quantity,ocr_quantity,provider_cost_total,recon_notes
+LOT-01,2025-11-03,2025-11-04,BUY,10000,12.0,120000,30.0,1.2,0,-120031.2,10000,120031.2,12.0031,2025-11-04,,,,Original purchase
+LOT-01,2026-04-15,2026-04-15,CASH_DIVIDEND,10000,0.1,1000,0,0,0,1000.0,10000,120031.2,12.0031,2025-11-04,,,,Hist dividend received 0.10/share on 10000 shares
+LOT-01,2026-06-30,2026-06-30,STOCK_DIVIDEND,5000,0,0,0,0,0,0,15000,120031.2,8.0021,2025-11-04,,,,"10送5: 10000->15000 shares, cost unchanged, per-share reduced to 8.0021"
+LOT-02,2026-07-10,2026-07-13,BUY,6000,17.5,105000,26.25,1.05,0,-105027.3,6000,105027.3,17.5046,2026-07-13,,,,"Bought after stock dividend, no adjustment"
+LOT-03,2026-09-18,2026-09-21,BUY,3000,21.3,63900,15.98,0.64,0,-63916.62,3000,63916.62,21.3055,2026-09-21,,,,"T+1 frozen on 9/18, sellable from 9/21"
+TOTAL,,,,24000,,288900,72.23,2.89,0,-288975.12,24000,288975.12,12.0406,,24000,24800,314880,Reconstructed=24000 matches official; OCR 24800 LOW conf (0.58) excluded; provider cost 314880 stale after stock dividend
+CHECK,official_total,,,24000,,,,,,,,,,,MATCH,,,Official total 24000 = reconstructed 24000
+CHECK,official_sellable,,,21000,,,,,,,,,,,MATCH (as-of 9/18),,,Sellable=21000 (LOT-01 15000 + LOT-02 6000); LOT-03 3000 frozen
+CHECK,sellable_from_9_21,,,24000,,,,,,,,,,,,,,"After LOT-03 unfreezes on 9/21, all 24000 sellable"
+CHECK,provider_cost_discrepancy,,,,,,,,,,,,,,,,25904.88,Provider total 314880 - reconstructed 288975.12 = 25904.88; provider avg 13.12 vs rebuilt 12.0406

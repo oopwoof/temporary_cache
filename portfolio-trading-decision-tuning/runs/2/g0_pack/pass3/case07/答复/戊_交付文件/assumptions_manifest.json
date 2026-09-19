@@ -1,0 +1,175 @@
+{
+  "decision_point": "2026-08-28 15:20 Asia/Shanghai",
+  "timezone": "Asia/Shanghai",
+  "currency": "CNY",
+  "cash_deadline": "2026-09-02 10:00",
+  "cash_target": 260000.0,
+  "inputs": {
+    "file": "持仓交易决策_短期用款与流动性排序_附件.xlsx",
+    "sheets_used": [
+      "任务说明",
+      "账户与资金",
+      "官方持仓",
+      "OCR核验",
+      "交易批次",
+      "行情交易状态",
+      "公司行动",
+      "风险参数",
+      "相关性矩阵",
+      "压力情景",
+      "约束与偏好",
+      "费用与规则",
+      "资金日历"
+    ],
+    "excluded_records": [
+      {
+        "record": "MKT-A-FUT",
+        "reason": "available_ts=2026-08-31 09:36晚于决策时点, 前视记录, 排除"
+      },
+      {
+        "record": "OCR-001",
+        "reason": "置信度0.62<0.80, 仅列异常不覆盖官方数据"
+      },
+      {
+        "record": "OCR-005",
+        "reason": "名称识别错误0.74, 以security_id匹配"
+      }
+    ]
+  },
+  "nav_bases": {
+    "broker_statement_total_assets": 1038800.0,
+    "detail_positions_plus_available_cash": 1040050.0,
+    "detail_plus_dividend_receivable": 1043800.0,
+    "residual_detail_vs_broker": 1250.0,
+    "residual_detail_plus_div_vs_broker": 5000.0,
+    "note": "残差不强行补平; 主口径用明细1040050, 同时报告券商1038800"
+  },
+  "reconstructed_costs": {
+    "A": {
+      "avg": 21.1944,
+      "total": 381499.16,
+      "qty": 18000,
+      "broker_avg": 21.32
+    },
+    "B": {
+      "avg": 8.1021,
+      "total": 101276.32,
+      "qty": 12500,
+      "broker_avg": 8.11
+    },
+    "C": {
+      "avg": 14.5038,
+      "total": 116030.16,
+      "qty": 8000,
+      "broker_avg": 14.52
+    },
+    "D": {
+      "avg": 16.8044,
+      "total": 168043.68,
+      "qty": 10000,
+      "broker_avg": 16.82
+    },
+    "E": {
+      "avg": 3.92098,
+      "total": 196049.0,
+      "qty": 50000,
+      "broker_avg": 3.925
+    }
+  },
+  "fee_assumptions": {
+    "A股佣金": "0.025%, 最低5元/笔",
+    "A股印花税": "0.05% (卖出侧)",
+    "A股过户费": "0.001%",
+    "ETF佣金": "0.02%, 最低5元/笔",
+    "ETF印花税": "0",
+    "ETF过户费": "0",
+    "滑点": {
+      "A": 0.0005,
+      "B": 0.0006,
+      "D": 0.003,
+      "E": 0.0002
+    },
+    "T_plus_1": "卖出成交款当日可交易, 下一交易日09:00可划转"
+  },
+  "constraints_active": {
+    "CON-01": "可划转现金>=260000 by 9/2 10:00",
+    "CON-02": "股票+ETF<=75% NAV",
+    "CON-03": "单票<=27% NAV",
+    "CON-04": "高波动(A+D)<=30% NAV",
+    "CON-05": "电子(A+D)<=32% NAV",
+    "CON-06": "最不利压力损失<=9% NAV",
+    "CON-07": "单标的风险贡献<=55%",
+    "CON-08": "单日量<=5% ADV",
+    "CON-09": "可划转现金>=30000",
+    "CON-10": "当日买当日卖=0"
+  },
+  "soft_preferences": {
+    "PREF-01": "保留>=12000股证券A (与方案3冲突: 需卖至7900股)",
+    "PREF-02": "最小化实现亏损 (方案3实际实现盈利约31128元)",
+    "PREF-03": "交易证券<=3只 (方案3交易A和ETF=2只, 满足)",
+    "PREF-04": "股息到账前不卖B (方案3未卖B, 满足)"
+  },
+  "unresolved_items": [
+    {
+      "item": "证券D何时恢复有效买盘",
+      "impact": "若恢复可替代部分A减仓",
+      "note": "当前按0可执行"
+    },
+    {
+      "item": "证券C复牌时间和价格",
+      "impact": "复牌跳空风险",
+      "note": "不得按15.20假设成交"
+    },
+    {
+      "item": "账户残差1250元来源",
+      "impact": "权重计算口径",
+      "note": "已并列两口径"
+    },
+    {
+      "item": "客户是否接受A<12000股",
+      "impact": "方案3与PREF-01冲突",
+      "note": "需客户确认"
+    },
+    {
+      "item": "OCR总数量13000? vs官方18000",
+      "impact": "低置信不影响",
+      "note": "以官方为准"
+    },
+    {
+      "item": "未来入金",
+      "impact": "无",
+      "note": "附件确认0"
+    }
+  ],
+  "files": [
+    {
+      "name": "liquidity_decision_memo.md",
+      "sha256": "21936fe2b7df0f544c0bc38e205e39e0eb7bcac8cbb4f1a243286400fd8454ad"
+    },
+    {
+      "name": "position_reconciliation.csv",
+      "sha256": "965a4a6584052f307c803efef57d3f2cf98e7cc3de0aec224b9c8b19c2f9cdd8"
+    },
+    {
+      "name": "cash_availability_schedule.csv",
+      "sha256": "7869e49da8046ef6316df5539e5130759c10213380a4fd0097965bf95f8c9637"
+    },
+    {
+      "name": "portfolio_diagnosis.csv",
+      "sha256": "14e4fdf564791f29e2f007c0dfe950c3e6986b49dd02df86221e62be46f3364b"
+    },
+    {
+      "name": "action_priority.csv",
+      "sha256": "c43bd1e4514b97d510ef1b9eacdd9afe60be5ab0c160016b3851c6caa08364f6"
+    },
+    {
+      "name": "scenario_comparison.csv",
+      "sha256": "bb73cbe0e4dd5724635d87f1ff306f227901b587a1c63a2496ea9acdbee368fd"
+    },
+    {
+      "name": "if_then_rules.csv",
+      "sha256": "7211bbe82075c28effde6eb47271f2465029d260a426ad7ba0c2e97a408101b0"
+    }
+  ],
+  "sha256_note": "见下方files列表, 生成后计算"
+}

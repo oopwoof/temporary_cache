@@ -1,0 +1,14 @@
+scenario_id,scenario_name,trading_day,date,day_index,action,shares,price_basis,gross_amount,estimated_fee,net_cash_proceeds,post_trade_shares,post_trade_weight,post_trade_RC,cash_after_trade,low_risk_assets,constraint_status,notes
+SCN-EXEC,正常执行(价格>=20.80),1,2026-09-21,1,SELL,9000,21.55_close_ref,193950.00,438.33,193511.67,15000,40.3534%,see_risk_csv,266011.67,386011.67,PROGRESS,ADV daily limit 9000; T+1 cash
+SCN-EXEC,正常执行(价格>=20.80),2,2026-09-22,2,SELL,2000,21.55_close_ref,43100.00,97.41,43002.59,13000,34.9729%,see_risk_csv,115502.59,235502.59,COMPLIANT_WEIGHT,ADV daily limit 9000; T+1 cash
+SCN-UP,上涨情景(价格>=22.00),1,2026-09-21,1,SELL,9000,22.00+,198000.00,447.48,197552.52,15000,41.1960%,see_risk_csv,270052.52,390052.52,PROGRESS,ADV daily limit 9000; T+1 cash
+SCN-UP,上涨情景(价格>=22.00),2,2026-09-22,2,SELL,2000,22.00+,44000.00,99.44,43900.56,13000,35.7032%,see_risk_csv,116400.56,236400.56,COMPLIANT_WEIGHT,ADV daily limit 9000; T+1 cash
+SCN-DN,跌破偏好价(19.50-20.80),1,2026-09-21,1,SELL,9000,market_below_20.80,178200.00,402.73,177797.27,15000,37.0764%,see_risk_csv,250297.27,370297.27,PROGRESS,ADV daily limit 9000; T+1 cash
+SCN-DN,跌破偏好价(19.50-20.80),2,2026-09-22,2,SELL,2000,market_below_20.80,39600.00,89.50,39510.50,13000,32.1329%,see_risk_csv,112010.50,232010.50,COMPLIANT_WEIGHT,ADV daily limit 9000; T+1 cash
+SCN-LD,跌停无买盘,1,2026-09-21,1,NO_EXECUTION,0,LIMIT_DOWN_NO_BID,0.00,0.00,0.00,24000,64.5654%,95.4022%,72500.00,192500.00,CANNOT_SELL,Day1 -10% no bid; no shares sold; day2 gap -5% compounding
+SCN-LD,跌停无买盘,2,2026-09-22,2,SELL_IF_OPEN,0,gap_down_18.43,0.00,0.00,0.00,24000,see_note,see_note,72500.00,192500.00,REASSESS,"If opens, sell max 9000 at open; stress loss 9.73% still FAIL pre-trade"
+SCN-HALT,停牌后复牌,1,2026-09-21,1,SUSPENDED,0,NO_TRADING,0.00,0.00,0.00,24000,64.5654%,95.4022%,72500.00,192500.00,CANNOT_SELL,Suspended 3 trading days; no execution possible
+SCN-HALT,停牌后复牌,2,2026-09-22,2,SUSPENDED,0,NO_TRADING,0.00,0.00,0.00,24000,64.5654%,95.4022%,72500.00,192500.00,CANNOT_SELL,Still suspended
+SCN-HALT,停牌后复牌,3,2026-09-23,3,SUSPENDED,0,NO_TRADING,0.00,0.00,0.00,24000,64.5654%,95.4022%,72500.00,192500.00,CANNOT_SELL,Still suspended; record date missed if still suspended
+SCN-HALT,停牌后复牌,4,2026-09-24,4,SELL_ON_RESUME,9000,open_gap_-12%,170676.00,stress_fee,see_csv,15000,see_note,see_note,72500.00,192500.00,REASSESS,Resume at -12%; sell up to 9000 ADV; remaining 15000; stress loss 8.03%
+SCN-DIV,除息后触发调整,4,2026-09-24,4,ADJUST_TRIGGER,0,ex_div_adj,0.00,0.00,0.00,24000,-,-,-,-,TRIGGER_ADJUSTED,20.80 soft price mechanically adjusted to 20.70 post-ex-div; dividend 0.10/share on record-date shares

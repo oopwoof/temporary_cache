@@ -1,0 +1,59 @@
+{
+ "passes": 3,
+ "shards": 1,
+ "并发": "下面每个 unit 起一个互相看不见的 subagent，**一次性同时发起**",
+ "每个 unit 的 prompt": "给每个subagent的prompt.md（逐字相同，只换 pass 号与题号清单）",
+ "units": [
+  {
+   "unit": "pass1",
+   "pass": 1,
+   "shard": 1,
+   "dir": "pass1",
+   "cases": [
+    "case01",
+    "case02",
+    "case03",
+    "case04",
+    "case05",
+    "case06",
+    "case07",
+    "case08"
+   ],
+   "回填到": "pass1/case<NN>/ranking.json"
+  },
+  {
+   "unit": "pass2",
+   "pass": 2,
+   "shard": 1,
+   "dir": "pass2",
+   "cases": [
+    "case01",
+    "case02",
+    "case03",
+    "case04",
+    "case05",
+    "case06",
+    "case07",
+    "case08"
+   ],
+   "回填到": "pass2/case<NN>/ranking.json"
+  },
+  {
+   "unit": "pass3",
+   "pass": 3,
+   "shard": 1,
+   "dir": "pass3",
+   "cases": [
+    "case01",
+    "case02",
+    "case03",
+    "case04",
+    "case05",
+    "case06",
+    "case07",
+    "case08"
+   ],
+   "回填到": "pass3/case<NN>/ranking.json"
+  }
+ ]
+}

@@ -1,0 +1,451 @@
+{
+  "_sha256_notes": "self_SHA_for_assumptions_manifest_marked_NOT_COMPUTED_due_to_self_reference; other files verified after generation.",
+  "constraint_violation_summary": {
+    "portfolio_stress_loss_max_8pct": {
+      "current_in_SCN_DOWN_pct": 9.79,
+      "current_in_SCN_HALT_pct": 8.06,
+      "remediation": "必须减仓约30%以使总损失NAV<8%",
+      "status": "VIOLATED"
+    },
+    "settled_cash_floor_50k_cny": {
+      "current": 72500,
+      "remediation": "T净超2,000股且价格超过30元时,需检查现金流",
+      "status": "OK_AS_OF_T1 (在9/30后含分红应收可能保持)"
+    },
+    "settled_low_risk_assets_min_300k_cny": {
+      "current_with_no_sells": 83848,
+      "remediation": "必须在10/9前 卖出至少200,000元净现金, OR 客户授权赎回 SYNBOND",
+      "status": "VIOLATED"
+    },
+    "single_position_weight_max_35pct": {
+      "current_weight_high_nav_pct": 64.4,
+      "current_weight_low_nav_pct": 64.57,
+      "remediation": "必须减仓至 ≤11,000股才能看到权重≤35%(按不变NAV)",
+      "status": "VIOLATED"
+    },
+    "target_risk_contribution_max_60pct": {
+      "current_pct": 95.4,
+      "remediation": "必须减仓到约10,000-11,000股才能达60%(估计)",
+      "status": "VIOLATED"
+    }
+  },
+  "corporate_actions": {
+    "CA-FUT-01": {
+      "depends_on": "实际登记日持仓",
+      "ex_date": "2026-09-24",
+      "pay_date": "2026-09-30",
+      "per_share": 0.1,
+      "record_date": "2026-09-23",
+      "type": "CASH_DIVIDEND"
+    },
+    "CA-HIST-01": {
+      "amount": 1000,
+      "eligible_shares": 10000,
+      "pay_date": "2026-04-15",
+      "per_share": 0.1,
+      "status": "PAID",
+      "type": "CASH_DIVIDEND"
+    },
+    "CA-HIST-02": {
+      "cost_change": "ZERO",
+      "ex_date": "2026-06-30",
+      "lot": "LOT-01",
+      "qty_added": 5000,
+      "terms": "10送5",
+      "type": "STOCK_DIVIDEND"
+    }
+  },
+  "data_admission": {
+    "exclude_files": [],
+    "exclude_records": [
+      {
+        "rationale": "INTRADAY_PARTIAL, 收盘决策排除 (DQ-004)",
+        "records": [
+          "MKT-INTRA-003"
+        ],
+        "sheet": "行情快照"
+      },
+      {
+        "rationale": "FINAL_STALE 仅为历史, 已被OFFICIAL最新覆盖",
+        "records": [
+          "MKT-VENDOR-002"
+        ],
+        "sheet": "行情快照"
+      },
+      {
+        "rationale": "FUTURE_FINAL 决策时点后 (DQ-005)",
+        "records": [
+          "MKT-FUTURE-004"
+        ],
+        "sheet": "行情快照"
+      },
+      {
+        "rationale": "FUTURE_FINAL 决策时点后 (DQ-005)",
+        "records": [
+          "TECH-003"
+        ],
+        "sheet": "技术状态"
+      },
+      {
+        "rationale": "置信度0.58, 数量被识别为24,800似为0误识8, 不采 (DQ-002)",
+        "records": [
+          "OCR-002"
+        ],
+        "sheet": "OCR持仓"
+      },
+      {
+        "rationale": "现金分红未到账, 须9/23登记日实际持仓决定应收 (DQ-009)",
+        "records": [
+          "CA-FUT-01 pay_date"
+        ],
+        "sheet": "公司行动"
+      }
+    ],
+    "include_records": [
+      {
+        "rationale": "决策时点内总览",
+        "records": [
+          "ACCT-001"
+        ],
+        "sheet": "账户汇总"
+      },
+      {
+        "rationale": "决策时点内组合资产明细",
+        "records": [
+          "AST-001..AST-007"
+        ],
+        "sheet": "资产背景"
+      },
+      {
+        "rationale": "决策时点内官方持仓 (优先于OCR)",
+        "records": [
+          "BRK-POS-001"
+        ],
+        "sheet": "官方持仓"
+      },
+      {
+        "rationale": "用于成本重建, 决策时点前事件",
+        "records": [
+          "LEDGER-001..005"
+        ],
+        "sheet": "交易流水"
+      },
+      {
+        "rationale": "CA-001/002 已发生, CA-003 用于除息日价格调整",
+        "records": [
+          "CA-001..003"
+        ],
+        "sheet": "公司行动"
+      },
+      {
+        "rationale": "当日FINAL收盘, 决策时点前可知",
+        "records": [
+          "MKT-OFFICIAL-001"
+        ],
+        "sheet": "行情快照"
+      },
+      {
+        "rationale": "决策时点内完整技术摘要, 仅做辅助",
+        "records": [
+          "TECH-001/TECH-002"
+        ],
+        "sheet": "技术状态"
+      },
+      {
+        "rationale": "所有生效版",
+        "records": [
+          "RULE-01..07"
+        ],
+        "sheet": "交易规则"
+      },
+      {
+        "rationale": "所有生效版",
+        "records": [
+          "FEE-01..03, SLIP-01/02, BUF-01"
+        ],
+        "sheet": "费用滑点"
+      },
+      {
+        "rationale": "当日ADV20",
+        "records": [
+          "LIQ-001"
+        ],
+        "sheet": "流动性"
+      },
+      {
+        "rationale": "决策时点参数",
+        "records": [
+          "RISK-001..04"
+        ],
+        "sheet": "风险参数"
+      },
+      {
+        "rationale": "决策时点参数",
+        "records": [
+          "CORR-001..04"
+        ],
+        "sheet": "相关性矩阵"
+      },
+      {
+        "rationale": "全采用",
+        "records": [
+          "SCN-001..04"
+        ],
+        "sheet": "压力情景"
+      },
+      {
+        "rationale": "known_asof=True 全部采用",
+        "records": [
+          "EV-SRC-001..010"
+        ],
+        "sheet": "事件日历"
+      },
+      {
+        "rationale": "全采用",
+        "records": [
+          "PAR-001..016"
+        ],
+        "sheet": "决策参数"
+      },
+      {
+        "rationale": "全部保留供查阅",
+        "records": [
+          "DQ-001..010"
+        ],
+        "sheet": "数据质量"
+      }
+    ]
+  },
+  "fees_slippage": {
+    "commission_min_cny": 5.0,
+    "commission_rate": 0.00025,
+    "evidence_ids": "FEE-SRC-01/02/03; SLIP-01/02; BUF-01; PAR-016",
+    "slippage_base_rate": 0.0015,
+    "slippage_stress_rate": 0.004,
+    "stamp_duty_sell_rate": 0.0005,
+    "t_min_spread_cny_per_share": 0.1513,
+    "t_roundtrip_buffer_rate": 0.003,
+    "transfer_fee_rate": 1e-05
+  },
+  "liquidity": {
+    "adv20_shares": 180000,
+    "evidence": "LIQ-001; PAR-009/010/011",
+    "max_daily_shares_5pct": 9000,
+    "max_participation_pct": 0.05,
+    "t_max_roundtrip_shares": 2000,
+    "t_max_roundtrips_per_day": 1,
+    "trade_status_now": "NORMAL"
+  },
+  "metadata": {
+    "base_currency": "CNY",
+    "decision_as_of_ts": "2026-09-18 15:30:00 Asia/Shanghai",
+    "planning_horizon": {
+      "end_date": "2026-10-09",
+      "source": "PAR-014",
+      "start_date": "2026-09-21",
+      "trading_days": 10
+    },
+    "report_generated_at": "2026-09-11T17:22:31.245613",
+    "report_version": "1.0",
+    "scope": "action_scope=SYN100.SZ; other assets used for NAV/cash/risk only",
+    "target_symbol": "SYN100.SZ",
+    "tool_generated_by": "WorkBuddy Agent (skill: tencent-docs-routing omitted; direct analysis)"
+  },
+  "nav_reconciliation": {
+    "do_not_invent_other_assets": true,
+    "handling_rule": "REPORT_2000_CNY_RESIDUAL_AND_USE_NAV_RANGE (DQ-001)",
+    "item_sum_cny": 801048.0,
+    "residual_cny": 2000.0,
+    "statement_total_cny": 803048.0,
+    "two_nav_bases_used": {
+      "high_nav_basis_statement_cny": 803048.0,
+      "low_nav_basis_item_sum_cny": 801048.0
+    }
+  },
+  "output_files_sha256": {
+    "action_scenarios.csv": "646ad8b469d715835e8f58b1c9ce739d9620978b7d3da4d886360a4538d1561f",
+    "assumptions_manifest.json": "NOT_COMPUTED_SELF_REFERENTIAL",
+    "if_then_rules.csv": "037c4b9a996d5b52176d9bbfc1348df992bf44d1380e4637d4e375f91e020df5",
+    "position_reconciliation.csv": "31865bdcf35264f5d7a5750f4bd003b8ac3cecd29ed8b7e9d5cc1411025bf6a7",
+    "principal_definitions.csv": "b18bdb8a29599c6a0c66c6d8ee198aec0576dbbe857015fc93a83acc7f9bf8fa",
+    "risk_diagnosis.csv": "ff5da5e15e9d6a57b4d6eb331cb8558ee79cdc1f7124fbabd4e6073cadfab1a6",
+    "single_position_memo.md": "14701c274b2e46b74306dc900c7c36728298dadfb54493758dd2f5d5876e0b6b"
+  },
+  "position_reconciliation": {
+    "cost_status_evidence": "DQ-003 成本未正确调整送股; 重建必须使用 12.04",
+    "frozen_release_date": "2026-09-21",
+    "frozen_today_buy_lot03": 3000,
+    "match": true,
+    "ocr_status": "REJECTED_LOW_CONFIDENCE",
+    "ocr_total_qty": 24800,
+    "official_provider_avg_cost": 13.12,
+    "official_provider_total_cost": 314880.0,
+    "official_total_qty": 24000,
+    "provider_cost_diff_to_rebuild_cny": 25904.88,
+    "realized_cash_dividend_received": 1000.0,
+    "rebuilt_avg_per_share": 12.04,
+    "rebuilt_cost_with_fees": 288975.12,
+    "rebuilt_total_qty": 24000,
+    "sellable_at_decision_time": 21000,
+    "sellable_from_2026_09_21": 24000,
+    "stock_dividend_received": 5000
+  },
+  "principal_definitions": [
+    {
+      "concept": "历史现金投入总额（买入毛额+已发生费用，未扣已收分红 1,000元）",
+      "evidence": "LEDGER-001/004/005 + 各费用",
+      "id": "PRIN_GROSS_INVEST_NO_DIV",
+      "value_cny": 288975.12
+    },
+    {
+      "concept": "分红后净现金投入（已扣历史已收分红 1,000元）",
+      "evidence": "LEDGER-002; CA-001",
+      "id": "PRIN_NET_OF_REALIZED_DIV",
+      "value_cny": 287975.12
+    },
+    {
+      "concept": "当前持仓重建成本（=口径A，附股不增减总成本）",
+      "evidence": "LEDGER-001..005 + CA-002",
+      "id": "PRIN_CURRENT_REBUILT_BASIS",
+      "value_cny": 288975.12
+    },
+    {
+      "note": "三个口径的实际差异小(口径A=口径C=288,975.12，口径B=287,975.12)，因为仅一笔1000元分红。客户尚未确认口径, 不自行选择。"
+    }
+  ],
+  "principal_recovery_shares_at_21_55": {
+    "PRIN_CURRENT_REBUILT_BASIS_288975.12": {
+      "cash_offset_0": 13500,
+      "cash_offset_72500": 10100,
+      "cash_offset_81460_9_21": 9700,
+      "cash_offset_83848_9_25": 9600
+    },
+    "PRIN_GROSS_INVEST_NO_DIV_288975.12": {
+      "cash_offset_0": 13500,
+      "cash_offset_72500": 10100,
+      "cash_offset_81460_9_21": 9700,
+      "cash_offset_83848_9_25": 9600
+    },
+    "PRIN_NET_OF_REALIZED_DIV_287975.12": {
+      "cash_offset_0": 13400,
+      "cash_offset_72500": 10100,
+      "cash_offset_81460_9_21": 9700,
+      "cash_offset_83848_9_25": 9500
+    },
+    "note": "以上都是名义价格21.55下;实际价变化会改变股数。未使用任何不可知价格。"
+  },
+  "risk_parameters": {
+    "CASH": {
+      "beta": 0.0,
+      "bucket": "CASH",
+      "evidence": "RISK-004",
+      "mv_cny": 72500,
+      "vol": 0.0
+    },
+    "SYN100.SZ": {
+      "beta": 1.35,
+      "bucket": "HIGH_VOL_EQUITY",
+      "evidence": "RISK-001",
+      "mv_cny": 517200,
+      "vol": 0.48
+    },
+    "SYN100_risk_contribution_share_pct": 95.4,
+    "SYN300ETF": {
+      "beta": 1.0,
+      "bucket": "BROAD_EQUITY",
+      "evidence": "RISK-002",
+      "mv_cny": 80000,
+      "vol": 0.22
+    },
+    "SYN300ETF_risk_contribution_share_pct": 4.48,
+    "SYNBOND": {
+      "beta": -0.05,
+      "bucket": "LOW_RISK_FUND",
+      "evidence": "RISK-003",
+      "mv_cny": 120000,
+      "vol": 0.035
+    },
+    "SYNBOND_risk_contribution_share_pct": 0.11,
+    "correlation_matrix_check": {
+      "diag_ok": true,
+      "matrix_valid": true,
+      "range_ok": true,
+      "sym_ok": true
+    },
+    "evidence": "CORR-001..004",
+    "portfolio_annualized_volatility_pct": 36.22
+  },
+  "scenarios": [
+    {
+      "first_day_executable": true,
+      "id": "SCN-BASE",
+      "loss_cny": 11264,
+      "loss_pct_nav_high": 1.4,
+      "loss_pct_nav_low": 1.41
+    },
+    {
+      "first_day_executable": true,
+      "id": "SCN-UP",
+      "loss_cny": 37804,
+      "loss_pct_nav_high": 4.71,
+      "loss_pct_nav_low": 4.72,
+      "note": "SCN-UP 实际为收益(SCN-002)显示 +7%, loss=-pv change? 详见 risk_diagnosis.csv"
+    },
+    {
+      "constraint_8pct": "VIOLATED",
+      "first_day_executable": false,
+      "id": "SCN-DOWN",
+      "loss_cny": 78434,
+      "loss_pct_nav_high": 9.77,
+      "loss_pct_nav_low": 9.79
+    },
+    {
+      "constraint_8pct": "VIOLATED",
+      "first_day_executable": false,
+      "id": "SCN-HALT",
+      "loss_cny": 64584,
+      "loss_pct_nav_high": 8.04,
+      "loss_pct_nav_low": 8.06
+    }
+  ],
+  "unresolved_matters": [
+    {
+      "blocking_decision": "持有数量和未来卖出数量",
+      "id": "OPEN-001",
+      "options": [
+        "口径A: 历史现金投入",
+        "口径B: 分红后净投入",
+        "口径C: 重建成本"
+      ],
+      "source": "PAR-015; DQ-010",
+      "subject": "客户对'本金'的最终定义未确认"
+    },
+    {
+      "blocking": "权重/风险指标上下界",
+      "id": "OPEN-002",
+      "source": "DQ-001",
+      "subject": "账户净资产差异2000元来源未确认"
+    },
+    {
+      "blocking": "下行情景执行方案选择",
+      "id": "OPEN-003",
+      "options": [
+        "继续坚守20.80(以硬风险为代价)",
+        "接受硬风险覆盖软偏好(以财务为代价)"
+      ],
+      "source": "PAR-013; DQ-008",
+      "subject": "客户是否愿意在价格跌破20.80软偏好时放弃该底线"
+    },
+    {
+      "blocking": "下行止损位",
+      "id": "OPEN-004",
+      "options": [
+        "可接受亏损=2万元",
+        "可接受亏损=5万元",
+        "可接受亏损=10万元"
+      ],
+      "source": "客户未提供",
+      "subject": "个人单票最大可接受亏损金额未提供"
+    }
+  ]
+}
