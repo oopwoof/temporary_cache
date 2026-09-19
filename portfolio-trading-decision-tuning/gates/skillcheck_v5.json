@@ -1,0 +1,91 @@
+{
+  "target": "/tmp/v5/portfolio-trading-decision",
+  "root": "/tmp/v5/portfolio-trading-decision",
+  "skill_md_exists": true,
+  "files": {
+    "references": [
+      "references/routing.md",
+      "references/output-skeleton.md",
+      "references/calculation-contract.md",
+      "references/excel-contract.md"
+    ],
+    "scripts": [],
+    "assets": []
+  },
+  "frontmatter": {
+    "present": true,
+    "fields": {
+      "name": "portfolio-trading-decision",
+      "description": "当用户给出自己的持仓（成本、数量、可卖数量、现金、总资产、期限、风险上限）并问该不该减仓、怎么止盈止损、如何腾出用款资金、集中度是否超限时使用。完成单票与组合体检、提款与减仓测算、费用与压力测算，输出 if→then 交易纪律。纯技术诊断转 equity-technical-analysis，策略回测转 quant-research，复杂期权与杠杆结构转 derivatives-research。"
+    },
+    "raw": "\nname: portfolio-trading-decision\ndescription: 当用户给出自己的持仓（成本、数量、可卖数量、现金、总资产、期限、风险上限）并问该不该减仓、怎么止盈止损、如何腾出用款资金、集中度是否超限时使用。完成单票与组合体检、提款与减仓测算、费用与压力测算，输出 if→then 交易纪律。纯技术诊断转 equity-technical-analysis，策略回测转 quant-research，复杂期权与杠杆结构转 derivatives-research。\n",
+    "parser": "pyyaml"
+  },
+  "headings": [
+    {
+      "level": 1,
+      "text": "持仓交易决策"
+    },
+    {
+      "level": 2,
+      "text": "五个前置硬门"
+    },
+    {
+      "level": 2,
+      "text": "结论先行与可读性"
+    },
+    {
+      "level": 2,
+      "text": "勾稽与约束"
+    },
+    {
+      "level": 2,
+      "text": "求解顺序"
+    },
+    {
+      "level": 2,
+      "text": "计算与动作"
+    },
+    {
+      "level": 2,
+      "text": "输出结构"
+    },
+    {
+      "level": 2,
+      "text": "交付前自检"
+    }
+  ],
+  "required_sections": {
+    "概述": false,
+    "使用场景": false,
+    "核心流程": false
+  },
+  "line_count": 131,
+  "referenced_paths": [
+    "references/calculation-contract.md",
+    "references/excel-contract.md",
+    "references/output-skeleton.md",
+    "references/routing.md"
+  ],
+  "missing_referenced_paths": [],
+  "urls": [],
+  "security_findings": [],
+  "rule_findings": [],
+  "junk_files": [],
+  "notes": [],
+  "description_length": 200,
+  "directory_name": "portfolio-trading-decision",
+  "name_matches_directory": true,
+  "optional_sections": {
+    "输入": false,
+    "输出形式": false,
+    "工具与脚本": false,
+    "参考文件": false,
+    "参考案例": false
+  },
+  "clarity_signals": {
+    "trigger": true,
+    "flow": true,
+    "boundary": false
+  }
+}
