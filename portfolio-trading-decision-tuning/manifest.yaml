@@ -2,7 +2,7 @@
 # 需求变更 = 新版 manifest（version+1），不就地改。
 # 标 **待填** 的三项必须由需求方补，否则四方比较不成立（见 runs/1/需求方待补清单.md）。
 
-version: 2                       # v2：runs/1 跑完，把当时未知的 run_config 按回执补实
+version: 3                       # v3：runs/2 跑完，候选换成 v5；run_config 保持 runs/1 回执补实的值不变
 task_id: portfolio-trading-decision-2026w38
 
 skill:

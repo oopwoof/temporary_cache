@@ -81,6 +81,51 @@ CARRIERS = {
     "C-05 写出相邻一手验证": lambda b, a, n: bool(re.search(r"少(卖|一手|100\s*股)[^。\n]{0,40}(超限|不满足|回到)", a)),
 }
 
+
+# ── v5 的五条载体（D-01~D-05）。同样按内容判。────────────────────────
+FILEEXT = re.compile(r"[\w\u4e00-\u9fff\-_.]+\.(?:csv|xlsx|docx|md|json|py|html|txt)\b")
+CELL = re.compile(r"\b[A-Z]{1,2}\d{1,3}\b")
+FORMULA = re.compile(r"(?<![=\w])=[A-Z(]|公式原文")
+# D-04 按首句实际内容判：首句若只报交付状态、不带决策要素，即为未落地。
+DELIVERY = re.compile(r"已?(?:全部)?(?:完成|交付|生成|送达|输出)|交付\s*\d+\s*(?:件|个|份)|文件已")
+# 收紧：只认真正的决策要素。「可改卖出数量」这类描述性用词不算（实测误判过一次）。
+DECISION = re.compile(r"结论|最紧|超限|减仓|清仓|不必|待补|"
+                      r"[\d][\d,]*\s*(?:股|份|元|万)|[\d.]+\s*%")
+
+def first_sentence(body):
+    """取正文第一句：跳过 markdown 标题记号与空行，截到句号或换行。"""
+    for line in body.splitlines():
+        s = re.sub(r"^[#>*\-\s|]+", "", line).strip()
+        if not s or s in ("表格", "plaintext", "---"):
+            continue
+        return re.split(r"[。；\n]", s)[0][:120]
+    return ""
+
+def opening_carries_decision(body):
+    """v5 D-04 的准确语义：禁的是「裸交付状态句」开头。
+
+    首句报了交付状态就必须同句带决策要素；首句是标题或表头时不算违反——
+    决策摘要表本身是否存在由 C-03 单独判，两条不要重复计分。
+    """
+    s = first_sentence(body)
+    if not s:
+        return False
+    if DELIVERY.search(s):
+        return bool(DECISION.search(s))
+    return True
+
+CARRIERS_V5 = {
+    "D-01 回执里写了实际文件名": lambda b, a, n: len(set(FILEEXT.findall(a))) >= 2,
+    "D-01 主工件产出为文件或标注未另出": lambda b, a, n: bool(
+        re.search(r"正文内含[^。\n]{0,12}未另出文件|未另出文件", a)) or bool(
+        n and any(x.endswith((".md", ".docx")) for x in n)),
+    "D-02 工作簿可复算抽查有证据": lambda b, a, n: bool(
+        re.search(r"抽查[^。\n]{0,30}(单元格|公式)", a)) and bool(CELL.search(a)) and bool(FORMULA.search(a)),
+    "D-03 占比写出分母": lambda b, a, n: bool(re.search(r"分母[^。\n]{0,30}?[\d][\d,]{2,}|分母\s*[=＝:：]", a)),
+    "D-04 开头句自带决策": lambda b, a, n: opening_carries_decision(b),
+    "D-05 状态表有相邻一手列": lambda b, a, n: bool(re.search(r"相邻一手|少一手", a)),
+}
+
 def claim_vs_actual(body, names):
     """正文声称的件数 vs 实际产出。runs/1 与 runs/2 的同一处失分点。"""
     m = CLAIM.search(body)
@@ -103,7 +148,7 @@ def main():
         except FileNotFoundError:
             print(f"⚠ case{c} 缺文件，跳过", file=sys.stderr)
             continue
-        for k, f in CARRIERS.items():
+        for k, f in {**CARRIERS, **CARRIERS_V5}.items():
             res.setdefault(k, {})[c] = f(b, full, names)
         claims[c] = (claim_vs_actual(b, names), len(names))
     if not res:

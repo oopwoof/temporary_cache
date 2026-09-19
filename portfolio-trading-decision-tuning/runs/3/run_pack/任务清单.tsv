@@ -1,0 +1,10 @@
+# 一行一个会话。并发跑同一遍内的各题；第 2 遍（噪声底）等第 1 遍校验完再开。
+序号	题号	题面	附件目录	正文回收到	交付文件回收到
+1	case01	题目/case01/题面.md	题目/case01/附件/	responses/ours_case01.md	response_files/ours_case01/
+2	case02	题目/case02/题面.md	题目/case02/附件/	responses/ours_case02.md	response_files/ours_case02/
+3	case03	题目/case03/题面.md	题目/case03/附件/	responses/ours_case03.md	response_files/ours_case03/
+4	case04	题目/case04/题面.md	题目/case04/附件/	responses/ours_case04.md	response_files/ours_case04/
+5	case05	题目/case05/题面.md	题目/case05/附件/	responses/ours_case05.md	response_files/ours_case05/
+6	case06	题目/case06/题面.md	题目/case06/附件/	responses/ours_case06.md	response_files/ours_case06/
+7	case07	题目/case07/题面.md	题目/case07/附件/	responses/ours_case07.md	response_files/ours_case07/
+8	case08	题目/case08/题面.md	题目/case08/附件/	responses/ours_case08.md	response_files/ours_case08/
