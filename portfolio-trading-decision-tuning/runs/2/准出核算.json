@@ -1,0 +1,16 @@
+{
+ "scheme": null,
+ "mean": {
+  "WB": 3.625,
+  "base": 3.875,
+  "base+skill": 3.375,
+  "gpt": 4.291666666666667,
+  "ours": 3.375
+ },
+ "gap_vs_base": -0.5,
+ "wr_vs_base": 0.25,
+ "cases_beating_base": 2,
+ "wr_vs_primary": 0.375,
+ "pass": false,
+ "verdict": "❌ **未达标**：对 base 分差差 0.900；对 base 胜率差 35.0 个百分点；超过 base 的题数差 4 题；对 WB 胜率差 22.5 个百分点（分差未过 0.50，只能走主路径）"
+}
