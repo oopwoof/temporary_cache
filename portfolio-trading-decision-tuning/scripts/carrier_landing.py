@@ -126,6 +126,18 @@ CARRIERS_V5 = {
     "D-05 状态表有相邻一手列": lambda b, a, n: bool(re.search(r"相邻一手|少一手", a)),
 }
 
+
+# ── v6 的四条（E-01~E-04）。按「载体分三类」重做：只加字段，不要求新增动作。──
+TOTAL_CLAIM = re.compile(r"(?:交付|产出|生成|送达|输出)\s*(?:了)?\s*\d+\s*(?:件|个|份)|\d+\s*(?:件|个|份)\s*(?:文件|交付物|交付件)")
+CARRIERS_V6 = {
+    "E-01 工作簿含「核验」表": lambda b, a, n: bool(re.search(r"核验(?:结果)?表|核验\s*[|｜]|表名[^。\n]{0,20}核验", a)),
+    "E-02 只枚举文件名、不报总数": lambda b, a, n: (not TOTAL_CLAIM.search(b)) and len(set(FILEEXT.findall(a))) >= 1,
+    "E-02 主工件指认了位置": lambda b, a, n: bool(
+        re.search(r"(?:见|在|位于)[^。\n]{0,24}(?:\.(?:xlsx|docx|md|csv)|工作表|第[一二三四五六七八九十\d]+节)", a))
+        or bool(re.search(r"仅正文内含|未进交付件", a)),
+    "E-04 决策摘要表存在（不论位置）": lambda b, a, n: bool(re.search(r"决策摘要|结论先行", a)),
+}
+
 def claim_vs_actual(body, names):
     """正文声称的件数 vs 实际产出。runs/1 与 runs/2 的同一处失分点。"""
     m = CLAIM.search(body)
@@ -148,7 +160,7 @@ def main():
         except FileNotFoundError:
             print(f"⚠ case{c} 缺文件，跳过", file=sys.stderr)
             continue
-        for k, f in {**CARRIERS, **CARRIERS_V5}.items():
+        for k, f in {**CARRIERS, **CARRIERS_V5, **CARRIERS_V6}.items():
             res.setdefault(k, {})[c] = f(b, full, names)
         claims[c] = (claim_vs_actual(b, names), len(names))
     if not res:
