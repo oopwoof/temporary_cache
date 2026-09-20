@@ -1,0 +1,24 @@
+# 校验清单
+#
+# 三个不同的东西，别混：
+#   1) zip 文件字节 sha256   = 56f66bebb81f3e13193d6144e57602bab56f2b1c9e4292bfa77e10388706e125
+#   2) 解包后目录内容摘要     = 3e638845e7a4173e69acdbd62fbce663e67f4a66eb7b08af4e912670f0410676
+#   3) 逐文件 sha256         = 见下表
+#
+# 1) 只证明这个 zip 传输没损坏。换台机器重新打包它就会变（zip 里存了时间戳、
+#    压缩参数和条目顺序），所以**不能用它判断内容一致**。
+# 2) 与打包方式无关，**校验以它为准**。解包后跑：
+#       python3 校验.py portfolio-trading-decision
+# 3) 摘要对不上时，用下表定位是哪个文件变了。
+#
+# ⚠ 解包时注意**不要再套一层同名目录**。前两包的回执都出现过
+#   `portfolio-trading-decision/portfolio-trading-decision/…` 这种嵌套，
+#   对外层算摘要必然对不上——校验脚本会提示你这一点。
+#
+# 与上一包（runs/4，测的是 v7）相比：**只有 SKILL.md 变了**，四份 reference 逐字未变。
+
+dce3555246cf0fec5854606c734f54408c4bf0eae028c76ba1f3b2f2996df2d1  SKILL.md
+13a817596f106abadee353985d53957db1f69945fd231422788b3a67e47a8b46  references/calculation-contract.md
+abfc2a0082195ccdafc68a4ef9ec3d1c74f15938168282f65ff686dc93b2c5de  references/excel-contract.md
+50f0ad2e03195b95466089a6abadadaa618c2e2047d2b0042b7b84bfe892424b  references/output-skeleton.md
+3b35bcf44c42a8bccfe1c2bdd71ed9227065fbcc90407843b157bab7c4bbec6f  references/routing.md
