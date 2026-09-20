@@ -1,0 +1,101 @@
+{
+  "as_of_ts": "2026-09-18 15:30:00 Asia/Shanghai",
+  "base_currency": "CNY",
+  "action_scope": "SYN100.SZ only",
+  "planning_window": "2026-09-21 to 2026-10-09 (10 trading days; 10-01~10-07 CN holiday)",
+  "adopted_records": {
+    "price_close": "MD-001 21.55 FINAL available 15:05<=15:30",
+    "position": "BRK-POS-001 total 24000 sellable 21000 frozen 3000",
+    "ledger": [
+      "LEDGER-001/002/003/004/005"
+    ]
+  },
+  "excluded_records": {
+    "MD-003": "intraday partial 21.63 at 14:55 (DQ-004)",
+    "MD-004 / TECH-003": "future 2026-09-21 (DQ-005)",
+    "OCR total_quantity 24800": "low confidence 0.58 rejected (DQ-002); use 24000",
+    "provider_avg_cost 13.12": "stale after stock dividend (DQ-003); rebuilt to 12.0406"
+  },
+  "account_reconciliation": {
+    "detail_NAV": 801048,
+    "statement_NAV": 803048,
+    "unexplained_residual": 2000,
+    "status": "OPEN not plugged (DQ-001)"
+  },
+  "cost_basis_reconstructed": {
+    "LOT01": {
+      "shares": 15000,
+      "cost": 120031.2,
+      "avg": 8.0021
+    },
+    "LOT02": {
+      "shares": 6000,
+      "cost": 105027.3,
+      "avg": 17.5045
+    },
+    "LOT03": {
+      "shares": 3000,
+      "cost": 63916.62,
+      "avg": 21.3055
+    },
+    "total_shares": 24000,
+    "total_cost": 288975.12,
+    "blended_avg": 12.0406,
+    "provider_total_cost": 314880,
+    "provider_diff": 25904.88
+  },
+  "principal_definitions": {
+    "D1_hist_gross": 288975.12,
+    "D2_net_after_received_dividend": 287975.12,
+    "D3_reconstructed_holding_cost": 288975.12,
+    "received_dividend_to_date": 1000,
+    "future_dividend_0.10_per_share_contingent_on_0923_record": "not booked"
+  },
+  "fees_and_slippage": {
+    "commission_rate": 0.00025,
+    "commission_min_cny": 5,
+    "transfer_rate": 1e-05,
+    "stamp_duty_sell": 0.0005,
+    "slippage_base_oneway": 0.0015,
+    "slippage_stress_oneway": 0.004,
+    "t_roundtrip_buffer": 0.003,
+    "implied_oneway_rate_base": 0.00226
+  },
+  "liquidity": {
+    "ADV20_shares": 180000,
+    "max_daily_shares_at_5pct": 9000,
+    "lot": 100
+  },
+  "risk": {
+    "corr_matrix_check": "PASS: 4x4 symmetric, diagonal=1, range[0,1]",
+    "portfolio_annual_vol_now": 0.328984,
+    "SYN_RC_now": 0.954022,
+    "SYN_RC_at_sell11000": 0.914187,
+    "SYN_RC_at_sell12000": 0.906935,
+    "SYN_RC_60pct_requires_sell": 21600,
+    "retained_at_60pct": 2400
+  },
+  "hard_constraints": {
+    "weight_max": 0.35,
+    "stress_loss_max": 0.08,
+    "rc_max": 0.6,
+    "low_risk_assets_min": 300000,
+    "settled_cash_floor": 50000
+  },
+  "unresolved": [
+    "principal definition not confirmed",
+    "2000 CNY NAV residual source",
+    "willingness to abandon soft 20.80 floor",
+    "client max acceptable single-position loss",
+    "60% RC vs 12000 retained: structurally infeasible, needs client/risk decision"
+  ],
+  "output_files": {
+    "single_position_memo.md": "bbc1b0651630356342cf97eda0a790d44139e6e795b04eed755bfac9de32f284",
+    "position_reconciliation.csv": "17f633e588da1a2f43688be6d588dd62bb8960bbab62b93e9a93929330f60a41",
+    "principal_definitions.csv": "beacd63b32bcb41d6d73d036d53e65be0cf1011c863330414153ee141f0280b4",
+    "risk_diagnosis.csv": "7e74e89b81b81c6910c49b6fe2f8ba04b8a34fc48319815f98bf6dccffbe2a99",
+    "action_scenarios.csv": "39a0cf823730dba17192b1e76ab97eecb45b10523a9d5513dc4230fec864489b",
+    "if_then_rules.csv": "9fc2b57ca6245fa6cc4280d67c8c5c8e4fd03315e212eec7889ff59f2ad96c8c",
+    "assumptions_manifest.json": "NOT_COMPUTED: self-referential (embedding own SHA-256 changes the file); other 6 hashes are real and verified"
+  }
+}

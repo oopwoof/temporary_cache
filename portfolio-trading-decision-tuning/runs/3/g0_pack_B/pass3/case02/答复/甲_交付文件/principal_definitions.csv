@@ -1,0 +1,4 @@
+﻿principal_definition,target_cny,basis,shares_pure_sell_@21.55,retained_pure,shares_with_existing_cash_lowrisk_@21.55,retained_with,shares_pure_sell_@20.80,retained_pure_floor,shares_with_@20.80,retained_with_floor,notes
+D1_hist_gross_cash_in,288975.12,历次买入成交额+已发生买入费用,13500,10500,4500,19500,14000,10000,4700,19300,纯卖出回收需卖>12000软下限
+D2_net_invest_after_received_div,287975.12,D1-已实收现金分红1000(0.10x10000),13400,10600,4500,19500,13900,10100,4700,19300,未来0.10分红未登记不计入
+D3_reconstructed_holding_cost,288975.12,公司行动调整后仍对应持仓的成本基础,13500,10500,4500,19500,14000,10000,4700,19300,无既往卖出故与D1同值

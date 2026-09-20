@@ -1,0 +1,9 @@
+﻿scenario,trade_day,date,phase,shares_sold,price_basis,gross,total_fee,net_cash_in,post_shares,weight_after_pct,stress_DOWN_after,constraint_status,note
+NORMAL_BASE,TD1,2026-09-21,de-risk,9000,>=20.80 limit-up23.70,193950,438.33,193511.67,15000,40.64,-7.3%,"weight still>35%, RC>60%","sell into strength, ADV9000 cap"
+NORMAL_BASE,TD2,2026-09-22,de-risk,2000,>=20.80,43100,97.41,43002.59,13000,34.996,-5.44%,weight<=35 PASS; stress PASS; low-risk PASS; RC 91.4% FAIL,retain13000>=12000 soft OK
+NORMAL_BASE,TD3,2026-09-23,record_date,0,,0,0,0,13000,34.996,-,hold through record=eligible 0.10x13000=1300 (not booked),"no action, dividend contingent"
+UP_trend,TD1-TD2,2026-09-21/22,sell_into_strength,11000,>=21.55 toward resist22.30,NA,NA,~236514,13000,<=35,PASS,"same plan, better fill",use 22.30 resistance as sell zone
+BELOW_SOFT_FLOOR,TD1+,"price_in(20.70,20.80)",still de-risk,11000,>=support20.70(after ex 09-24),NA,NA,less net,13000,<=35,PASS,hard risk overrides soft 20.80; avoid limit-down,soft floor fails; sell on any bid
+LIMIT_DOWN_NO_BID,any,day limit-down,NO_EXECUTION,0,no bid,0,0,0,unchanged,unchanged,unchanged,NOT_EXECUTED,委托不计成交/现金; next trading day re-evaluate,RULE-06
+HALT_REOPEN,any,suspended>3d,NO_EXECUTION,0,,0,0,0,unchanged,unchanged,unchanged,NOT_EXECUTED,re-open gap may be -5%+; first non-limit-down day sell into bid,RULE-07
+T_ROUNDTRIP,only_if_RC_le_60,--,0,sell2000@>=21.55 buyback<=21.40,-,-,-,unchanged,unchanged,unchanged,CONDITION_NOT_MET:RC91%>60% buyback FORBIDDEN,T cannot substitute net de-risk

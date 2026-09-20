@@ -1,0 +1,22 @@
+﻿metric,value_detail_NAV,value_statement_NAV,threshold,pass_fail,source_id
+SYN_market_value_CNY,517200,517200,,,AST-001/MKT-OFFICIAL-001
+denominator_NAV_CNY,801048,803048,,residual=2000,ACCT-001/DQ-001
+SYN_weight_pct,64.5654,64.4046,<=35.0000,FAIL_BOTH,DERIVED/PAR-004
+max_SYN_MV_allowed_35pct,280366.8,281066.8,,,DERIVED
+excess_SYN_MV,236833.2,236133.2,,,DERIVED
+min_sell_lots_to_35pct,11000,11000,100-lot,one_lot_less=35.27%>35%,DERIVED
+portfolio_annual_vol_pct,32.8984,n/a,,RC model denom=789700,RISK-001..004/CORR-001
+SYN_risk_contribution_pct_now,95.4022,n/a,<=60.0000,FAIL 35.4pp over,DERIVED
+SYN_RC_at_sell11000_retain13000,91.4187,n/a,<=60.0000,FAIL 31.4pp over,DERIVED
+SYN_RC_at_sell12000_retain12000_MAXunder_floor,90.6935,n/a,<=60.0000,INFEASIBLE_under_retained_floor,DERIVED
+SYN_RC_to_reach_60pct_sell_lots,21600,,retain_only_2400,VIOLATES_soft_12000,DERIVED
+stress_BASE_loss_pct,-1.3762,-1.3762,>=-8.0000,PASS,SCN-001
+stress_UP_paper_gain_pct,4.7193,4.7193,,not a loss,SCN-002
+stress_DOWN_lower_gap_pct,-9.7315,-9.7315,>=-8.0000,FAIL_worst,SCN-003
+stress_HALT_pct,-8.0325,-8.0325,>=-8.0000,FAIL,SCN-004
+stress_DOWN_after_sell4500,-7.9783,-7.9783,>=-8.0000,PASS,DERIVED
+stress_DOWN_after_sell11000,-5.4442,-5.4442,>=-8.0000,PASS,DERIVED
+settled_low_risk_now_CNY,192500,192500,>=300000_by_1009,FAIL gap107500,AST-003/004
+settled_low_risk_after_recv,203848,203848,>=300000,FAIL gap96152,DERIVED
+settled_low_risk_after_sell4500,300603.84,300603.84,>=300000,PASS,DERIVED
+settled_cash_now,72500,72500,>=50000,PASS,ACCT-001

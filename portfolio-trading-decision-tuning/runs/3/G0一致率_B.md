@@ -1,0 +1,36 @@
+# G0 一致率（历史四方在新尺子下的还原度）
+
+- 有效题次：24（缺 0）
+- 四方顺序**完全一致**：4/24 = 16.7%
+- 平均同序对比例：0.667
+
+| 轮 | 题 | 判分方给出的历史四方顺序 | 专家顺序 | 同序对 | 完全一致 | ours 名次 |
+|---|---|---|---|---:|:--:|:--:|
+| pass1 | case01 | base > WB > base+skill > gpt | base+skill > base > gpt > WB | 0.5 | ✗ | 5 |
+| pass1 | case02 | gpt > base+skill > base > WB | gpt > base > base+skill > WB | 0.833 | ✗ | 2 |
+| pass1 | case03 | base+skill > base > gpt > WB | base+skill > base > gpt > WB | 1.0 | ✓ | 4 |
+| pass1 | case04 | gpt > base+skill > base > WB | base > gpt > base+skill > WB | 0.667 | ✗ | 1 |
+| pass1 | case05 | gpt > base+skill > WB > base | gpt > base > WB > base+skill | 0.5 | ✗ | 1 |
+| pass1 | case06 | gpt > WB > base > base+skill | WB > base > gpt > base+skill | 0.667 | ✗ | 4 |
+| pass1 | case07 | gpt > base > WB > base+skill | gpt > base > WB > base+skill | 1.0 | ✓ | 4 |
+| pass1 | case08 | gpt > WB > base > base+skill | gpt > base > base+skill > WB | 0.667 | ✗ | 2 |
+| pass2 | case01 | WB > base+skill > gpt > base | base+skill > base > gpt > WB | 0.333 | ✗ | 5 |
+| pass2 | case02 | gpt > base > base+skill > WB | gpt > base > base+skill > WB | 1.0 | ✓ | 2 |
+| pass2 | case03 | base > gpt > base+skill > WB | base+skill > base > gpt > WB | 0.667 | ✗ | 4 |
+| pass2 | case04 | gpt > base+skill > WB > base | base > gpt > base+skill > WB | 0.5 | ✗ | 1 |
+| pass2 | case05 | gpt > WB > base+skill > base | gpt > base > WB > base+skill | 0.667 | ✗ | 2 |
+| pass2 | case06 | base+skill > gpt > base > WB | WB > base > gpt > base+skill | 0.0 | ✗ | 1 |
+| pass2 | case07 | gpt > WB > base > base+skill | gpt > base > WB > base+skill | 0.833 | ✗ | 5 |
+| pass2 | case08 | gpt > base > WB > base+skill | gpt > base > base+skill > WB | 0.833 | ✗ | 1 |
+| pass3 | case01 | base > WB > base+skill > gpt | base+skill > base > gpt > WB | 0.5 | ✗ | 5 |
+| pass3 | case02 | gpt > base+skill > WB > base | gpt > base > base+skill > WB | 0.667 | ✗ | 2 |
+| pass3 | case03 | gpt > base+skill > base > WB | base+skill > base > gpt > WB | 0.667 | ✗ | 1 |
+| pass3 | case04 | gpt > base > base+skill > WB | base > gpt > base+skill > WB | 0.833 | ✗ | 1 |
+| pass3 | case05 | gpt > base+skill > WB > base | gpt > base > WB > base+skill | 0.5 | ✗ | 2 |
+| pass3 | case06 | gpt > WB > base+skill > base | WB > base > gpt > base+skill | 0.5 | ✗ | 5 |
+| pass3 | case07 | gpt > base+skill > base > WB | gpt > base > WB > base+skill | 0.667 | ✗ | 5 |
+| pass3 | case08 | gpt > base > base+skill > WB | gpt > base > base+skill > WB | 1.0 | ✓ | 2 |
+
+## 结论：**尺子不同：本轮读数只能在轮内比较，不得挂到历史刻度**
+
+注：ours 不参与一致率计算（它没有历史读数）。本指标只回答「判分方是否还原了专家对同一批答复的相对判断」。
