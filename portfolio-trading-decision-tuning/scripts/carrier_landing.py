@@ -213,6 +213,31 @@ CARRIERS_V7 = {
         bool(FX_CASH.search(a)) if c in FX_CASES else None),
 }
 
+# ── v8 的两条（H-01 件数禁令按内容重写、H-02 相邻一手验证进回执）────────
+# H-01 复用已修过的 TOTAL_CLAIM（它现在按内容认总数与总括宣称，不认语序）。
+# 单列成一条检测器，是为了把「不报总数」和「逐件列名」分开读——
+# v6 的 E-02 检测器把两件事 AND 在一起，看不出到底哪一半没落住。
+#
+# H-02 比 C-05 严：C-05 只要出现「少一手…超限/回到」就算，
+# H-02 还要求把**数值**写出来（自检③ 的原话是「缺这两个数视同反解未完成」）。
+# ⚠ 捕获组 + findall 只会返回**组**、不返回整段匹配——第一版因此把后面 60 字丢了，
+# 六轮全判 0/8，而实际上 v5/v7 有好几题写得很规范（如「少卖 100 股…权重 30.64%，仍超限」）。
+# 检测器误判第 9 次，这次在出包前抓到。改用非捕获组。
+ADJ_LOT = re.compile(r"(?:少(?:卖)?\s*(?:一手|1\s*手|100\s*股)|相邻一手)[^。；\n]{0,80}")
+NUMERIC = re.compile(r"[\d.]+\s*%|[\d][\d,]{2,}\s*(?:股|份|元)")
+
+def adjacent_lot_with_numbers(full):
+    """H-02：相邻一手验证必须带数字，且说明是否仍超限。"""
+    for s in ADJ_LOT.findall(full):
+        if NUMERIC.search(s) and re.search(r"超限|回到|不满足|达标|超过", s):
+            return True
+    return False
+
+CARRIERS_V8 = {
+    "H-01 正文无交付总数/总括宣称": lambda b, a, n: not TOTAL_CLAIM.search(b),
+    "H-02 相邻一手验证写出数值": lambda b, a, n: adjacent_lot_with_numbers(a),
+}
+
 def claim_vs_actual(body, names):
     """正文声称的件数 vs 实际产出。runs/1 与 runs/2 的同一处失分点。"""
     m = CLAIM.search(body)
@@ -235,7 +260,7 @@ def main():
         except FileNotFoundError:
             print(f"⚠ case{c} 缺文件，跳过", file=sys.stderr)
             continue
-        for k, f in {**CARRIERS, **CARRIERS_V5, **CARRIERS_V6, **CARRIERS_V7}.items():
+        for k, f in {**CARRIERS, **CARRIERS_V5, **CARRIERS_V6, **CARRIERS_V7, **CARRIERS_V8}.items():
             # 题号只传给需要按题面定适用性的检测器（目前只有 G-02）
             try:
                 res.setdefault(k, {})[c] = f(b, full, names, c)
