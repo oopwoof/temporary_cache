@@ -25,7 +25,8 @@ PACKS = [("runs/1 第一包 (v3.0 r1)", "runs/1/g0_pack",    "runs/1/_answer_key
          ("runs/1 噪声包 (v3.0 r2)", "runs/1/g0_pack_r2", "runs/1/_answer_key/g0_keys_r2.json"),
          ("runs/2 (v4)",             "runs/2/g0_pack",    "runs/2/_answer_key/g0_keys.json"),
          ("runs/3 批A (v5)",         "runs/3/_judged_A",  "runs/3/_answer_key/g0_keys.json"),
-         ("runs/3 批B (v5)",         "runs/3/g0_pack_B",  "runs/3/_answer_key/g0_keys.json")]
+         ("runs/3 批B (v5)",         "runs/3/g0_pack_B",  "runs/3/_answer_key/g0_keys.json"),
+         ("runs/4 (v7)",             "runs/4/g0_pack",    "runs/4/_answer_key/g0_keys.json")]
 PASSES = ("pass1", "pass2", "pass3")
 
 
@@ -112,7 +113,7 @@ def main():
                      f"{r['wrw']:.1%} | {m(r['ok5'])} | {m(r['prim'])} | {r['loss']} | "
                      f"{'✅' if r['passed'] else '❌'} |")
     L += ["", "## 结论", "",
-          f"- 单次判分实例 **{n}** 个（5 批 × 逐轮），过准出的 **{ok}** 个",
+          f"- 单次判分实例 **{n}** 个（{len(PACKS)} 批 × 逐轮），过准出的 **{ok}** 个",
           f"- 连 floor 三条都同时满足的：**{nf}** 个",
           f"- 硬条件（对 base+skill 零负场）满足的：**{nh}** 个", "",
           "**两条判据一次都没满足过**：`超过题数 ≥6/8`（历史最好 5/8）与 `硬条件零负场`（历史最好 1 场）。",
