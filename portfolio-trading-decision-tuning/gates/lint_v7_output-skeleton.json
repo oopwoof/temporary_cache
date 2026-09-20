@@ -1,0 +1,86 @@
+{
+ "path": "skills/current/references/output-skeleton.md",
+ "chars": 1313,
+ "red": {
+  "R1": {
+   "status": "OK",
+   "hits": [],
+   "count": 0
+  },
+  "R3": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": []
+  },
+  "R2": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": [
+    {
+     "token": "无法评估",
+     "context": "后值｜用户偏好方案值｜判定（达标/超限/无法评估）｜绑定还是已被其他卖出消掉｜相邻一手检"
+    }
+   ]
+  },
+  "R4": {
+   "status": "OK",
+   "candidates": []
+  }
+ },
+ "yellow": {
+  "Y1": {
+   "prohibit_paras": 3,
+   "missing_alt": []
+  },
+  "Y2": {
+   "dup_groups": 0,
+   "samples": []
+  },
+  "Y3": {
+   "items": 0,
+   "max": 12,
+   "over": false
+  },
+  "Y4": {
+   "bold_blocks": 1,
+   "bold_ratio": 0.0053,
+   "max": 0.33,
+   "prohibit_words": 3
+  },
+  "Y5": {
+   "must_read": 0,
+   "max": 2
+  },
+  "Y6": [
+   {
+    "tier": "direct",
+    "budget": 4000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "brief",
+    "budget": 7000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "full",
+    "budget": 12000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   }
+  ],
+  "Y7": {
+   "unmatched": []
+  }
+ },
+ "skipped": [],
+ "verdict": "全绿",
+ "exit_code": 0
+}

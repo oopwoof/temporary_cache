@@ -1,0 +1,79 @@
+{
+ "path": "skills/current/references/excel-contract.md",
+ "chars": 593,
+ "red": {
+  "R1": {
+   "status": "OK",
+   "hits": [],
+   "count": 0
+  },
+  "R3": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": []
+  },
+  "R2": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": []
+  },
+  "R4": {
+   "status": "OK",
+   "candidates": []
+  }
+ },
+ "yellow": {
+  "Y1": {
+   "prohibit_paras": 3,
+   "missing_alt": []
+  },
+  "Y2": {
+   "dup_groups": 0,
+   "samples": []
+  },
+  "Y3": {
+   "status": "NO_SECTION"
+  },
+  "Y4": {
+   "bold_blocks": 1,
+   "bold_ratio": 0.0152,
+   "max": 0.33,
+   "prohibit_words": 4
+  },
+  "Y5": {
+   "must_read": 0,
+   "max": 2
+  },
+  "Y6": [
+   {
+    "tier": "direct",
+    "budget": 4000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "brief",
+    "budget": 7000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "full",
+    "budget": 12000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   }
+  ],
+  "Y7": {
+   "status": "NO_SELFCHECK"
+  }
+ },
+ "skipped": [],
+ "verdict": "全绿",
+ "exit_code": 0
+}

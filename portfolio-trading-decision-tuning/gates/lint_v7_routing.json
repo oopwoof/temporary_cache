@@ -1,0 +1,88 @@
+{
+ "path": "skills/current/references/routing.md",
+ "chars": 318,
+ "red": {
+  "R1": {
+   "status": "OK",
+   "hits": [],
+   "count": 0
+  },
+  "R3": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": []
+  },
+  "R2": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": [
+    {
+     "token": "完成持仓勾稽",
+     "context": "止改写成趋势研判报告或只交行情图，改为先完成持仓勾稽、风险判定与交易纪律。  缺关键账户信息"
+    },
+    {
+     "token": "技术分析",
+     "context": "附了历史价格序列时，这是持仓决策题而不是技术分析题：留在当前 Skill，均线、波动率等"
+    }
+   ]
+  },
+  "R4": {
+   "status": "OK",
+   "candidates": []
+  }
+ },
+ "yellow": {
+  "Y1": {
+   "prohibit_paras": 2,
+   "missing_alt": []
+  },
+  "Y2": {
+   "dup_groups": 0,
+   "samples": []
+  },
+  "Y3": {
+   "status": "NO_SECTION"
+  },
+  "Y4": {
+   "bold_blocks": 0,
+   "bold_ratio": 0.0,
+   "max": 0.33,
+   "prohibit_words": 2
+  },
+  "Y5": {
+   "must_read": 0,
+   "max": 2
+  },
+  "Y6": [
+   {
+    "tier": "direct",
+    "budget": 4000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "brief",
+    "budget": 7000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "full",
+    "budget": 12000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   }
+  ],
+  "Y7": {
+   "status": "NO_SELFCHECK"
+  }
+ },
+ "skipped": [],
+ "verdict": "全绿",
+ "exit_code": 0
+}

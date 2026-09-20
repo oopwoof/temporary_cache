@@ -138,6 +138,36 @@ CARRIERS_V6 = {
     "E-04 决策摘要表存在（不论位置）": lambda b, a, n: bool(re.search(r"决策摘要|结论先行", a)),
 }
 
+# ── v7 的三条（G-01 冲突归属、G-02 币种含现金）。按内容判，不按句式判。────
+# G-01 的病：硬约束与软偏好不可兼得时，把二选一交回客户/风控当结论。
+# 只在请示语与「超限/违反/放宽/无解」**同句**时才算未落地——
+# 「偏好偏离须客户书面确认」本身是合规写法，一并判就是第 6 条那种假阴性。
+PUNT = (r"(?:须|由|交(?:由)?|请)(?:客户|风控|投资者|投委会)[^。；！\n]{0,14}"
+        r"(?:确认|拍板|决定|选择|授权|定夺)|知情接受|客户自行(?:选择|决定)|二选一")
+BREACH = r"超限|超过(?:上限|阈值)|违反|放宽|不合规|无解|硬(?:约束|线)"
+PUNT_CLAUSE = re.compile(r"[^。；！\n]*(?:" + PUNT + r")[^。；！\n]*")
+
+def no_punt_closing(full):
+    """G-01：硬约束的解不得交回客户/风控。请示语与超限/放宽同句即判未落地。"""
+    for s in PUNT_CLAUSE.findall(full):
+        if re.search(BREACH, s):
+            return False
+    return True
+
+# G-02 只适用于题面设了币种上限的题（按纪律包：case03、case06）。
+# 其余题返回 None = 不适用，不进分母——否则 1/8 会被误读成失败。
+FX_CTX = re.compile(r"币种|外币|港币|美元|汇率|HKD|USD")
+FX_CASH = re.compile(r"币种[^。\n]{0,30}(?:含|计入|包含|加上)[^。\n]{0,14}现金"
+                     r"|现金[^。\n]{0,16}(?:计入|纳入)[^。\n]{0,12}币种(?:敞口)?")
+
+CARRIERS_V7 = {
+    "G-01 无请示型收口（硬约束不交客户拍板）": lambda b, a, n: no_punt_closing(a),
+    "G-01 回执写出与最紧约束冲突的软偏好": lambda b, a, n: bool(
+        re.search(r"冲突[^。\n|]{0,10}软?偏好|与之冲突", a)),
+    "G-02 币种敞口计入该币种现金": lambda b, a, n: (
+        bool(FX_CASH.search(a)) if FX_CTX.search(a) else None),
+}
+
 def claim_vs_actual(body, names):
     """正文声称的件数 vs 实际产出。runs/1 与 runs/2 的同一处失分点。"""
     m = CLAIM.search(body)
@@ -160,7 +190,7 @@ def main():
         except FileNotFoundError:
             print(f"⚠ case{c} 缺文件，跳过", file=sys.stderr)
             continue
-        for k, f in {**CARRIERS, **CARRIERS_V5, **CARRIERS_V6}.items():
+        for k, f in {**CARRIERS, **CARRIERS_V5, **CARRIERS_V6, **CARRIERS_V7}.items():
             res.setdefault(k, {})[c] = f(b, full, names)
         claims[c] = (claim_vs_actual(b, names), len(names))
     if not res:
@@ -170,9 +200,11 @@ def main():
              f"题数 {len(done)}｜轮次 {a.round}", "",
              "| 载体 | 逐题 | 落地 |", "|---|---|---:|"]
     for k, v in res.items():
-        cells = "".join("✓" if v[c] else "✗" for c in done)
-        n = sum(1 for c in done if v[c])
-        lines.append(f"| {k} | `{cells}` | **{n}/{len(done)}** |")
+        # None = 该题不适用（如题面没设币种上限），记「·」并从分母里剔除
+        cells = "".join("·" if v[c] is None else ("✓" if v[c] else "✗") for c in done)
+        appl = [c for c in done if v[c] is not None]
+        n = sum(1 for c in appl if v[c])
+        lines.append(f"| {k} | `{cells}` | **{n}/{len(appl)}** |")
     lines += ["", "## 交付声明 vs 实际件数（runs/1 case01 的失分点）", "",
               "| 题 | 正文声称 | 实际产出 | 一致 |", "|---|---:|---:|:--:|"]
     for c in done:

@@ -1,0 +1,96 @@
+{
+ "path": "skills/current/references/calculation-contract.md",
+ "chars": 1924,
+ "red": {
+  "R1": {
+   "status": "OK",
+   "hits": [],
+   "count": 0
+  },
+  "R3": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": []
+  },
+  "R2": {
+   "status": "OK",
+   "hits": [],
+   "count": 0,
+   "candidates": [
+    {
+     "token": "资金可划转日",
+     "context": "顺延并分行写出日历日、下一可执行交易日、资金可划转日。  风险贡献与分解型占比：风险贡献=标"
+    },
+    {
+     "token": "下一交易日",
+     "context": "止把非交易日解冻写成可执行日，改为顺延到下一交易日。  动态规则的数量用目标权重或绑定约束"
+    },
+    {
+     "token": "可划转现金",
+     "context": "为按仍在账内口径计算。 - 任务是\"准备可划转现金\"且资金尚未划出：权重和硬约束的分母用交"
+    },
+    {
+     "token": "无法评估",
+     "context": "依赖该报价的交易后权重、风险和成交额标\"无法评估\"，禁止用陈旧价填造并标可分配，改为标注"
+    }
+   ]
+  },
+  "R4": {
+   "status": "OK",
+   "candidates": []
+  }
+ },
+ "yellow": {
+  "Y1": {
+   "prohibit_paras": 12,
+   "missing_alt": []
+  },
+  "Y2": {
+   "dup_groups": 0,
+   "samples": []
+  },
+  "Y3": {
+   "status": "NO_SECTION"
+  },
+  "Y4": {
+   "bold_blocks": 1,
+   "bold_ratio": 0.0083,
+   "max": 0.33,
+   "prohibit_words": 17
+  },
+  "Y5": {
+   "must_read": 0,
+   "max": 2
+  },
+  "Y6": [
+   {
+    "tier": "direct",
+    "budget": 4000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "brief",
+    "budget": 7000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   },
+   {
+    "tier": "full",
+    "budget": 12000,
+    "min_chars": null,
+    "status": "SKIPPED",
+    "note": "骨架模板里没有该档小节"
+   }
+  ],
+  "Y7": {
+   "status": "NO_SELFCHECK"
+  }
+ },
+ "skipped": [],
+ "verdict": "全绿",
+ "exit_code": 0
+}
