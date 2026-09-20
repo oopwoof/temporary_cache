@@ -1,0 +1,9 @@
+﻿batch_id,event_date,event_type,qty_event,qty_after_event,gross_amount,commission,transfer_fee,stamp,net_cash_flow,batch_cost_total,batch_qty,batch_avg_cost,sellable_status,source_id
+LOT-01,2025-11-03,BUY,10000,10000,120000,30,1.2,0,-120031.2,120031.2,10000,12.0031,settled,LEDGER-001
+LOT-01,2026-04-15,CASH_DIVIDEND(已到账),-,10000,1000,0,0,0,1000,120031.2,10000,12.0031,settled,LEDGER-002
+LOT-01,2026-06-30,STOCK_DIVIDEND(10送5),5000,15000,0,0,0,0,0,120031.2,15000,8.0021,settled,LEDGER-003/CA-HIST-02
+LOT-02,2026-07-10,BUY,6000,6000,105000,26.25,1.05,0,-105027.3,105027.3,6000,17.5045,settled,LEDGER-004
+LOT-03,2026-09-18,BUY,3000,3000,63900,15.98,0.64,0,-63916.62,63916.62,3000,21.3055,"frozen_today,sellable_2026-09-21",LEDGER-005
+TOTAL,reconstructed,,24000,24000,,,,,-287975.12,288975.12,24000,12.0406,sellable_now=21000 / from_09-21=24000,DERIVED
+OFFICIAL_BROKER,2026-09-18 15:05,,24000,24000,,,,,,314880,24000,13.12,sellable=21000 frozen=3000 (provider cost STALE),BRK-POS-001
+OCR_SCREEN,2026-09-18 15:06,total=24800 conf0.58 REJECT,,24000,,,,,,,,,"sellable=21000 conf0.95 仅交叉核验,不取数",OCR-002

@@ -1,0 +1,233 @@
+{
+  "decision_point": "2026-08-28 15:20:00",
+  "timezone": "Asia/Shanghai",
+  "currency": "CNY",
+  "data_nature": "全部证券、行情、账户和规则为合成已脱敏数据",
+  "input_files": [
+    {
+      "name": "持仓交易决策_短期用款与流动性排序_附件.xlsx",
+      "sheets": [
+        "任务说明",
+        "账户与资金",
+        "官方持仓",
+        "OCR核验",
+        "交易批次",
+        "行情交易状态",
+        "公司行动",
+        "风险参数",
+        "相关性矩阵",
+        "压力情景",
+        "约束与偏好",
+        "费用与规则",
+        "资金日历"
+      ]
+    }
+  ],
+  "adopted_and_excluded": [
+    {
+      "item": "MKT-A-FUT(证券A未来测试记录21.8元)",
+      "status": "排除",
+      "reason": "available_ts=2026-08-31 09:36晚于决策时点,前视数据"
+    },
+    {
+      "item": "OCR-001(证券A总数量13000?置信度0.62)",
+      "status": "排除",
+      "reason": "置信度<0.80且与官方18000冲突,不覆盖"
+    },
+    {
+      "item": "OCR-005(证券D名称识别错误)",
+      "status": "排除",
+      "reason": "以security_id匹配,不以名称覆盖"
+    },
+    {
+      "item": "证券B股息3750元",
+      "status": "排除出现金目标",
+      "reason": "支付日9/3晚于9/2 10:00截止"
+    },
+    {
+      "item": "证券C停牌价格15.20",
+      "status": "仅账面估值",
+      "reason": "8/24陈旧价,不代表可成交价格"
+    },
+    {
+      "item": "证券D跌停价13.50",
+      "status": "不可执行",
+      "reason": "跌停且买盘为0,不得假设成交"
+    }
+  ],
+  "nav_definition": {
+    "broker_statement_total_assets": 1038800.0,
+    "detailed_reconstructed_nav": 1040035.8200000001,
+    "detailed_components": {
+      "withdrawable_cash": 58000.0,
+      "unsettled_sale_net": 17985.82,
+      "unsettled_sale_gross": 18000.0,
+      "unsettled_sale_fees": 14.18,
+      "holdings_market_value": 964050.0,
+      "dividend_receivable_B_excluded": 3750.0
+    },
+    "reconciliation_residual": 1235.8200000000652,
+    "residual_impact": "明细NAV比券商NAV高约1236元,权重差异约0.12个百分点,不改变约束判定方向"
+  },
+  "fees": {
+    "commission_A_rate": 0.00025,
+    "commission_min": 5.0,
+    "stamp_tax_sell_rate": 0.0005,
+    "transfer_fee_rate": 1e-05,
+    "commission_ETF_rate": 0.0002,
+    "slippage": {
+      "证券A": 0.0005,
+      "证券B": 0.0006,
+      "证券C": null,
+      "证券D": 0.003,
+      "宽基ETF": 0.0002
+    },
+    "ADV_limit": 0.05
+  },
+  "settlement_rules": {
+    "A_share_sell": "当日可用于交易,下一交易日09:00可划转",
+    "T_plus_1": "当日买入次一交易日可卖",
+    "lot_size": 100
+  },
+  "constraints": {
+    "CON-01": {
+      "limit": 260000,
+      "unit": "CNY",
+      "desc": "可划转现金>=260000"
+    },
+    "CON-02": {
+      "limit": 0.75,
+      "unit": "NAV",
+      "desc": "股票及ETF仓位<=75%"
+    },
+    "CON-03": {
+      "limit": 0.27,
+      "unit": "NAV",
+      "desc": "单票权重<=27%"
+    },
+    "CON-04": {
+      "limit": 0.3,
+      "unit": "NAV",
+      "desc": "高波动合计<=30%"
+    },
+    "CON-05": {
+      "limit": 0.32,
+      "unit": "NAV",
+      "desc": "电子行业合计<=32%"
+    },
+    "CON-06": {
+      "limit": 0.09,
+      "unit": "NAV",
+      "desc": "最不利压力损失<=9%"
+    },
+    "CON-07": {
+      "limit": 0.55,
+      "unit": "组合方差",
+      "desc": "单票风险贡献<=55%"
+    },
+    "CON-08": {
+      "limit": 0.05,
+      "unit": "ADV",
+      "desc": "单日成交量<=5%ADV"
+    },
+    "CON-09": {
+      "limit": 30000,
+      "unit": "CNY",
+      "desc": "可划转现金>=30000"
+    },
+    "CON-10": {
+      "limit": 0,
+      "unit": "股",
+      "desc": "当日买入当日卖出=0"
+    }
+  },
+  "preferences": {
+    "PREF-01": {
+      "value": 12000,
+      "unit": "股",
+      "desc": "证券A保留>=12000股"
+    },
+    "PREF-02": {
+      "value": null,
+      "unit": "CNY",
+      "desc": "实现亏损最小化"
+    },
+    "PREF-03": {
+      "value": 3,
+      "unit": "只",
+      "desc": "交易证券<=3只"
+    },
+    "PREF-04": {
+      "value": null,
+      "unit": "股",
+      "desc": "股息前避免卖证券B"
+    }
+  },
+  "unresolved_items": [
+    {
+      "item": "证券D何时恢复有效买盘",
+      "impact": "决定高波动/电子约束能否达标",
+      "priority": "会改变立即动作"
+    },
+    {
+      "item": "证券C复牌时间及复牌价格",
+      "impact": "决定C的可变现价值和压力损失",
+      "priority": "会改变立即动作"
+    },
+    {
+      "item": "客户是否接受保留<12000股证券A",
+      "impact": "决定方案C是否可行",
+      "priority": "会改变立即动作"
+    },
+    {
+      "item": "勾稽残差1235.82元来源",
+      "impact": "权重精度",
+      "priority": "只影响精度"
+    },
+    {
+      "item": "客户个人税务特殊情形",
+      "impact": "实现盈亏精确计算",
+      "priority": "只影响精度"
+    },
+    {
+      "item": "未来入金",
+      "impact": "已确认为0",
+      "priority": "暂不影响"
+    }
+  ],
+  "output_files": {
+    "position_reconciliation.csv": {
+      "sha256": "33fcb9caab61c510f02e01142dd1a3cfdc9fd84939d42dbbca92e3d9b8689dc9",
+      "size_bytes": 1843
+    },
+    "cash_availability_schedule.csv": {
+      "sha256": "aded23778239114c702bd926ecee728c57c28844fc57cbb38ae47befa1234286",
+      "size_bytes": 1192
+    },
+    "portfolio_diagnosis.csv": {
+      "sha256": "1717fd1020f620b53d830b6895ac4008e298d9916d8d322ba202a43e368598ba",
+      "size_bytes": 1888
+    },
+    "action_priority.csv": {
+      "sha256": "9bbb51e487b5876e54676513edc16dde93168a21da98330c66739631eddc8d03",
+      "size_bytes": 1876
+    },
+    "scenario_comparison.csv": {
+      "sha256": "a641f55e743b8290bb854a916f78c6d84cd346a9a43d1929967085eddce304e2",
+      "size_bytes": 3296
+    },
+    "if_then_rules.csv": {
+      "sha256": "0bb7c6cae70f290a38e7193c9841e892cf7bbf9d8e0694b873a985e2b8faa2cb",
+      "size_bytes": 4582
+    },
+    "assumptions_manifest.json": {
+      "sha256": "49474c242646ce32e84e9c8c607331c79d2f630135532142e797be307c7dd7f8",
+      "size_bytes": 6308
+    },
+    "liquidity_decision_memo.md": {
+      "sha256": "c4bf167d0c75bfb02afd56263d4f0a88c35ecbc9f493d587461f216f64d42cc7",
+      "size_bytes": 13359
+    }
+  },
+  "hash_note": "SHA-256在文件全部写入后计算"
+}
