@@ -1,0 +1,18 @@
+﻿item,detail_nav_anchor,statement_nav_anchor,note
+NAV_CNY,801048.00,803048.00,"残差2000.00,不补造"
+M_mv_cny,517200.00,517200.00,24000*21.55
+M_weight,0.6457,0.6440,"上限0.35,均超限"
+portfolio_ann_vol_pre,0.3243,,"现金类含净应收,vol=0"
+M_risk_contribution_pre,0.9540,,"上限0.60,超限"
+M_risk_contribution_post_weight_only(卖11000),0.9142,,"仍>0.60,权重解不充分"
+JOINT_min_sell_shares,21600,,同时满足权重/RC/压力
+M_weight_at_joint,0.0647,,
+M_risk_contrib_at_joint,0.5907,,<0.60
+stress_down_loss_rate_pre,0.0973,,>0.08 FAIL
+stress_halt_loss_rate_pre,0.0803,,>0.08 FAIL
+stress_down_loss_rate_at_joint,0.0131,,<0.08 PASS
+cash_lowrisk_now,203848.00,,含净应收到账后;距300000缺口96152.00
+stress_SCN-BASE,SCN-BASE,11024.00,0.0138,0.6416
+stress_SCN-UP,SCN-UP,-37804.00,-0.0472,0.6597
+stress_SCN-DOWN,SCN-DOWN,77954.00,0.0973,0.6115
+stress_SCN-HALT,SCN-HALT,64344.00,0.0803,0.6178

@@ -2,8 +2,8 @@
 # 需求变更 = 新版 manifest（version+1），不就地改。
 # 标 **待填** 的三项必须由需求方补，否则四方比较不成立（见 runs/1/需求方待补清单.md）。
 
-version: 3                       # v3：runs/2 跑完，候选换成 v5；run_config 保持 runs/1 回执补实的值不变
-task_id: portfolio-trading-decision-2026w38
+version: 4                       # v4：runs/4 跑完，候选换成 v7（同包补测 v6 五条）；run_config 仍沿用 runs/1 回执补实的值
+task_id: portfolio-trading-decision-2026w39
 
 skill:
   name: portfolio-trading-decision
@@ -22,9 +22,13 @@ cases:
     full:   ["01","02","07"]      # 4197 / 5242 / 5379 字符
   with_attachments: ["01","02","03","04","05","06","07","08"]
 
-# 四方构成。ours = 豆包 + v3.0；base+skill = 上一轮被评测的 豆包 + v1.0，是回归底线。
-# 上一轮读数：base 15 / base+skill 23 / WB 27 / gpt 15（排序分，越小越好）；
-# 人评均分 3.75 / 3.00 / 2.38 / 3.88。新判据下对裸模分差 −0.75、超过题数 1/8、对 WB 胜率 62%。
+# 五方构成。ours = 豆包 + **v7**（runs/4 第 1 轮）；base+skill = 豆包 + v1.0，是回归底线。
+# ⚠ 基线四方自 runs/1 起**逐字不变**（32 份已复算，跨轮零差异），这是跨轮比较的唯一前提。
+# ⚠ 已知泄露（不改，留给需求方定）：base 的答复里含
+#   `/tmp/系统-JZ-test-portfolio-trading-decision-08-...` 这类路径，暴露 skill 名与题号。
+#   它在四轮里一直存在且逐字不变，所以不影响版本间比较；改了反而会破坏「基线逐字不变」。
+# 上一轮（runs/3）读数分两批且判分模型不同，不可互比，详见 runs/3/两批判分对照.md。
+# 历史上 15 个单次判分实例 0 个过准出，阻塞在「超过题数 ≥6/8」与「硬条件零负场」两条。
 parties_mapping_known: true      # 槽位映射来自提需表「备注」字段原文，8 题固定，已交叉核验
 parties:
   - {id: ours,        role: candidate}
@@ -66,5 +70,6 @@ judge:
 domain_pack: packs/portfolio-trading-decision.yaml   # ⚠ 尚未建，判分包需要它，跑题包不需要
 cadence: {due: "**待填**", recurring: weekly_tue}
 
-# runs/1 实测留痕：8 题 × 2 轮 16 次会话、零技术失败、交付件 24/23 件。
-# 判分侧三轮塌成一轮（check_judge_quality 退出码 2），runs/2 必须解决，见 runs/2/需求方待补清单.md
+# runs/4 实测留痕：8 题 × 2 轮 16/16 PASS、零技术失败、交付件 23/24 件、版本指纹已独立复算。
+# 判分侧累计四种失效模式：漂移过大 / 噪声底不稳 3 倍 / 三轮被合成一轮 / 两批换了判分模型。
+# 待需求方定的口径已 6 条，见 runs/4/需求方待补清单.md。

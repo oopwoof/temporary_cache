@@ -1,0 +1,96 @@
+{
+  "as_of": "2026-09-18 15:30:00 Asia/Shanghai",
+  "base_currency": "CNY",
+  "action_scope": "SYN100.SZ",
+  "planning_window": "2026-09-21..2026-10-09 (10 synthetic trading days)",
+  "data_admission": {
+    "USED": [
+      "MD-001 FINAL close 21.55 (available 15:05)",
+      "TECH-001/002 final & known by 15:20",
+      "账户汇总/资产背景/官方持仓/交易流水/公司行动/交易规则/费用滑点/流动性/风险参数/相关性矩阵/压力情景/事件日历 (均<=as_of)"
+    ],
+    "EXCLUDED": [
+      "MD-003 14:55 INTRADAY_PARTIAL (DQ-004)",
+      "MD-004 9/21 FUTURE_FINAL (DQ-005)",
+      "TECH-003 9/21 FUTURE_FINAL (DQ-005)",
+      "OCR total_quantity 24800 置信0.58 (DQ-002,仅交叉核验)"
+    ]
+  },
+  "account_reconciliation": {
+    "nav_detail": 801048,
+    "nav_statement": 803048.0,
+    "residual_unexplained": 2000.0,
+    "treatment": "不补造其他资产;权重按两口径区间披露"
+  },
+  "position": {
+    "total_shares": 24000,
+    "sellable_now_0918": 21000,
+    "frozen_today": 3000,
+    "sellable_from_0921": 24000,
+    "rebuilt_total_cost": 288975.12,
+    "rebuilt_pp_share": 12.0406,
+    "provider_cost_total": 314880.0,
+    "provider_pp_share": 13.12,
+    "provider_cost_status": "UNVERIFIED_AFTER_STOCK_DIVIDEND"
+  },
+  "corporate_actions": {
+    "past_div_received": 1000.0,
+    "stock_dividend": "2026-06-30 10送5,LOT-01 +5000",
+    "future_dividend": "2026-09-23登记/9-24除息/9-30支付 每股0.10,登记日前不得入账"
+  },
+  "fees": {
+    "commission_rate": 0.00025,
+    "commission_min": 5.0,
+    "transfer_rate": 1e-05,
+    "stamp_sell": 0.0005,
+    "slip_base": 0.0015,
+    "slip_stress": 0.004,
+    "t_buffer": 0.003,
+    "t_roundtrip_breakeven_rate": 0.00702
+  },
+  "liquidity": {
+    "adv20": 180000,
+    "max_participation": 0.05,
+    "max_daily_shares": 9000,
+    "t_max_roundtrip": 2000
+  },
+  "risk_params": {
+    "corr_matrix_check": "PASS (4x4,symmetric,diag=1,in[-1,1])",
+    "port_vol_pre": 0.3243,
+    "rc_M_pre": 0.954,
+    "joint_min_sell_shares": 21600,
+    "post_weight": 0.0647,
+    "post_rc": 0.5907,
+    "post_stress_down": 0.0131
+  },
+  "principal_definitions": {
+    "P1_gross_invested": 288975.12,
+    "P2_net_after_div": 287975.12,
+    "P3_rebuilt_cost": 288975.12,
+    "note": "客户未确认口径,三口径并列,不替选"
+  },
+  "open_items": [
+    "本金最终口径",
+    "NAV 2000残差来源",
+    "跌破20.80是否放弃软价",
+    "个人最大可接受亏损",
+    "是否接受仅余~2400股"
+  ],
+  "hard_constraints": {
+    "weight_max": 0.35,
+    "stress_loss_max": 0.08,
+    "rc_max": 0.6,
+    "cash_lowrisk_min_1009": 300000,
+    "settled_cash_floor": 50000
+  },
+  "outputs": {
+    "single_position_memo.md": "f72e5eb61635902581dad6abc067334981de2b1e7f27f4206cd81ff1b1190916",
+    "position_reconciliation.csv": "5d23f29b524aaa96c603c419f8ac2accfcf5edaee2b9520b83fbebca30eab7ff",
+    "principal_definitions.csv": "dfebbebdd682f833b09369d1c25b14bb1a249036ca284f9dbf5dacbbfff68f90",
+    "risk_diagnosis.csv": "db96aa88e254bd0cc3350883dc38e99d285a195296e66cb59bb00619fa37410a",
+    "action_scenarios.csv": "023bacaabb9983fefc5ff70b1e17f8c1670b3a5c5dde7abc9a41f4dab2b60ddb",
+    "if_then_rules.csv": "8a6b83bca862862a9bebca98a049742e4b8e9c650719765cc060732d235b2807",
+    "assumptions_manifest_json": "COMPUTED_AT_WRITING"
+  },
+  "non_execution_statement": "仅为内部研究与条件式纪律,未获交易授权,不构成订单或收益承诺;所有if->then动作均待触发条件成立后另行授权执行。"
+}

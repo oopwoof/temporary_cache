@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "decision_as_of": "2026-08-28 15:20:00 Asia/Shanghai",
+    "cash_deadline": "2026-09-02 10:00:00",
+    "base_currency": "CNY",
+    "market": "China A-shares",
+    "data_nature": "合成脱敏,封闭材料,未联网",
+    "generated_utc": "2026-09-20T04:21:39.278873+00:00"
+  },
+  "adopted_records": [
+    "官方持仓全部5只证券数量与价格(BRK-POS-01..05)",
+    "交易批次TRD-A/B/C/D/E用于重建成本",
+    "账户与资金ACC-001/002/003/004/006",
+    "行情交易状态8/28正式收盘与8/24停牌前收盘",
+    "风险参数60日年化",
+    "相关性矩阵5x5(校验通过:对称,对角=1,取值[-1,1])",
+    "压力情景STRESS-01/02/03",
+    "费用与规则费率/滑点/ADV/T+1",
+    "资金日历结算与到账时点"
+  ],
+  "excluded_records": [
+    "MKT-A-FUT 2026-08-31 09:35记录(晚于决策时点,前视)",
+    "OCR-001证券A总数量13,000?置信0.62(低置信,不覆盖官方)",
+    "OCR-005证券D名称'证劵D?'置信0.74(以security_id匹配)",
+    "ACC-005证券B股息3750元(9/3到账,晚于截止,不计入26万目标)",
+    "证券C停牌价15.20与证券D跌停价13.50(不可作为可成交价格)"
+  ],
+  "nav_definition": {
+    "broker_statement_nav": 1038800.0,
+    "detail_reconstructed_nav": 1040035.82,
+    "detail_components": {
+      "positions_at_close": 964050.0,
+      "settled_withdrawable_cash": 58000.0,
+      "unsettled_sale_net": 17985.82
+    },
+    "unresolved_residual": 1235.82,
+    "residual_treatment": "明细NAV高于券商汇总1235.82,附件内无法消除,并列两口径权重,不虚构其他资产抹平"
+  },
+  "cash_reachability": {
+    "start_transferable": 75985.82,
+    "required_net_new_proceeds": 184014.18,
+    "settlement_rule": "卖出成交当日可用于交易,次一交易日09:00可划转;8/31卖款9/1到账,9/1卖款9/2 09:00到账"
+  },
+  "fees": {
+    "A股佣金": "max(金额*0.00025,5)",
+    "A股印花税": "卖出*0.0005",
+    "A股过户费": "*0.00001",
+    "ETF佣金": "max(金额*0.0002,5)",
+    "ETF印花税": 0,
+    "slip": {
+      "A": 0.0005,
+      "B": 0.0006,
+      "D": 0.003,
+      "E": 0.0002,
+      "C": "停牌不可用"
+    },
+    "lot": 100,
+    "adv_cap": "单日<=5%的20日ADV"
+  },
+  "key_constraints": {
+    "CON-01_wd_cash>=260000": "hard",
+    "CON-02_stock<=0.75": "hard",
+    "CON-03_single_name<=0.27": "hard",
+    "CON-04_highvol_AD<=0.30": "hard",
+    "CON-05_industry_electronic_AD<=0.32": "hard",
+    "CON-06_worst_stress>=-0.09": "hard",
+    "CON-07_single_RC<=0.55": "hard",
+    "CON-08_adv<=0.05": "hard",
+    "CON-09_min_wd>=30000": "hard",
+    "PREF-01_keep_A>=12000": "soft,与CON-07冲突,主方案按hard"
+  },
+  "hard_conflict_statement": "PREF-01(保留A>=12000股)与CON-07(单票风险贡献<=55%)冲突:保留12000股时A风险贡献约64.4%;主方案按hard将A减至8700股,冲突已在memo与scenario_comparison披露",
+  "unresolved": [
+    {
+      "item": "证券D恢复有效买盘时间",
+      "impact": "决定S1/S3是否可执行;否则转D停硬合规分支(A减至4200)",
+      "changes_action": "会改变立即动作"
+    },
+    {
+      "item": "证券C复牌时间与首日报价",
+      "impact": "复牌跳空风险,历史波动低估;不得按15.20成交",
+      "changes_action": "会改变立即动作"
+    },
+    {
+      "item": "客户是否接受A保留量<12000股",
+      "impact": "soft偏好与hard约束冲突的取舍",
+      "changes_action": "会改变立即动作"
+    },
+    {
+      "item": "客户个人税务特殊情形",
+      "impact": "已实现亏损/股息税的实际口径",
+      "changes_action": "只影响精度"
+    },
+    {
+      "item": "券商总资产与明细残差+1235.82",
+      "impact": "权重分母两口径并列;不改变超限方向",
+      "changes_action": "只影响精度"
+    },
+    {
+      "item": "未来入金=0(附件明确)",
+      "impact": "不得假设入金",
+      "changes_action": "暂不影响当前方案"
+    }
+  ],
+  "output_file_sha256": {
+    "liquidity_decision_memo.md": "2de6b3851d552b55aa5e066041fbef02808e24234c17f3de5612ca5382d7088b",
+    "position_reconciliation.csv": "1d46479cad52169f5f9cc635a380578d6b8278821d1ce367c185088af3351d8e",
+    "cash_availability_schedule.csv": "be2f9ed330bbbc9c3ae6a785a27c1bc567ea79181d35e40ff7940a4bf35285b9",
+    "portfolio_diagnosis.csv": "457e7947357c277ed15eec8bd586cbe9b3ccf9732be97e8fdfed7a941ea8634c",
+    "action_priority.csv": "b0df42ebf9a30b0b2227183c41acc0ccf6701692293e16a2ce2c3e2e18f2f1b9",
+    "scenario_comparison.csv": "6edafbee718a2fa2204e64760aaf8f1f027aa03261f9e01522459bb0f1eca1d9",
+    "if_then_rules.csv": "46c4913799b141fc23509b2b4c937d31ab62cacaacd76590adb52962fcf6e215",
+    "assumptions_manifest.json": "d6868adf3789503341af39b412fddc30cf540a4fcb7ab307e61026bc58424ff8"
+  },
+  "verification_notes": [
+    "金额0.01元,权重/波动率/风险贡献4位小数,股数整数",
+    "风险贡献合计=100.00%",
+    "相邻一手检验:卖A9300 RCA54.91%PASS,卖A9200 RCA55.26%FAIL"
+  ]
+}

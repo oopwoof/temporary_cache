@@ -1,0 +1,35 @@
+{
+ "case": "01",
+ "ranking": [
+  "甲",
+  "乙",
+  "丙",
+  "丁"
+ ],
+ "technical_failure": [],
+ "hard_gate_hits": [
+  {
+   "side": "",
+   "item": "",
+   "quote": ""
+  }
+ ],
+ "why_first": [
+  {
+   "quote": "连续10字以上原句",
+   "why": ""
+  }
+ ],
+ "why_last": [
+  {
+   "quote": "连续10字以上原句",
+   "why": ""
+  }
+ ],
+ "scores": {
+  "甲": 3,
+  "乙": 3,
+  "丙": 3,
+  "丁": 3
+ }
+}
