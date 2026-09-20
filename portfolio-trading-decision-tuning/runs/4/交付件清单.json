@@ -1,0 +1,221 @@
+{
+ "r1/ours_case01": [
+  {
+   "name": "run_portfolio_review.py",
+   "bytes": 25043
+  },
+  {
+   "name": "候选方案约束矩阵.csv",
+   "bytes": 2902
+  },
+  {
+   "name": "审批监控条件.csv",
+   "bytes": 1766
+  },
+  {
+   "name": "当前持仓风险快照.csv",
+   "bytes": 924
+  },
+  {
+   "name": "批次卖出分配.csv",
+   "bytes": 1130
+  }
+ ],
+ "r1/ours_case02": [
+  {
+   "name": "action_scenarios.csv",
+   "bytes": 1060
+  },
+  {
+   "name": "assumptions_manifest.json",
+   "bytes": 3529
+  },
+  {
+   "name": "if_then_rules.csv",
+   "bytes": 4109
+  },
+  {
+   "name": "position_reconciliation.csv",
+   "bytes": 1102
+  },
+  {
+   "name": "principal_definitions.csv",
+   "bytes": 2029
+  },
+  {
+   "name": "risk_diagnosis.csv",
+   "bytes": 935
+  }
+ ],
+ "r1/ours_case03": [
+  {
+   "name": "组合持仓诊断与交易纪律.xlsx",
+   "bytes": 43285
+  }
+ ],
+ "r1/ours_case04": [
+  {
+   "name": "集中持仓复核与处理方案_20260908.xlsx",
+   "bytes": 22096
+  }
+ ],
+ "r1/ours_case05": [],
+ "r1/ours_case06": [
+  {
+   "name": "组合诊断与三交易日执行计划.xlsx",
+   "bytes": 18664
+  }
+ ],
+ "r1/ours_case07": [
+  {
+   "name": "action_priority.csv",
+   "bytes": 1887
+  },
+  {
+   "name": "assumptions_manifest.json",
+   "bytes": 5004
+  },
+  {
+   "name": "cash_availability_schedule.csv",
+   "bytes": 1134
+  },
+  {
+   "name": "if_then_rules.csv",
+   "bytes": 4610
+  },
+  {
+   "name": "portfolio_diagnosis.csv",
+   "bytes": 1408
+  },
+  {
+   "name": "position_reconciliation.csv",
+   "bytes": 1357
+  },
+  {
+   "name": "scenario_comparison.csv",
+   "bytes": 1810
+  }
+ ],
+ "r1/ours_case08": [
+  {
+   "name": "单一重仓持仓处理备忘录.docx",
+   "bytes": 44447
+  },
+  {
+   "name": "单一重仓持仓处理测算.xlsx",
+   "bytes": 12762
+  }
+ ],
+ "r2/ours_case01": [
+  {
+   "name": "requirements.txt",
+   "bytes": 24
+  },
+  {
+   "name": "run_portfolio_review.py",
+   "bytes": 22180
+  },
+  {
+   "name": "候选方案约束矩阵.csv",
+   "bytes": 5671
+  },
+  {
+   "name": "审批监控条件.csv",
+   "bytes": 3170
+  },
+  {
+   "name": "当前持仓风险快照.csv",
+   "bytes": 693
+  },
+  {
+   "name": "批次卖出分配.csv",
+   "bytes": 993
+  }
+ ],
+ "r2/ours_case02": [
+  {
+   "name": "action_scenarios.csv",
+   "bytes": 2703
+  },
+  {
+   "name": "assumptions_manifest.json",
+   "bytes": 3673
+  },
+  {
+   "name": "if_then_rules.csv",
+   "bytes": 3592
+  },
+  {
+   "name": "position_reconciliation.csv",
+   "bytes": 1548
+  },
+  {
+   "name": "principal_definitions.csv",
+   "bytes": 923
+  },
+  {
+   "name": "risk_diagnosis.csv",
+   "bytes": 1237
+  }
+ ],
+ "r2/ours_case03": [
+  {
+   "name": "组合持仓诊断与交易纪律.xlsx",
+   "bytes": 28381
+  }
+ ],
+ "r2/ours_case04": [
+  {
+   "name": "集中持仓复核与交易纪律_20260908.xlsx",
+   "bytes": 21807
+  }
+ ],
+ "r2/ours_case05": [
+  {
+   "name": "招商银行持仓诊断与交易纪律.xlsx",
+   "bytes": 18276
+  }
+ ],
+ "r2/ours_case06": [
+  {
+   "name": "组合诊断与三日执行计划.xlsx",
+   "bytes": 32121
+  }
+ ],
+ "r2/ours_case07": [
+  {
+   "name": "action_priority.csv",
+   "bytes": 1446
+  },
+  {
+   "name": "assumptions_manifest.json",
+   "bytes": 4253
+  },
+  {
+   "name": "cash_availability_schedule.csv",
+   "bytes": 972
+  },
+  {
+   "name": "if_then_rules.csv",
+   "bytes": 3246
+  },
+  {
+   "name": "portfolio_diagnosis.csv",
+   "bytes": 1385
+  },
+  {
+   "name": "position_reconciliation.csv",
+   "bytes": 1363
+  },
+  {
+   "name": "scenario_comparison.csv",
+   "bytes": 2006
+  }
+ ],
+ "r2/ours_case08": [
+  {
+   "name": "单一重仓持仓处理备忘录.docx",
+   "bytes": 45596
+  }
+ ]
+}

@@ -70,8 +70,14 @@ def collect(run, rnd, case):
 SOLVE = re.compile(
     r"(限\s*[\d.]+\s*%|上限[^|\n]{0,10}[\d.]+\s*%)[^|\n]{0,60}?([\d][\d,]{2,})\s*(股|份)[^|\n]{0,20}?(达标|才|需|可)"
     r"|(达标|反解)[^|\n]{0,12}?([\d][\d,]{2,})\s*(股|份)")
+# ⚠ 2026-09-20 修正（检测器误判第 7 次，而且是假阴性，直接翻了 E-02 的结论）。
+# 旧版只认「动词在前」的语序（交付 7 件），漏掉了**数词在前**的写法：
+#   v7 case07 正文首行写「8 个交付文件已生成」、实有 7 件——旧正则零命中，
+#   于是「交付声明 vs 实际件数」整张表报成 16/16「未声称件数」，把没修好报成修好了。
+# 教训同经验沉淀第 6 条：按内容判。语序是句式，件数声明是内容。
 CLAIM = re.compile(
     r"(?:交付|产出|生成|附上|已附)\s*(?:了)?\s*(\d+)\s*(?:份|件|个)\s*(?:文件|交付物|交付件|附件)?"
+    r"|(\d+)\s*(?:个|份|件)\s*(?:交付)?\s*(?:文件|交付物|交付件|附件)"
     r"|(?:全部\s*)?(\d+)\s*(?:份|件)\s*交付(?:物|件)")
 CARRIERS = {
     "C-03 决策摘要表在开头": lambda b, a, n: bool(re.match(r"\s*(?:#+\s*)?\|?\s*(决策摘要|结论先行)", b)),
@@ -128,7 +134,14 @@ CARRIERS_V5 = {
 
 
 # ── v6 的四条（E-01~E-04）。按「载体分三类」重做：只加字段，不要求新增动作。──
-TOTAL_CLAIM = re.compile(r"(?:交付|产出|生成|送达|输出)\s*(?:了)?\s*\d+\s*(?:件|个|份)|\d+\s*(?:件|个|份)\s*(?:文件|交付物|交付件)")
+# 同上修正：补数词在前的语序，并补上**概括语**——
+# 自检① 明写「概括语『全部交付物已交付』同样禁止」，检测器此前没查它。
+# v7 case01 r1 首行就是「全部交付完成。」，实有 5 件，旧版判成合规。
+TOTAL_CLAIM = re.compile(
+    r"(?:交付|产出|生成|送达|输出)\s*(?:了)?\s*\d+\s*(?:件|个|份)"
+    r"|\d+\s*(?:件|个|份)\s*(?:交付)?\s*(?:文件|交付物|交付件|附件)"
+    r"|全部[^。；\n]{0,10}(?:交付物?|文件)[^。；\n]{0,10}(?:已?交付|完成|生成|齐全)"
+    r"|全部交付完成|交付(?:物)?已?全部完成")
 CARRIERS_V6 = {
     "E-01 工作簿含「核验」表": lambda b, a, n: bool(re.search(r"核验(?:结果)?表|核验\s*[|｜]|表名[^。\n]{0,20}核验", a)),
     "E-02 只枚举文件名、不报总数": lambda b, a, n: (not TOTAL_CLAIM.search(b)) and len(set(FILEEXT.findall(a))) >= 1,
@@ -147,16 +160,48 @@ PUNT = (r"(?:须|由|交(?:由)?|请)(?:客户|风控|投资者|投委会)[^。�
 BREACH = r"超限|超过(?:上限|阈值)|违反|放宽|不合规|无解|硬(?:约束|线)"
 PUNT_CLAUSE = re.compile(r"[^。；！\n]*(?:" + PUNT + r")[^。；！\n]*")
 
+# ⚠ 2026-09-20 补：偏好分支里的请示是**合规写法**，不是 punt。
+# v7 case04 r1 命中的是这一句：
+#   「三、如果坚持一股电池都不卖 … 我们不建议、也不代客户提高风险预算；
+#     是否放宽请客户和风控明确确认后再执行」
+# 它在「如果坚持…」这个偏好分支里，而且明写不建议、不代客户决定——
+# 正是 G-01a 允许的形态（主方案按硬约束给，偏好方案降附录并写明会超限多少）。
+# 第一版检测器把它判成 punt，是**假阳性**（检测器误判第 8 次）。
+# 豁免按内容给，且只认两种明确信号；宁可漏放，也在报告里写明它可能掩盖真 punt。
+DISCLAIM = re.compile(r"不建议|不推荐|不代客户|不代为决定|不替客户")
+PREF_BRANCH = re.compile(r"如果坚持|若坚持|坚持保留|偏好方案|仅作附录|对照情景|客户要求保留")
+
 def no_punt_closing(full):
-    """G-01：硬约束的解不得交回客户/风控。请示语与超限/放宽同句即判未落地。"""
-    for s in PUNT_CLAUSE.findall(full):
-        if re.search(BREACH, s):
-            return False
+    """G-01：硬约束的解不得交回客户/风控。
+
+    判未落地 = 请示语与「超限/放宽/无解」同句，**且**这一句不在偏好分支里、
+    也没有明写「不建议/不代客户」。豁免只看同句与前 200 字，不做更远的推断。
+    """
+    for m in PUNT_CLAUSE.finditer(full):
+        s = m.group(0)
+        if not re.search(BREACH, s):
+            continue
+        if DISCLAIM.search(s):
+            continue
+        near = full[max(0, m.start() - 150):m.end()]
+        # 紧邻的「不建议/不代客户」本身就是不把决定权交出去的表态；
+        # 再要求它落在偏好分支里就过严了（v7 case04 的分支标题在 300 字之外）。
+        if DISCLAIM.search(near) or (
+                PREF_BRANCH.search(full[max(0, m.start() - 400):m.start()])
+                and DISCLAIM.search(full[max(0, m.start() - 400):m.end()])):
+            continue
+        return False
     return True
 
-# G-02 只适用于题面设了币种上限的题（按纪律包：case03、case06）。
-# 其余题返回 None = 不适用，不进分母——否则 1/8 会被误读成失败。
-FX_CTX = re.compile(r"币种|外币|港币|美元|汇率|HKD|USD")
+# G-02 只适用于**题面**设了币种/外币敞口约束的题。
+# ⚠ 2026-09-20 修正：第一版把「适用与否」判在**答复**上（答复里提到币种才算适用），
+# 结果同一批题的分母在两轮之间从 2 跳到 4——分母被候选方的写法决定了，读数没法比。
+# 适用性必须由**题面**定死。回题面逐条核过，只有 case03、case06 写了外币敞口要求
+# （与纪律包 never_regress 第 8 条标的 case03, case06 一致）：
+#   case03「复核各批次成本、浮动盈亏、持仓权重、行业集中度、**外币暴露**和可卖数量」
+#   case06「结合客户设定的仓位上限、现金要求、**外币敞口**和最大可承受损失」
+# 其余题返回 None = 不适用，记「·」不进分母。
+FX_CASES = {"03", "06"}
 FX_CASH = re.compile(r"币种[^。\n]{0,30}(?:含|计入|包含|加上)[^。\n]{0,14}现金"
                      r"|现金[^。\n]{0,16}(?:计入|纳入)[^。\n]{0,12}币种(?:敞口)?")
 
@@ -164,8 +209,8 @@ CARRIERS_V7 = {
     "G-01 无请示型收口（硬约束不交客户拍板）": lambda b, a, n: no_punt_closing(a),
     "G-01 回执写出与最紧约束冲突的软偏好": lambda b, a, n: bool(
         re.search(r"冲突[^。\n|]{0,10}软?偏好|与之冲突", a)),
-    "G-02 币种敞口计入该币种现金": lambda b, a, n: (
-        bool(FX_CASH.search(a)) if FX_CTX.search(a) else None),
+    "G-02 币种敞口计入该币种现金": lambda b, a, n, c=None: (
+        bool(FX_CASH.search(a)) if c in FX_CASES else None),
 }
 
 def claim_vs_actual(body, names):
@@ -173,7 +218,7 @@ def claim_vs_actual(body, names):
     m = CLAIM.search(body)
     if not m:
         return None
-    return int(m.group(1) or m.group(2)), len(names)
+    return int(next(g for g in m.groups() if g)), len(names)
 
 def main():
     ap = argparse.ArgumentParser()
@@ -191,7 +236,11 @@ def main():
             print(f"⚠ case{c} 缺文件，跳过", file=sys.stderr)
             continue
         for k, f in {**CARRIERS, **CARRIERS_V5, **CARRIERS_V6, **CARRIERS_V7}.items():
-            res.setdefault(k, {})[c] = f(b, full, names)
+            # 题号只传给需要按题面定适用性的检测器（目前只有 G-02）
+            try:
+                res.setdefault(k, {})[c] = f(b, full, names, c)
+            except TypeError:
+                res.setdefault(k, {})[c] = f(b, full, names)
         claims[c] = (claim_vs_actual(b, names), len(names))
     if not res:
         sys.exit("没读到任何答复")
