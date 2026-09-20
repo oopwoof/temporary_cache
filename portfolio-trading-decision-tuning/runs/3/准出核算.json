@@ -1,0 +1,16 @@
+{
+ "scheme": null,
+ "mean": {
+  "WB": 3.25,
+  "base": 3.0,
+  "base+skill": 3.0,
+  "gpt": 4.0,
+  "ours": 3.75
+ },
+ "gap_vs_base": 0.75,
+ "wr_vs_base": 0.625,
+ "cases_beating_base": 5,
+ "wr_vs_primary": 0.625,
+ "pass": false,
+ "verdict": "❌ **未达标**：超过 base 的题数差 1 题"
+}
